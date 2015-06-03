@@ -1,0 +1,59 @@
+<snippet>
+	<content><![CDATA[
+/**
+ * Latest News widget
+ */
+class ThemeWidgetLatestNews extends Carbon_Widget {
+	/**
+	 * Register widget function.
+	 */
+	function __construct() {
+		\$this->setup(__('Theme Widget Latest News', 'crb'), __('Displays a block with title/latest news', 'crb'), array(
+			Carbon_Field::factory('text', 'title', __('Title', 'crb'))
+				->set_default_value('News and Insights:'),
+			Carbon_Field::factory('text', 'count', __('Latest news shown at most', 'crb'))
+				->set_default_value('4')
+		));
+	}
+	
+	/**
+	 * Called when rendering the widget in the front-end
+	 */
+	function front_end(\$args, \$instance) {
+		if (\$instance['title'] != '') {
+			echo \$args['before_title'] . \$instance['title'] . \$args['after_title'];
+		}
+
+		\$instance['count'] = absint(\$instance['count']);
+		if ( empty(\$instance['count']) ) {
+			\$instance['count'] = 4;
+		}
+
+		\$latest_news_query = new WP_Query(array(
+			'post_type' => 'post',
+			'posts_per_page' => \$instance['count'],
+			'meta_key' => '_thumbnail_id',
+		));
+		
+		if ( \$latest_news_query->have_posts() ) :
+			?>
+			<ul class="list-news">
+				<?php while ( \$latest_news_query->have_posts() ): \$latest_news_query->the_post(); ?>
+					<li>
+						<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+					</li>
+				<?php endwhile; ?>
+			</ul>
+			<?php
+		endif;
+	}
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>ThemeWidgetLatestNews</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> Widget</description>
+</snippet>

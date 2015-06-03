@@ -1,0 +1,36 @@
+<snippet>
+	<content><![CDATA[
+function crb_get_related_posts_query(\$limit = 3) {
+	\$post_id = get_the_id();
+	\$categories = get_the_category(\$post_id);
+	\$tags = get_the_tags(\$post_id);
+
+	if ( !empty(\$categories) ) {
+		\$args = array(
+			'category__in' => wp_list_pluck(\$categories, 'term_id'),
+		);
+	} elseif ( !empty(\$tags) ) {
+		\$args = array(
+			'tag__in' => wp_list_pluck(\$tags, 'term_id'),
+		);
+	}
+
+	\$related_posts_query = new WP_Query(array_merge(\$args, array(
+		'post__not_in' => array(\$post_id),
+		'post_type' => 'post',
+		'orderby' => 'rand',
+		'posts_per_page' => \$limit,
+		'meta_key' => '_thumbnail_id',
+	)));
+	
+	return \$related_posts_query;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_related_posts_query</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

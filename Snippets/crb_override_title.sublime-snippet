@@ -1,0 +1,20 @@
+<snippet>
+	<content><![CDATA[
+add_filter('crb_get_title', 'crb_override_title');
+function crb_override_title(\$title) {
+	\$page_id = crb_get_page_context();
+	\$crb_override_title = carbon_get_post_meta(\$page_id, 'crb_override_title');
+	if ( !empty(\$crb_override_title) ) {
+		\$title = \$crb_override_title;
+	}
+
+	return \$title;
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_override_title</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> spinner replace</description>
+</snippet>

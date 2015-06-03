@@ -1,0 +1,20 @@
+<snippet>
+	<content><![CDATA[
+function crb_get_blog_url() {
+	\$page_for_posts = get_option('page_for_posts');
+
+	if( !empty(\$page_for_posts) ) {
+		return get_permalink( \$page_for_posts );
+	} else {
+		return home_url('/');
+	}
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_blog_url</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> blog link</description>
+</snippet>

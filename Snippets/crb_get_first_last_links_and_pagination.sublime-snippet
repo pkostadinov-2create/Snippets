@@ -1,0 +1,59 @@
+<snippet>
+	<content><![CDATA[
+function crb_get_first_last_links_and_pagination() {
+	\$result = array(
+		'first_link' => '',
+		'last_link' => '',
+		'pagination' => '',
+	);
+
+	global \$wp_query;
+	\$big = 999999999; // need an unlikely integer
+	\$format = '?paged=%#%';
+	\$base = str_replace( \$big, '%#%', esc_url( get_pagenum_link( \$big ) ) );
+	\$total = \$wp_query->max_num_pages;
+	\$current = max( 1, get_query_var('paged') );
+
+	if ( \$total < 2 ) {
+		return \$result;
+	}
+
+	if ( \$current && 1 < \$current ) {
+		\$result['first_link'] = str_replace( '%_%', \$format, \$base );
+		\$result['first_link'] = str_replace( '%#%', 1, \$result['first_link'] );
+	}
+
+	if ( \$current && ( \$current < \$total || -1 == \$total ) ) {
+		\$result['last_link'] = str_replace( '%_%', \$format, \$base );
+		\$result['last_link'] = str_replace( '%#%', \$total, \$result['last_link'] );
+	}
+
+	\$result['pagination'] = paginate_links(array(
+		'base' => \$base,
+		'format' => \$format,
+		'total' => \$total,
+		'current' => \$current,
+
+		'show_all' => False,
+		'end_size' => 1,
+		'mid_size' => 2,
+		'prev_next' => True,
+		'prev_text' => __('« Previous'),
+		'next_text' => __('Next »'),
+		'type' => 'array',
+		'add_args' => False,
+		'add_fragment' => '',
+		'before_page_number' => '',
+		'after_page_number' => ''
+	));
+
+	return \$result;
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_first_last_links_and_pagination</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

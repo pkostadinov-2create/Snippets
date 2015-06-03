@@ -1,0 +1,21 @@
+<snippet>
+	<content><![CDATA[
+
+crb_attachment_help
+
+crb_admin_thumbnail_help
+
+admin_column_callback
+
+admin_post_type_order
+
+crb_wpthumb
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_image_functions</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> Image</description>
+</snippet>

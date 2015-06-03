@@ -1,0 +1,19 @@
+<snippet>
+	<content><![CDATA[
+// Add Reorder for pages
+add_action( 'admin_menu', 'crb_show_post_type_order', 99 );
+function crb_show_post_type_order() {
+	\$post_type_name = 'page';
+
+	\$custom_post_type_order = new CPTO();
+	add_submenu_page('edit.php?post_type='.\$post_type_name, __('Re-Order', 'cpt'), __('Re-Order', 'cpt'), 'switch_themes', 'order-post-types-'.\$post_type_name, array(\$custom_post_type_order, 'SortPage') );
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>admin_post_type_order_show</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> hide</description>
+</snippet>

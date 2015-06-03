@@ -1,0 +1,103 @@
+<snippet>
+	<content><![CDATA[
+add_action( 'carbon_after_include', 'crb_register_carbon_field_icon_select' );
+function crb_register_carbon_field_icon_select() {
+
+	if ( !class_exists('Carbon_Field_Icon_Select') ) :
+		class Carbon_Field_Icon_Select extends Carbon_Field_Attachment {
+			public \$value_type = 'id';
+
+			function description(){
+				\$description = '';
+				\$is_image = false;
+				\$has_image = false;
+				\$attachment_url = !empty(\$this->value) ? wp_get_attachment_url( \$this->value ) : '';
+				\$thumbnail_src = !empty(\$this->value) ? wp_get_attachment_image_src( \$this->value, 'thumbnail' ) : '';
+				\$attachment_type = wp_check_filetype(\$attachment_url);
+
+				if ( in_array(\$attachment_type['ext'], \$this->image_extensions) ) {
+					// is_image
+					\$is_image = true;
+				}
+
+				\$description .= '<div class="carbon-preview">';
+
+				\$description .= '<div class="carbon-field-icon-select">';
+
+				\$crb_icons_select_field = carbon_get_theme_option('crb_icons_select_field', 'complex');
+				foreach (\$crb_icons_select_field as \$attachment) {
+					\$class = '';
+					if ( \$this->get_value() == \$attachment['icon'] ) {
+						\$class = 'active';
+					}
+
+					\$description .= '<div class="carbon-field-icon-select-item ' . \$class . '">';
+
+					\$description .= '<img src="' . crb_wp_get_attachment_image_src(\$attachment['icon'], 'crb_admin_icon_select') . '" alt="" data-id="' . \$attachment['icon'] . '" />';
+
+					\$description .= '</div>';
+				}
+
+				\$description .= '</div>';
+
+				\$description .= '</div>';
+				\$description .= '<div class="cl"></div>';
+
+				\$is_image = false;
+
+				return apply_filters('carbon_field_' . \$this->type . '_description', '<div class="carbon-description">' . \$description . '</div>');
+			}
+
+			function render() {
+				echo '<input
+						id="' . \$this->get_id() . '"
+						type="text"
+						name="' . \$this->get_name() . '"
+						value="' . \$this->get_value() . '"
+						class="regular-text carbon-file-field carbon-field-icon-select-value hidden" ' . (\$this->required ? 'data-carbon-required="true"': '') . '
+						'.(\$this->value_type=='id' ? 'style="display:none"' : '').'
+					/>';
+
+				echo \$this->description();
+			}
+		}
+	}
+
+}
+
+
+<style>
+	.carbon-field-icon-select { width: 595px; }
+	.carbon-field-icon-select-item { padding: 10px 15px; width: 55px; height: 55px; display: inline-block; }
+	.carbon-field-icon-select-item img { border: 1px solid  transparent; display: block; margin: 0 auto; cursor: pointer; text-align: center; }
+	.carbon-field-icon-select-item:hover img,
+	.carbon-field-icon-select-item.active img { border: 1px solid  #000; }
+</style>
+
+
+/* ==========================================================================
+	# Theme Options
+========================================================================== */
+Carbon_Container::factory('theme_options', __('Icons', 'crb'))
+	->set_page_parent('Theme Options')
+	->add_fields(array(
+		Carbon_Field::factory('complex', 'crb_icons_select_field', __('Icons', 'crb'))
+			->setup_labels(array(
+				'plural_name' => 'Icons',
+				'singular_name' => 'Icon',
+			))
+			->add_fields(array(
+				Carbon_Field::factory('attachment', 'icon', __('Icon', 'crb'))
+					->set_required(true)
+					->help_text(crb_get_attachment_help('crb_feature')),
+			)),
+	));
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>Carbon_Field_Icon_Select</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> Image</description>
+</snippet>

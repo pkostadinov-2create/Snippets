@@ -1,0 +1,14 @@
+<snippet>
+	<content><![CDATA[
+function crb_get_slug() {
+	return get_post_field( 'post_name', get_the_id() );
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_slug</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

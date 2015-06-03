@@ -1,0 +1,84 @@
+<snippet>
+	<content><![CDATA[
+/**
+ * Displays a block with latest tweets from particular user
+ */
+class CrbLatestTweetsWidget extends Carbon_Widget {
+	protected \$form_options = array(
+		'width' => 300
+	);
+
+	function __construct() {
+		\$this->setup(__('Latest Tweets', 'crb'), __('Displays a block with your latest tweets', 'crb'), array(
+			Carbon_Field::factory('text', 'title', __('Title', 'crb')),
+			Carbon_Field::factory('text', 'username', __('Username', 'crb')),
+			Carbon_Field::factory('text', 'count', __('Number of Tweets to show', 'crb'))->set_default_value('5')
+		));
+	}
+
+	function front_end(\$args, \$instance) {
+		if ( !carbon_twitter_is_configured() ) {
+			return; //twitter settings are not configured
+		}
+
+		\$tweets = TwitterHelper::get_tweets(\$instance['username'], \$instance['count']);
+		if (empty(\$tweets)) {
+			return; //no tweets, or error while retrieving
+		}
+
+		if (\$instance['title']) {
+			echo \$args['before_title'] . \$instance['title'] . \$args['after_title'];
+		}
+		?>
+		<ul>
+			<?php
+			foreach (\$tweets as \$tweet):
+				\$author_username = \$tweet->user->screen_name;
+				\$author_nice_name = \$tweet->user->name;
+				\$author_link = 'https://twitter.com/' . \$author_username . '/';
+
+				\$tweet_image = \$tweet->image;
+				\$tweet_link = \$tweet->tweet_link;
+
+				# Intent Links, If used with the intent js will auto popup
+				\$reply_link = 'https://twitter.com/intent/tweet?in_reply_to=' . \$tweet->id_str;
+				\$retweet_link = 'https://twitter.com/intent/retweet?tweet_id=' . \$tweet->id_str;
+				\$favourite_link = 'https://twitter.com/intent/favorite?tweet_id=' . \$tweet->id_str;
+				\$author_popup_link = 'https://twitter.com/intent/user?screen_name=' . \$author_username;
+				\$author_follow_link = 'https://twitter.com/intent/follow?screen_name=' . \$author_username;
+				?>
+				<li>
+					<div class="avatar">
+						<a href="<?php echo esc_url(\$author_popup_link); ?>">
+							<img src="<?php echo \$tweet_image; ?>" alt="" />
+						</a>
+					</div><!-- /.avatar -->
+
+					<div class="cnt">
+						<h5><a href="<?php echo esc_url(\$author_link); ?>"><?php echo \$author_nice_name; ?></a> <a href="<?php echo esc_url(\$author_follow_link); ?>" class="user-name">@<?php echo \$author_username; ?></a></h5>
+
+						<?php echo apply_filters('the_content', \$tweet->tweet_text); ?>
+
+						<div class="post-options">
+							<a href="<?php echo esc_url(\$reply_link); ?>" class="back-ico" title="Reply"></a>
+
+							<a href="<?php echo esc_url(\$retweet_link); ?>" class="refresh-ico" title="Retweet"></a>
+
+							<a href="<?php echo esc_url(\$favourite_link); ?>" class="star-ico" title="Favorite"></a>
+						</div><!-- /.post-options -->
+					</div><!-- /.cnt -->
+				</li>
+			<?php endforeach ?>
+		</ul>
+		<?php
+	}
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_twitter_widget_extend</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> twitter</description>
+</snippet>

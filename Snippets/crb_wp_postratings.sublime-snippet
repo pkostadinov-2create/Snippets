@@ -1,0 +1,72 @@
+<snippet>
+	<content><![CDATA[
+if ( !function_exists('the_ratings') ) {
+	return;
+}
+
+add_action( 'wp_enqueue_scripts', 'crb_wp_postratings_override_image', 100 );
+add_filter( 'expand_ratings_template', 'crb_ratings_fix', 100 ); // WP-Ratings Filter
+add_action( 'save_post', 'crb_init_video_meta' );
+
+function crb_wp_postratings_override_image() {
+	// WP Post Ratings Override plugin images, from plugin source
+	\$postratings_max = intval(get_option('postratings_max'));
+	\$postratings_ajax_style = get_option('postratings_ajax_style');
+	\$postratings_custom = intval(get_option('postratings_customrating'));
+	if(\$postratings_custom) {
+		for(\$i = 1; \$i <= \$postratings_max; \$i++) {
+			\$postratings_javascript .= 'var ratings_'.\$i.'_mouseover_image=new Image();ratings_'.\$i.'_mouseover_image.src=ratingsL10n.plugin_url+"/images/"+ratingsL10n.image+"/rating_'.\$i.'_over."+ratingsL10n.image_ext;';
+		}
+	} else {
+		\$postratings_javascript = 'var ratings_mouseover_image=new Image();ratings_mouseover_image.src=ratingsL10n.plugin_url+"/images/"+ratingsL10n.image+"/rating_over."+ratingsL10n.image_ext;';
+	}
+
+	wp_deregister_script( 'wp-postratings' );
+	wp_enqueue_script('wp-postratings', plugins_url('wp-postratings/postratings-js.js'), array('jquery'), WP_POSTRATINGS_VERSION, true);
+	wp_localize_script('wp-postratings', 'ratingsL10n', array(
+		'plugin_url' => get_bloginfo('stylesheet_directory') . '/images/wp-postratings/',
+		'ajax_url' => admin_url('admin-ajax.php'),
+		'text_wait' => __('Please rate only 1 post at a time.', 'wp-postratings'),
+		'image' => get_option('postratings_image'),
+		'image_ext' => 'gif',
+		'max' => \$postratings_max,
+		'show_loading' => intval(\$postratings_ajax_style['loading']),
+		'show_fading' => intval(\$postratings_ajax_style['fading']),
+		'custom' => \$postratings_custom,
+		'l10n_print_after' => \$postratings_javascript
+	));
+}
+
+// Fixing WP-Ratings plugin initial output, to match Design
+function crb_ratings_fix(\$html ) {
+	\$search = plugins_url( '/wp-postratings/images/stars_crystal/' );
+	\$replace = get_bloginfo('stylesheet_directory') . '/images/wp-postratings/images/stars_crystal/';
+
+	\$html = str_replace(\$search, \$replace, \$html);
+
+	return \$html;
+}
+
+/**
+ * Forcing post meta to be created with post creation
+ * @param crb_video_count_watch
+ * @param ratings_average
+ */
+function crb_init_video_meta( \$post_id ) {
+	if ( get_post_type( \$post_id ) === 'crb_review' ) {
+		\$ratings_average = get_post_meta( \$post_id, 'ratings_average' );
+		if ( empty(\$ratings_average) ) {
+			\$ratings_average = 0;
+			update_post_meta( \$post_id, 'ratings_average', \$ratings_average );
+		}
+	}
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_wp_postratings</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> Imgs Replace</description>
+</snippet>

@@ -1,0 +1,24 @@
+<snippet>
+	<content><![CDATA[
+// Return link target, depending of checkbox field
+function crb_the_target( \$field = '' ) {
+	echo crb_return_target(\$field);
+}
+
+function crb_return_target( \$field = '' ) {
+	\$target = '';
+	if ( !empty(\$field) ) {
+		\$target = 'target="_blank"';
+	}
+
+	return \$target;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_the_target</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

@@ -1,0 +1,9 @@
+{
+	"scope": "source.php - variable.other.php",
+	"comment": "Constants / Class's a-z",
+	"completions":
+	[
+		"crb_copyright",
+		"crb_slider",
+	]
+}

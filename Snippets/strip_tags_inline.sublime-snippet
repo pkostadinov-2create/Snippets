@@ -1,0 +1,12 @@
+<snippet>
+	<content><![CDATA[
+strip_tags(\$content, '<strong><span><em><sup><sub><b><i>');
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>strip_tags_inline</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

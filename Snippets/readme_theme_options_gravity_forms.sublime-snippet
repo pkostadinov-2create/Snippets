@@ -1,0 +1,16 @@
+<snippet>
+	<content><![CDATA[
+<li>
+	<h3 id="gravity-forms-plugin">Activate the &quot;Gravity Forms&quot; plugin</h3>
+	<p>Go to <span class="admin-path">Settings &raquo; Gravity Forms</span> and setup plugin options.</p>
+	<p>To create a form, click <strong>Forms</strong> &gt; <strong>New Form</strong>, and fill form title. After that you can add fields from the right panel, to the left empty panel. When finished click Update Form.</p>
+	<p>To add a form, visit any page, and on top of the main WYSIWYG editor you will find <strong>Add Form</strong> button. Click it, and select the form with the correct settings from the popup. When finished click <strong>Insert Form</strong> button, and you are done.</p>
+</li>
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>readme_theme_options_gravity_forms</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>text.html</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> Readme</description>
+</snippet>

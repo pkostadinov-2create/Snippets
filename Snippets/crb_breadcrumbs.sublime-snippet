@@ -1,0 +1,204 @@
+<snippet>
+	<content><![CDATA[
+/**
+ * 
+ * Print Breadcrumbs
+ *
+ * Settings: $before, $after, $before_items, $after_items, $before_item, $after_item, $separator
+ *
+ * Use Crb_Breadcrumbs::show(); to display the Breadcrumbs
+ *
+ */
+
+/**
+ * Source
+ * https://gist.github.com/brutalenemy666/8544b08fe235216cca6f
+ */
+class Crb_Breadcrumbs {
+
+	protected \$post = null,
+			\$breadcrumbs = '',
+			\$inlude_homepage = false,
+			\$before = '<div class="breadcrumbs col-xs-10">',
+			\$after = '</div><!-- /.breadcrumbs -->',
+			\$before_items = '<p><strong>You Are Here</strong> ',
+			\$after_items = '</p>',
+			\$before_item = '',
+			\$after_item = '',
+			\$separator = ' &gt; ';
+
+	private function __construct() {
+		global \$post;
+
+		\$this->post = \$post;
+
+		\$this->render_breadcrumbs();
+	}
+
+	public static function show() {
+		return new self();
+	}
+
+	protected function wrap_item( \$label, \$link = null ) {
+		if ( \$link ) {
+			return \$this->before_item . '<a href="' . \$link . '">' . \$label . '</a>' . \$this->after_item;
+		} else {
+			return \$this->before_item . \$label . \$this->after_item;
+		}
+	}
+
+	protected function print_breadcrumbs() {
+		echo \$this->before . \$this->before_items . \$this->breadcrumbs . \$this->after_items . \$this->after;
+	}
+
+	protected function render_breadcrumbs() {
+
+		if ( \$this->inlude_homepage ) {
+			\$this->_homepage();
+		}
+
+		if ( is_singular( 'post' ) ) { # blog posts
+			\$this->_blog();
+			\$this->_single_post();
+		} else if ( is_page() ) { # pages
+			\$this->_page();
+		} else if ( is_singular() ) { # other posts
+			\$this->_blog();
+			\$this->_single();
+		} else if ( is_404() ) { # error page
+			\$this->_404();
+		} else if ( is_search() ) { # search page
+			\$this->_search();
+		} else if ( is_home() ) { # blog page
+			\$this->_blog( false );
+		} else if ( is_archive() ) { # archives
+			\$this->_archive();
+		}
+
+		\$this->print_breadcrumbs();
+	}
+
+	protected function _homepage() {
+		\$homepage_id = get_option( 'page_on_front' );
+
+		\$this->breadcrumbs .= \$this->wrap_item( get_the_title( \$homepage_id ), home_url('/') ) . \$this->separator;
+
+		return \$this;
+	}
+
+	protected function _blog( \$link = true ) {
+		\$blog_id = get_option( 'page_for_posts' );
+
+		if ( !\$blog_id ) {
+			\$blog_id = get_option( 'page_on_front' );
+		}
+
+		if ( \$link ) {
+			\$this->breadcrumbs .= \$this->wrap_item( get_the_title( \$blog_id ), get_permalink( \$blog_id ) ) . \$this->separator;
+		} else {
+			\$this->breadcrumbs .= \$this->wrap_item( get_the_title( \$blog_id ) );
+		}
+
+		return \$this;
+	}
+
+	protected function _single_post() {
+		\$post_categories = array_reverse( wp_get_post_categories( \$this->post->ID ) );
+
+		foreach ( \$post_categories as \$cat_id ) {
+			\$category = get_category( \$cat_id );
+
+			\$this->breadcrumbs .= \$this->wrap_item( \$category->name, get_category_link( \$category ) ) . \$this->separator;
+		}
+
+		\$this->breadcrumbs .= \$this->wrap_item( apply_filters( 'the_title', \$this->post->post_title ) );
+
+		return \$this;
+	}
+
+	protected function _single() {
+		\$this->breadcrumbs .= \$this->wrap_item( get_the_title() );
+
+		return \$this;
+	}
+
+	protected function _page( \$link = false ) {
+		\$antcestors = array_reverse( (array) get_post_ancestors( \$this->post ) );
+
+		foreach ( \$antcestors as \$id ) {
+			\$this->breadcrumbs .= \$this->wrap_item( get_the_title(\$id), get_permalink( \$id ) ) . \$this->separator;
+		}
+
+		# Current page links to self
+		if ( \$link ) {
+			\$this->breadcrumbs .= \$this->wrap_item( get_the_title( \$this->post->ID ), get_permalink( \$this->post->ID ) );
+		} else {
+			\$this->breadcrumbs .= \$this->wrap_item( get_the_title( \$this->post->ID ) );
+		}
+
+		return \$this;
+	}
+
+	// protected function _page() {
+	// 	\$antcestors = get_post_ancestors( \$this->post );
+	// 
+	// 	foreach ( \$antcestors as \$id ) {
+	// 		\$this->breadcrumbs .= \$this->wrap_item( get_the_title(\$id), get_permalink( \$id ) ) . \$this->separator;
+	// 	}
+	// 
+	// 	\$this->breadcrumbs .= \$this->wrap_item( get_the_title() );
+	// 
+	// 	return \$this;
+	// }
+
+	protected function _404() {
+		\$this->breadcrumbs .= \$this->wrap_item( __('404 - Page Not Found', 'crb') );
+
+		return \$this;
+	}
+
+	protected function _search() {
+		\$this->breadcrumbs .= \$this->wrap_item( __('Search', 'crb') . ' : <em>' . \$_GET['s'] . '</em>' );
+
+		return \$this;
+	}
+
+	protected function _archive() {
+		if ( is_tag() || is_category() ) {
+			\$this->_blog();
+		}
+
+		if ( is_category() ) {
+			\$title = "&#8216;". single_cat_title("", false) . '&#8217; ' . __('Category', 'crb');
+		} elseif( is_tag() ) {
+			\$title = __('Posts Tagged', 'crb') . ' &#8216;' . single_tag_title("", false) . '&#8217;';
+		} elseif ( is_day() ) {
+			\$title = __('Archive for', 'crb') . ' ' . get_the_time('F jS, Y');
+		} elseif ( is_month() ) {
+			\$title = __('Archive for', 'crb') . ' ' . get_the_time('F, Y');
+		} elseif ( is_year() ) {
+			\$title = __('Archive for', 'crb') . ' ' . get_the_time('Y');
+		} elseif ( is_author() ) {
+			\$title = __('Author Archive', 'crb');
+		} elseif ( is_tax() ){
+			\$term = get_term_by( 'slug', get_query_var('term'), get_query_var('taxonomy') );
+
+			\$title = \$term->name;
+		}elseif ( isset(\$_GET['paged']) && !empty(\$_GET['paged']) ) {
+			\$title = __('Blog Archives', 'crb');
+		}
+
+		\$this->breadcrumbs .= \$this->wrap_item( \$title );
+
+		return \$this;
+	}
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_breadcrumbs</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> ::show()</description>
+</snippet>

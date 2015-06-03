@@ -1,0 +1,44 @@
+<snippet>
+	<content><![CDATA[
+// Trace Post Meta to all parents, until meta value is found or a page with no parent is reached.
+function crb_get_meta_from_parent_page(\$args) {
+	\$args = wp_parse_args(\$args, array(
+		'current_meta_content' => '',
+		'page_ID' => 0,
+		'meta_name' => '',
+		'default' => '',
+		'complex' => '',
+	));
+
+	if ( empty(\$args['page_ID']) || empty(\$args['meta_name']) ) {
+		return \$args['current_meta_content'];
+	}
+
+	\$parent_page_id = get_post_field( 'post_parent', \$args['page_ID'] );
+
+	\$is_empty = empty(\$args['current_meta_content']);
+	\$is_default = \$args['default'] === \$args['current_meta_content'];
+	\$has_parent = \$parent_page_id !== 0;
+
+	if ( (\$is_default || \$is_empty) && \$has_parent ) {
+		if ( \$args['complex'] === 'complex' ) {
+			\$args['current_meta_content'] = carbon_get_post_meta(\$parent_page_id, \$args['meta_name'], 'complex');
+		} else {
+			\$args['current_meta_content'] = carbon_get_post_meta(\$parent_page_id, \$args['meta_name']);
+		}
+
+		\$args['page_ID'] = \$parent_page_id;
+		\$args['current_meta_content'] = crb_get_meta_from_parent_page(\$args);
+	}
+
+	return \$args['current_meta_content'];
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_meta_from_parent_page</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> trace meta</description>
+</snippet>

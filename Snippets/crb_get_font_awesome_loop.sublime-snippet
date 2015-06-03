@@ -1,0 +1,27 @@
+<snippet>
+	<content><![CDATA[
+
+\$crb_social_icons = carbon_get_theme_option('crb_social_icons', 'complex');
+if ( !empty(\$crb_social_icons) ) : ?>
+	<div class="socials">
+		<ul>
+			<?php
+			foreach (\$crb_social_icons as \$social_entry):
+				if ( empty(\$social_entry['icon']) || empty(\$social_entry['link']) ) {
+					continue;
+				}
+				?>
+				<li><a class="fa <?php echo esc_attr(\$social_entry['icon']); ?>" href="<?php echo esc_url(\$social_entry['link']) ?>" target="_blank"></a></li>
+			<?php endforeach; ?>
+		</ul>
+	</div><!-- /socials -->
+<?php endif; ?>
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_font_awesome_loop</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> ::show()</description>
+</snippet>

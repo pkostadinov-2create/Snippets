@@ -1,0 +1,21 @@
+<snippet>
+	<content><![CDATA[
+
+// Adding Help text to Admin Featured Image
+add_filter( 'admin_post_thumbnail_html', 'crb_admin_post_thumbnail_html' );
+function crb_admin_post_thumbnail_html( \$content ) {
+	if ( get_post_type() === 'crb_slider' ) {
+		\$content .= '<p>' . crb_get_attachment_help('crb_slider') . '</p>';
+	}
+
+	return \$content;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>admin_thumbnail_help</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> Help Text</description>
+</snippet>

@@ -1,0 +1,76 @@
+<snippet>
+	<content><![CDATA[
+
+// Wrapper for wpthumb, in case plugin is missing
+// Supports image size as 2nd attr or width, height and crop as 2nd, 3rd, 4th
+function crb_wpthumb( \$url, \$args ) {
+	if ( !function_exists('wpthumb') ) {
+		return \$url;
+	}
+
+	\$args = crb_sanitize_image_size_args(\$args);
+	\$url = crb_sanitize_url(\$url);
+
+	return wpthumb( \$url, \$args);
+}
+
+// Adding protocol to urls starting with //
+function crb_sanitize_url(\$url) {
+	\$protocol = is_ssl() ? 'https' : 'http';
+	if ( substr(\$url, 0, 2) === '//' ) {
+		\$url = \$protocol . ':' . \$url;
+	}
+	
+	return \$url;
+}
+
+// Parsing Args width, height and crop, or extracting them from image size.
+function crb_sanitize_image_size_args(\$args) {
+	if ( !is_array(\$args) ) {
+		global \$_wp_additional_image_sizes;
+		if ( !empty(\$_wp_additional_image_sizes[ \$args ]) ) {
+			\$current_size = \$_wp_additional_image_sizes[ \$args ];
+		} else {
+			\$current_size = crb_get_unregistered_image_size(\$args);
+		}
+
+		if (!empty(\$current_size)) {
+			\$args = \$current_size;
+		}
+	}
+
+	return wp_parse_args(\$args, array(
+		'width' => 0,
+		'height' => 0,
+		'crop' => false,
+	));
+}
+
+// Using custom image sizes, that are not registered in wordpress for automatic cropping
+// This is for Preformance reasons, and cleaner FTP
+function crb_get_unregistered_image_size(\$name) {
+	\$unregistered_image_sizes = array(
+		'crb_footer_map_image' => array(
+			'width' => 330,
+			'height' => 160,
+			'crop' => true,
+		),
+	);
+
+	if ( empty(\$unregistered_image_sizes[\$name]) ) {
+		// On callign with unexisting image size, will return 'full'.
+		// This is safe, because it is meant to be used within other functions leading to crb_sanitize_image_size_args()
+		return 'full';
+	}
+
+	return \$unregistered_image_sizes[\$name];
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_wpthumb</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> wpthumb wrapper</description>
+</snippet>

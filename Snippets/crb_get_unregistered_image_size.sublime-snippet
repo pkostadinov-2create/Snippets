@@ -1,0 +1,30 @@
+<snippet>
+	<content><![CDATA[
+// Using custom image sizes, that are not registered in wordpress for automatic cropping
+// This is for Preformance reasons, and cleaner FTP
+function crb_get_unregistered_image_size(\$name) {
+	\$unregistered_image_sizes = array(
+		'crb_footer_map_image' => array(
+			'width' => 330,
+			'height' => 160,
+			'crop' => true,
+		),
+	);
+
+	if ( empty(\$unregistered_image_sizes[\$name]) ) {
+		// On callign with unexisting image size, will return 'full'.
+		// This is safe, because it is meant to be used within other functions leading to crb_sanitize_image_size_args()
+		return 'full';
+	}
+
+	return \$unregistered_image_sizes[\$name];
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_unregistered_image_size</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> ::show()</description>
+</snippet>

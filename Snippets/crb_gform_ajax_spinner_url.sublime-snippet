@@ -1,0 +1,15 @@
+<snippet>
+	<content><![CDATA[
+// Replace the ajax spinner image
+add_filter('gform_ajax_spinner_url', 'crb_gform_ajax_spinner_url', 10, 2);
+function crb_gform_ajax_spinner_url(\$image_src, \$form) {
+	return get_bloginfo('stylesheet_directory') . '/images/spinner-while.gif';
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_gform_ajax_spinner_url</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> spinner replace</description>
+</snippet>

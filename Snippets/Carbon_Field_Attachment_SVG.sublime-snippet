@@ -1,0 +1,15 @@
+<snippet>
+	<content><![CDATA[
+
+class Carbon_Field_Attachment_Svg extends Carbon_Field_Attachment {
+	public \$image_extensions = array('jpg', 'jpeg', 'gif', 'png', 'bmp', 'svg');
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>Carbon_Field_Attachment_SVG</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> Image</description>
+</snippet>

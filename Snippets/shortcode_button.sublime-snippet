@@ -1,0 +1,50 @@
+<snippet>
+	<content><![CDATA[
+/**
+ * Button Shortcode
+ */
+add_shortcode('button', 'crb_shortcode_button');
+add_shortcode('button-white', 'crb_shortcode_button');
+function crb_shortcode_button(\$atts, \$content, \$shortcode) {
+	\$atts = shortcode_atts(
+		array(
+			'link' => '#',
+		),
+		\$atts, 'button'
+	);
+
+	\$button_settings = array(
+		'classes' => array(
+			'button' => 'btn',
+			'button-white' => 'btn btn-white',
+		)
+	);
+
+	\$target = '';
+	if ( !empty(\$atts['target']) ) {
+		\$target = 'target="_' . esc_attr(\$atts['target']) . '"';
+	}
+
+	ob_start();
+	?>
+	<a
+		href="<?php echo esc_url(\$atts['link']); ?>"
+		class="<?php echo \$button_settings['classes'][\$shortcode]; ?>"
+		<?php echo \$target; ?>
+	>
+		<?php echo \$content; ?>
+	</a>
+	<?php
+	\$html = ob_get_clean();
+
+	return \$html;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>shortcode_button</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

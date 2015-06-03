@@ -1,0 +1,47 @@
+<snippet>
+	<content><![CDATA[
+function crb_get_socials() {
+	return array('twitter', 'facebook', 'instagram', 'youtube');
+}
+
+function crb_get_social_fields() {
+	\$fields = array();
+	\$socials = crb_get_socials();
+	if ( empty(\$socials) ) {
+		return \$fields;
+	}
+
+	foreach (\$socials as \$social) {
+		\$fields[] = Carbon_Field::factory('text', 'crb_social_' . \$social, ucfirst(\$social) . __(' link', 'crb'))
+			->set_default_value('http://' . \$social . '.com/');
+	}
+
+	return \$fields;
+}
+
+// Returns social array, foreach (\$socials as \$slug => \$link) {
+function crb_get_social_links() {
+	\$social_links = array();
+	\$socials = crb_get_socials();
+
+	foreach (\$socials as \$social) {
+		\$social_link = carbon_get_theme_option('crb_social_' . \$social);
+		if ( empty(\$social_link) ) {
+			continue;
+		}
+
+		\$social_links[\$social] = \$social_link;
+	}
+
+
+	return \$social_links;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_socials</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> socials</description>
+</snippet>

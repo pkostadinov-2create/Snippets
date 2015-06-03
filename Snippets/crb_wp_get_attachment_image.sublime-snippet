@@ -1,0 +1,44 @@
+<snippet>
+	<content><![CDATA[
+// Extraction Image With Width and Height From Image ID and Image size, Supports additional atts
+function crb_wp_get_attachment_image(\$image_id, \$args, \$additional_atts = array()) {
+	if ( empty(\$image_id) ) {
+		return;
+	}
+
+	// Fallback
+	if ( !function_exists('wpthumb') ) {
+		if ( is_array(\$args) ) {
+			\$args = array(\$args['width'], \$args['height']);
+		}
+
+		return wp_get_attachment_image(\$image_id, \$args);
+	}
+
+	// Default Additional Atts
+	\$additional_atts = wp_parse_args(\$additional_atts, array(
+		'class' => '',
+	));
+
+	// Add Image Size name as class
+	\$additional_atts['class'] .= is_string(\$args) ? ' ' . \$args : '';
+
+	\$image_src = crb_wp_get_attachment_image_src(\$image_id, \$args);
+	\$args = crb_sanitize_image_size_args(\$args);
+
+	// Prepare the \$args array for wpthumb_img_shortcode
+	array_unshift(\$args, \$image_src);
+	\$args = array_merge(\$args, \$additional_atts);
+
+	return @wpthumb_img_shortcode(\$args);
+}
+
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_wp_get_attachment_image</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> ::show()</description>
+</snippet>

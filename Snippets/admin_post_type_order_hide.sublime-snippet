@@ -1,0 +1,16 @@
+<snippet>
+	<content><![CDATA[
+// Hide Reorder for specific post types
+add_action( 'admin_menu', 'crb_hide_post_type_order', 99 );
+function crb_hide_post_type_order() {
+	remove_submenu_page('edit.php?post_type=crb_media', 'order-post-types-crb_media');
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>admin_post_type_order_hide</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> hide</description>
+</snippet>

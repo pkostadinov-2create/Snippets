@@ -1,0 +1,31 @@
+<snippet>
+	<content><![CDATA[
+\$some_terms = get_terms(\$taxonomies_string_array, array(
+	'orderby'           => 'name', 
+	'order'             => 'ASC',
+	'hide_empty'        => true, 
+	'exclude'           => array(), 
+	'exclude_tree'      => array(), 
+	'include'           => array(),
+	'number'            => '', 
+	'fields'            => 'all', 
+	'slug'              => '', 
+	'parent'            => '',
+	'hierarchical'      => true, 
+	'child_of'          => 0, 
+	'get'               => '', 
+	'name__like'        => '',
+	'description__like' => '',
+	'pad_counts'        => false, 
+	'offset'            => '', 
+	'search'            => '', 
+	'cache_domain'      => 'core'
+));
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>get_terms</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

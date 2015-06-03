@@ -1,0 +1,50 @@
+<snippet>
+	<content><![CDATA[
+// Render a gravity form. This is just a shortcut for `gravity_form()` function without 
+// the crazy arguments list and all available options.
+function crb_render_gform(\$id, \$is_ajax=false, \$args = array()) {
+	if (!function_exists('gravity_form') || empty(\$id)) {
+		return;
+	}
+
+	// using a shared auto-increment tabindex
+	static \$gform_tabindex;
+	if (empty(\$gform_tabindex)) {
+		\$gform_tabindex = 1;
+	}
+
+	// use generated tabindex only if no tabindex is specified
+	// step to increment the starting tabindex of the next form
+	\$step = apply_filters('carbon_gform_tabindex_step', 500);
+
+	\$tabindex = \$gform_tabindex;
+	\$gform_tabindex += \$step;
+
+	\$args = wp_parse_args(\$args, array(
+		'display_title' => false,
+		'display_description' => false,
+		'display_inactive' => false,
+		'field_values' => null,
+		'tabindex' => \$tabindex,
+	));
+
+	// render the form
+	gravity_form(
+		\$id,
+		\$args['display_title'], // display_title
+		\$args['display_description'], // display_description
+		\$args['display_inactive'], // display_inactive
+		\$args['field_values'], // field_values
+		\$is_ajax,
+		\$args['tabindex']
+	);
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_render_gform</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> render form</description>
+</snippet>

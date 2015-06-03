@@ -1,0 +1,29 @@
+<snippet>
+	<content><![CDATA[
+
+function crb_hex_to_rgb(\$hex_string, \$return_as_string = false, \$seperator = ',') {
+	\$hex_string = preg_replace('/[^0-9A-Fa-f]/', '', \$hex_string); // Gets a proper hex string
+	\$rgb_array = array();
+
+	if (strlen(\$hex_string) == 6) { //regular format
+		for (\$i=0; \$i < 6; \$i=\$i+2) { 
+			\$rgb_array[] = hexdec(substr(\$hex_string, \$i, 2));
+		}
+	} elseif (strlen(\$hex_string) == 3) { //shorthand format
+		for (\$i=0; \$i < 3; \$i++) { 
+			\$rgb_array[] = hexdec(substr(\$hex_string, \$i, 2));
+		}
+	} else {
+		return false; //Invalid hex color code
+	}
+	return \$return_as_string ? implode(\$seperator, \$rgb_array) : \$rgb_array; // returns the rgb string or the associative array
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_hex_to_rgb</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> convert hex</description>
+</snippet>

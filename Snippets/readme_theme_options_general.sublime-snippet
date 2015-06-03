@@ -1,0 +1,11 @@
+<snippet>
+	<content><![CDATA[
+<p>Go to <span class="admin-path">Theme Options &raquo; General</span> and setup theme options. Use <strong>Header Script</strong> and <strong>Footer Script</strong> fields to print scripts, provided from outside services, like <strong>Google Analytics</strong>.</p>
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>readme_theme_options_general</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>text.html</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> Readme</description>
+</snippet>

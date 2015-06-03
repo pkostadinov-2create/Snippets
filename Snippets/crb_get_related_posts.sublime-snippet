@@ -1,0 +1,47 @@
+<snippet>
+	<content><![CDATA[
+\$tax_query = array();
+
+\$categories = get_the_category();
+\$tags = get_the_tags();
+
+if ( !empty(\$categories) || !empty(\$tags) ) {
+	\$tax_query['relation'] = 'OR';
+}
+
+if ( !empty(\$categories) ) {
+	foreach (\$categories as \$category) {
+		\$tax_query[] = array(
+			'taxonomy' => 'category',
+			'field' => 'id',
+			'terms' => \$category->term_id,
+		);
+	}
+}
+
+if ( !empty(\$tags) ) {
+	foreach (\$tags as \$tag) {
+		\$tax_query[] = array(
+			'taxonomy' => 'tag',
+			'field' => 'id',
+			'terms' => \$tag->term_id,
+		);
+	}
+}
+
+\$related_query = new WP_Query(array(
+	'post_type' => 'post',
+	'orderby' => 'rand',
+	'post__not_in' => array(get_the_id()),
+	'posts_per_page' => \$related_count,
+	'tax_query' => \$tax_query,
+));
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_related_posts</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> Related Posts</description>
+</snippet>
