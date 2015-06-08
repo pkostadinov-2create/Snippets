@@ -9,6 +9,7 @@ function crb_shortcode_button(\$atts, \$content, \$shortcode) {
 	\$atts = shortcode_atts(
 		array(
 			'link' => '#',
+			'target' => '',
 		),
 		\$atts, 'button'
 	);

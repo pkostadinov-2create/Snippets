@@ -1,0 +1,63 @@
+<snippet>
+	<content><![CDATA[
+add_action('after_setup_theme', 'fix_map');
+function fix_map() {
+	\$map_query = new WP_Query(array(
+		'post_type' => 'attraction',
+		'posts_per_page' => -1,
+	));
+
+
+	if ( !\$map_query->have_posts() ) {
+		return;
+	}
+
+	while (\$map_query->have_posts()) { \$map_query->the_post();
+		\$map_info = get_post_meta(get_the_id(), '_lat_lng_attraction_address', true);
+		\$address = get_post_meta(get_the_id(), '_attraction_address', true);
+
+		if ( empty(\$map_info) ) {
+			continue;
+		}
+
+		\$lat = 40.346544;
+		\$lng = -101.645507;
+		\$zoom = 14;
+
+		\$map_info_array = explode(',', \$map_info);
+		if ( !empty(\$map_info_array[0]) ) {
+			\$lat = \$map_info_array[0];
+		}
+		if ( !empty(\$map_info_array[1]) ) {
+			\$lng = \$map_info_array[1];
+		}
+		if ( !empty(\$map_info_array[2]) ) {
+			\$zoom = \$map_info_array[2];
+		}
+		if ( empty(\$address) ) {
+			\$address = '';
+		}
+		
+		// echo '<pre>';
+		// var_dump( \$lat );
+		// var_dump( \$lng );
+		// var_dump( \$zoom );
+		// var_dump( \$address );
+		// echo '</pre>';
+
+		// update_post_meta(get_the_id(), '_lat_lng_attraction_address-lat', \$lat);
+		// update_post_meta(get_the_id(), '_lat_lng_attraction_address-lng', \$lng);
+		// update_post_meta(get_the_id(), '_lat_lng_attraction_address-zoom', \$zoom);
+		// update_post_meta(get_the_id(), '_lat_lng_attraction_address-address', \$address);
+	}
+	wp_reset_postdata();
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>fix_ecf_map</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

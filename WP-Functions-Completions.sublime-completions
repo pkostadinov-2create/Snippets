@@ -16,7 +16,7 @@
 	{"trigger": "carbon_get_term_meta", "contents": "carbon_get_term_meta( ${1:\\$term_id}, 'crb_${2:}' )"},
 	{"trigger": "crb_get_page_context", "contents": "crb_get_page_context()"},
 	{"trigger": "show_on_template", "contents": "show_on_template('${2:templates/${1:homepage}.php}')"},
-	{"trigger": "crb_wp_get_attachment_image", "contents": "crb_wp_get_attachment_image(${1:\\$image_id}, ${2:'crb_image_size'})"},
-	{"trigger": "crb_wp_get_attachment_image_src", "contents": "crb_wp_get_attachment_image_src(${1:\\$image_id}, ${2:'crb_image_size'})"}
+	{"trigger": "crb_image", "contents": "crb_wp_get_attachment_image(${1:\\$image_id}, ${2:'crb_image_size'})"},
+	{"trigger": "crb_image_src", "contents": "crb_wp_get_attachment_image_src(${1:\\$image_id}, ${2:'crb_image_size'})"}
 	]
 }
