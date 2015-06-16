@@ -1,0 +1,19 @@
+<snippet>
+	<content><![CDATA[
+// Filter for the_content, reparating the content to 2 parts, with expandable separator using the WYSIWYG more tag
+function crb_expandable_content(\$content) {
+	\$content = preg_replace('~<!--more-->(.*)~s', '<a href="#" class="link-more">Read more +</a><span>' . "\$1" . '</span>', \$content);
+
+	\$content = strip_tags(\$content, '<strong><span><em><sup><sub><b><i><a><br>');
+	\$content = wpautop(\$content);
+
+	return \$content;
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_expandable_content</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

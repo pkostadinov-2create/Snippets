@@ -1,6 +1,5 @@
 <snippet>
 	<content><![CDATA[
-
 // Wrapper for wpthumb, in case plugin is missing
 // Supports image size as 2nd attr or width, height and crop as 2nd, 3rd, 4th
 function crb_wpthumb( \$url, \$args ) {
@@ -50,10 +49,10 @@ function crb_sanitize_image_size_args(\$args) {
 // This is for Preformance reasons, and cleaner FTP
 function crb_get_unregistered_image_size(\$name) {
 	\$unregistered_image_sizes = array(
-		'crb_footer_map_image' => array(
-			'width' => 330,
-			'height' => 160,
-			'crop' => true,
+		'crb_admin_column' => array(
+			'width' => 100,
+			'height' => 100,
+			'crop' => false,
 		),
 	);
 
