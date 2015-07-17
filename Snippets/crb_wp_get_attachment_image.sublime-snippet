@@ -15,16 +15,47 @@ function crb_wp_get_attachment_image(\$image_id, \$args, \$additional_atts = arr
 		return wp_get_attachment_image(\$image_id, \$args);
 	}
 
+	// Crop pre image, available when using: add_theme_support('wpthumb-crop-from-position');
+	if ( is_numeric(\$image_id) ) {
+		\$current_position = get_post_meta( \$image_id, 'wpthumb_crop_pos', true );
+	}
+	if ( empty(\$current_position) ) {
+		\$current_position = 'center,center';
+	}
+
 	// Default Additional Atts
 	\$additional_atts = wp_parse_args(\$additional_atts, array(
 		'class' => '',
+		'crop_from_position' => \$current_position,
 	));
 
 	// Add Image Size name as class
 	\$additional_atts['class'] .= is_string(\$args) ? ' ' . \$args : '';
 
-	\$image_src = crb_wp_get_attachment_image_src(\$image_id, \$args);
+	// Add Image Alt from the attachment field
+	if ( is_numeric(\$image_id) ) {
+		\$alt_text = get_post_meta( \$image_id, '_wp_attachment_image_alt', true );
+		\$image_metadata = get_post_meta( \$image_id, '_wp_attachment_metadata', true );
+		if ( !empty(\$image_metadata['image_meta']['title']) ) {
+			\$title_text = \$image_metadata['image_meta']['title'];
+		}
+		if ( empty(\$alt_text) && !empty(\$title_text) ) {
+			\$alt_text = \$title_text;
+		}
+
+		if ( !empty(\$alt_text) ) {
+			\$additional_atts['alt'] = \$alt_text;
+		}
+		if ( !empty(\$alt_text) ) {
+			\$additional_atts['title'] = \$title_text;
+		}
+	}
+
+	\$image_src = crb_wp_get_attachment_image_src(\$image_id, 'full');
 	\$args = crb_sanitize_image_size_args(\$args);
+
+	// Add default image classes, defined with the custom image size
+	\$additional_atts['class'] .= !empty(\$args['class']) ? ' ' . \$args['class'] : '';
 
 	// Prepare the \$args array for wpthumb_img_shortcode
 	array_unshift(\$args, \$image_src);
@@ -32,7 +63,6 @@ function crb_wp_get_attachment_image(\$image_id, \$args, \$additional_atts = arr
 
 	return @wpthumb_img_shortcode(\$args);
 }
-
 
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
