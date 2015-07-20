@@ -35,6 +35,9 @@ function crb_wp_get_attachment_image(\$image_id, \$args, \$additional_atts = arr
 	\$image_src = crb_wp_get_attachment_image_src(\$image_id, 'full');
 	\$args = crb_sanitize_image_size_args(\$args);
 
+	// Add default image classes, defined with the custom image size
+	\$additional_atts['class'] .= !empty(\$args['class']) ? ' ' . \$args['class'] : '';
+
 	// Prepare the \$args array for wpthumb_img_shortcode
 	array_unshift(\$args, \$image_src);
 	\$args = array_merge(\$args, \$additional_atts);
