@@ -32,6 +32,25 @@ function crb_wp_get_attachment_image(\$image_id, \$args, \$additional_atts = arr
 	// Add Image Size name as class
 	\$additional_atts['class'] .= is_string(\$args) ? ' ' . \$args : '';
 
+	// Add Image Alt from the attachment field
+	if ( is_numeric(\$image_id) ) {
+		\$alt_text = get_post_meta( \$image_id, '_wp_attachment_image_alt', true );
+		\$image_metadata = get_post_meta( \$image_id, '_wp_attachment_metadata', true );
+		if ( !empty(\$image_metadata['image_meta']['title']) ) {
+			\$title_text = \$image_metadata['image_meta']['title'];
+		}
+		if ( empty(\$alt_text) && !empty(\$title_text) ) {
+			\$alt_text = \$title_text;
+		}
+
+		if ( !empty(\$alt_text) ) {
+			\$additional_atts['alt'] = \$alt_text;
+		}
+		if ( !empty(\$alt_text) ) {
+			\$additional_atts['title'] = \$title_text;
+		}
+	}
+
 	\$image_src = crb_wp_get_attachment_image_src(\$image_id, 'full');
 	\$args = crb_sanitize_image_size_args(\$args);
 
