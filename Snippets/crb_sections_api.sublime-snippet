@@ -1,0 +1,280 @@
+<snippet>
+	<content><![CDATA[
+
+/* ==========================================================================
+	# Functions.php
+========================================================================== */
+
+// Includes
+function crb_get_fragment( \$template, \$fragment_passed_args = array() ) {
+	include( locate_template( 'fragments/' . \$template . '.php' ) );
+}
+
+// Return the current page slug. Works inside loop.
+function crb_get_slug(\$post_id = '') {
+	if ( empty(\$post_id) ) {
+		\$post_id = get_the_id();
+	}
+
+	return get_post_field( 'post_name', \$post_id );
+}
+
+// Find pages, where the current section is used in
+function crb_get_page_id_from_section_id(\$section_id, \$singular = true) {
+	\$page_id = 0;
+
+	global \$wpdb;
+	\$results = \$wpdb->get_results( "SELECT post_id FROM \$wpdb->postmeta WHERE meta_key = '_crb_page_sections' and meta_value like '%post:crb_section:" . \$section_id . "%'", ARRAY_A );
+
+	if ( empty(\$results[0]) ) {
+		return \$page_id;
+	}
+
+	\$results = wp_list_pluck(\$results, 'post_id');
+	\$page_id = \$results[0];
+
+	if ( !\$singular ) {
+		return \$results;
+	}
+
+	return \$page_id;
+}
+
+// Modify Top Navigation Links
+add_filter('nav_menu_link_attributes', 'crb_nav_menu_link_attributes', 100, 4);
+function crb_nav_menu_link_attributes(\$atts, \$item, \$args, \$depth) {
+	\$post_type = \$item->object;
+
+	if ( \$post_type != 'crb_section' ) {
+		return \$atts;
+	}
+
+	\$post_id = \$item->object_id;
+	\$slug = get_post_field('post_name', \$post_id);
+
+	\$page_id = crb_get_page_id_from_section_id(\$post_id);
+	\$atts['href'] = get_permalink(\$page_id) . '#' . \$slug;
+	\$atts['data-scrollto'] = \$slug;
+
+	return \$atts;
+}
+
+// Find the first page where the current section type is used
+function crb_get_page_id_from_section_type(\$section_type = '') {
+	if ( empty(\$section_type) ) {
+		\$crb_sections = carbon_get_the_post_meta('crb_page_sections');
+		if ( empty(\$crb_sections[0]['_type']) ) {
+			return '';
+		}
+
+		\$section_type = \$crb_sections[0]['_type'];
+	}
+
+	global \$wpdb;
+	\$results = \$wpdb->get_results( "SELECT post_id FROM \$wpdb->postmeta WHERE meta_key = '_crb_section_projects-_show_categories_filter_0'", ARRAY_A );
+	\$results = wp_list_pluck(\$results, 'post_id');
+	\$section_id = \$results[0];
+
+	return crb_get_page_id_from_section_id(\$section_id);
+}
+
+
+/* ==========================================================================
+	# includes/admin-columns-callbacks.php
+========================================================================== */
+
+// Column callback, displays all pages in which the current section is displayed.
+function crb_column_section_link(\$section_id) {
+	\$links = '';
+
+	\$page_ids = crb_get_page_id_from_section_id(\$section_id, false);
+	if ( empty(\$page_ids) ) {
+		return \$links;
+	}
+
+	foreach (\$page_ids as \$index => \$page_id) {
+		if ( \$index != 0 ) {
+			\$links .= ', ';
+		}
+		\$links .= '<strong><a href="' . get_permalink(\$page_id) . '#' . crb_get_slug(\$section_id) . '" target="_blank">' . get_the_title(\$page_id) . '</a></strong>';
+	}
+
+	return \$links;
+}
+
+// Callback for "Section Type" column
+function crb_column_section_type(\$page_id) {
+	\$section = carbon_get_post_meta(\$page_id, 'crb_section', 'complex');
+	if ( empty(\$section) || empty(\$section[0]['_type'])) {
+		return '';
+	}
+
+	\$type = \$section[0]['_type'];
+	\$type =  substr(\$type, 1);
+	\$type =  str_replace('_', ' ', \$type);
+	\$type = ucfirst(\$type);
+
+	return \$type;
+
+}
+
+/* ==========================================================================
+	# fragments/load-sections.php
+========================================================================== */
+
+\$crb_sections = \$fragment_passed_args['crb_sections'];
+if ( empty(\$crb_sections) ) {
+	return;
+}
+
+\$sections_query = new WP_Query(array(
+	'post__in' => \$crb_sections,
+	'post_type' => 'crb_section',
+	'order' => 'ASC',
+	'orderby' => 'post__in',
+	'posts_per_page' => -1,
+));
+
+if ( \$sections_query->have_posts() ) {
+	while ( \$sections_query->have_posts() ) { \$sections_query->the_post();
+		\$crb_section = carbon_get_the_post_meta('crb_section', 'complex');
+		if ( empty(\$crb_section[0]['_type']) ) {
+			continue;
+		}
+
+		\$type = substr(\$crb_section[0]['_type'], 1);
+		\$type = str_replace('_', '-', \$type);
+
+		crb_get_fragment('section-' . \$type, array(
+			'crb_section' => \$crb_section[0],
+			'index' => \$sections_query->current_post,
+			'total_posts' => \$sections_query->found_posts,
+		));
+	}
+
+	wp_reset_postdata();
+}
+
+/* ==========================================================================
+	# fragments/section-example.php
+========================================================================== */
+<?php
+
+\$section = \$fragment_passed_args['crb_section'];
+if ( empty(\$section) ) {
+	return;
+}
+
+if ( empty(\$section['content']) ) {
+	return;
+}
+
+?>
+
+<div class="section" data-scroll-section="#<?php echo crb_get_slug(); ?>">
+	or
+<div class="section" id="#section-<?php echo crb_get_slug(); ?>">
+
+/* ==========================================================================
+	# options/custom-fields.php
+========================================================================== */
+
+/* ==========================================================================
+	# Page - Post Type
+========================================================================== */
+Carbon_Container::factory('custom_fields', __('Sections Settings', 'crb'))
+	->show_on_post_type('page')
+	->add_fields(array(
+		Carbon_Field::factory('association_extended', 'crb_page_sections', __('Select Page Sections', 'crb'))
+			->set_types(array(
+				array(
+					'type' => 'post',
+					'post_type' => 'crb_section',
+				),
+			)),
+	));
+
+/* ==========================================================================
+	# Section - Post Type
+========================================================================== */
+Carbon_Container::factory('custom_fields', __('Section Settings', 'crb'))
+	->show_on_post_type('crb_section')
+	->add_fields(array(
+		Carbon_Field::factory('complex', 'crb_section', __('Section Settings', 'crb'))
+			->set_max(1)
+
+			/* ==========================================================================
+				# Example Section
+			========================================================================== */
+			->add_fields('Example', array(
+				Carbon_Field::factory('rich_text', 'content')
+					->set_required(true),
+			)),
+	));
+
+/* ==========================================================================
+	# templates/homepage.php
+========================================================================== */
+\$crb_page_sections = carbon_get_the_post_meta('crb_page_sections');
+crb_get_fragment('load-sections', array(
+	'crb_sections' => \$crb_page_sections,
+));
+
+/* ==========================================================================
+	# js/functions.js
+========================================================================== */
+Refference Appetizer mobile
+
+/* ==========================================================================
+	# options/admin-columns.js
+========================================================================== */
+Carbon_Admin_Columns_Manager::modify_columns('post', array('crb_section') )
+	->add( array(
+		Carbon_Admin_Column::create('Link')
+			->set_name( 'crb-link-column' )
+			->set_callback('crb_column_section_link'),
+));
+
+Carbon_Admin_Columns_Manager::modify_columns('post', array('crb_section') )
+	->add( array(
+		Carbon_Admin_Column::create('Section Type')
+			->set_name( 'crb-section-type-column' )
+			->set_callback('crb_column_section_type'),
+));
+
+/* ==========================================================================
+	# options/post-types.js
+========================================================================== */
+register_post_type('crb_section', array(
+	'labels' => array(
+		'name'	 => __('Sections', 'crb'),
+		'singular_name' => __('Section', 'crb'),
+		'add_new' => __('Add New', 'crb'),
+		'add_new_item' => __('Add new Section', 'crb'),
+		'view_item' => __('View Section', 'crb'),
+		'edit_item' => __('Edit Section', 'crb'),
+		'new_item' => __('New Section', 'crb'),
+		'view_item' => __('View Section', 'crb'),
+		'search_items' => __('Search Sections', 'crb'),
+		'not_found' =>  __('No sections found', 'crb'),
+		'not_found_in_trash' => __('No sections found in trash', 'crb'),
+	),
+	'public' => true,
+	'exclude_from_search' => true,
+	'show_ui' => true,
+	'rewrite' => array(
+		'slug' => 'section',
+		'with_front' => false,
+	),
+	'menu_icon' => 'dashicons-exerpt-view',
+	'supports' => array('title', 'page-attributes'),
+));
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_sections_api</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

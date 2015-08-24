@@ -1,0 +1,20 @@
+<snippet>
+	<content><![CDATA[
+// Normalize paths
+\$error_file = str_replace('\\\\', '/', \$errfile);
+\$plugins_dir = str_replace('\\\\', '/', WP_CONTENT_DIR . '/plugins');
+\$wp_includes_dir = str_replace('\\\\', '/', ABSPATH . WPINC);
+
+if (strpos(\$error_file, \$plugins_dir) !== false || strpos(\$error_file, \$wp_includes_dir) !== false) {
+	// Do nothing for errors in wp-content/plugins directory
+	return true;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>theme_only_debug</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

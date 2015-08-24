@@ -1,0 +1,108 @@
+<snippet>
+	<content><![CDATA[
+
+/**
+ * Displays a block with latest tweets from particular user
+ */
+class CrbFlickrByUsername extends Carbon_Widget {
+	function __construct() {
+		\$this->setup(__('Flickr by Username', 'crb'), __('Displays a block with your latest flickr images', 'crb'), array(
+			Carbon_Field::factory('text', 'title', __('Title', 'crb')),
+			Carbon_Field::factory('text', 'username', __('User ID', 'crb'))
+				->set_required(true)
+				->help_text('<a href="http://idgettr.com/">Find my Twitter ID</a>'),
+			Carbon_Field::factory('text', 'api_key', __('Api Key', 'crb'))
+				->set_required(true)
+				->help_text('<a href="https://www.flickr.com/services/apps/create/apply">Create api key</a>'),
+			Carbon_Field::factory('text', 'count', __('Number of Flickr images to show', 'crb'))
+				->set_required(true)
+				->set_default_value('9'),
+		));
+	}
+
+	function front_end(\$args, \$instance) {
+		/**
+		 * 
+		 * Feed Expected Format:
+		 * 
+		 *  \$entry => Array (
+		 *  	[tag] => photo
+		 *  	[type] => complete
+		 *  	[level] => 3
+		 *  	[attributes] => Array (
+		 *  		[id] => 15144041417
+		 *  		[owner] => 60190001@N02
+		 *  		[secret] => af996aaa50
+		 *  		[server] => 2942
+		 *  		[farm] => 3
+		 *  		[title] => Chrysanthemum
+		 *  		[ispublic] => 1
+		 *  		[isfriend] => 0
+		 *  		[isfamily] => 0
+		 *  	))
+		 * 
+		 * image => http://farm3.static.flickr.com/2942/15144041417_af996aaa50.jpg
+		 * url => https://www.flickr.com/photos/60190001@N02/15144041417/
+		 * 
+		 */
+
+		if (\$instance['title']) {
+			echo \$args['before_title'] . \$instance['title'] . \$args['after_title'];
+		}
+
+		try {
+			\$flicker_id = \$instance['username'];
+			\$api_key = \$instance['api_key'];
+			\$api_url = 'https://api.flickr.com/services/rest/?method=flickr.people.getPhotos&api_key=' . \$api_key . '&user_id=' . \$flicker_id . '&per_page=300&format=rest';
+			\$data = wp_remote_retrieve_body(wp_remote_get(\$api_url));
+			\$parser = xml_parser_create();
+			xml_parser_set_option(\$parser, XML_OPTION_CASE_FOLDING, 0);
+			xml_parse_into_struct(\$parser, \$data, \$values, \$entries);
+			xml_parser_free(\$parser);
+
+			\$images = array();
+
+			foreach (\$values as \$entry) {
+				if (!empty(\$entry['attributes']['id'])) {
+					\$id = \$entry['attributes']['id'];
+					\$secret = \$entry['attributes']['secret'];
+					\$farm = \$entry['attributes']['farm'];
+					\$server = \$entry['attributes']['server'];
+					\$images[] = array(
+						'image' => 'http://farm' . \$farm . '.static.flickr.com/' . \$server . '/' . \$id . '_' . \$secret . '.jpg',
+						'url' => 'https://www.flickr.com/photos/' . \$entry['attributes']['owner'] . '/' . \$entry['attributes']['id'] . '/',
+					);
+				}
+			}
+		} catch (Exception \$e) {
+		    // Print Nothing
+		}
+
+		if (\$images): ?>
+			<div class="images clearfix">
+				<?php
+				foreach (\$images as \$index => \$entry):
+					if (\$index >= 9) {
+						break;
+					}
+					?>
+					<a href="<?php echo esc_url(\$entry['url']); ?>" target="_blank">
+						<img src="<?php echo crb_wpthumb(\$entry['image'], 'crb_flickr_thumb'); ?>" alt="" />
+					</a>
+					<?php
+				endforeach;
+				?>
+			</div><!-- /.images -->
+			<?php
+		endif;
+	}
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>flickr-widget</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

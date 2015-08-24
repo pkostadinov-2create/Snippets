@@ -1,0 +1,86 @@
+<snippet>
+	<content><![CDATA[
+
+Carbon_Container::factory('theme_options', __('Flickr', 'crb'))
+	->set_page_parent(__('Theme Options', 'crb'))
+	->add_fields(array(
+		Carbon_Field::factory('text', 'crb_flickr_username', __('Flickr ID', 'crb'))
+			->help_text('<a href="http://idgettr.com/" target="_blank">Find my Flickr ID</a>'),
+		Carbon_Field::factory('text', 'crb_flickr_api_key', __('API key', 'crb'))
+			->help_text('<a href="https://www.flickr.com/services/apps/create/apply" target="_blank">Create api key</a> or <a href="https://www.flickr.com/services/api/keys/" target="_blank">Use already existing one</a>'),
+	));
+
+function crb_get_flickr_images(\$count = 300, \$page = 1) {
+	/**
+	 * 
+	 * Feed Expected Format:
+	 * 
+	 *  \$entry => Array (
+	 *  	[tag] => photo
+	 *  	[type] => complete
+	 *  	[level] => 3
+	 *  	[attributes] => Array (
+	 *  		[id] => 15144041417
+	 *  		[owner] => 60190001@N02
+	 *  		[secret] => af996aaa50
+	 *  		[server] => 2942
+	 *  		[farm] => 3
+	 *  		[title] => Chrysanthemum
+	 *  		[ispublic] => 1
+	 *  		[isfriend] => 0
+	 *  		[isfamily] => 0
+	 *  	))
+	 * 
+	 * image => http://farm3.static.flickr.com/2942/15144041417_af996aaa50.jpg
+	 * url => https://www.flickr.com/photos/60190001@N02/15144041417/
+	 * 
+	 */
+
+	\$images = array();
+
+	try {
+		\$flicker_id = carbon_get_theme_option('crb_flickr_username');
+		\$api_key = carbon_get_theme_option('crb_flickr_api_key');
+		\$api_url = 'https://api.flickr.com/services/rest/';
+		\$api_url = add_query_arg(array(
+			'method' => 'flickr.people.getPhotos',
+			'api_key' => \$api_key,
+			'user_id' => \$flicker_id,
+			'per_page' => \$count,
+			'page' => \$page,
+			'format' => 'rest',
+		), \$api_url);
+
+		\$data = wp_remote_retrieve_body(wp_remote_get(\$api_url));
+		\$parser = xml_parser_create();
+		xml_parser_set_option(\$parser, XML_OPTION_CASE_FOLDING, 0);
+		xml_parse_into_struct(\$parser, \$data, \$values, \$entries);
+		xml_parser_free(\$parser);
+
+		foreach (\$values as \$entry) {
+			if (!empty(\$entry['attributes']['id'])) {
+				\$id = \$entry['attributes']['id'];
+				\$secret = \$entry['attributes']['secret'];
+				\$farm = \$entry['attributes']['farm'];
+				\$server = \$entry['attributes']['server'];
+				\$images[] = array(
+					'image' => 'http://farm' . \$farm . '.static.flickr.com/' . \$server . '/' . \$id . '_' . \$secret . '.jpg',
+					'url' => 'https://www.flickr.com/photos/' . \$entry['attributes']['owner'] . '/' . \$entry['attributes']['id'] . '/',
+				);
+			}
+		}
+	} catch (Exception \$e) {
+	    // Print Nothing
+	}
+
+	return \$images;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_flickr_images</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

@@ -4,6 +4,142 @@
 campos-creative-works
 gabriel-orengo
 
+https://trac.2c-studio.com/browser/project/wordpress/joe_preston/muskegon-lakeshore-chamber-of-commerce/themes/muskegon-lakeshore-chamber-of-commerce/includes/instagram-feed.php
+
+
+function crb_get_instagram_feed(\$params = array()) {
+	if( !class_exists('itw_Instagram') ) {
+		return;
+	}
+
+	\$access_token = get_option('itw_accesstoken');
+	\$instagram = new itw_Instagram(CLIENT_ID, CLIENT_SECRET, \$access_token);
+
+	if( !\$access_token ){
+		// no access token in db
+
+		\$msg = 'Please login securely to Instagram to authorise the plugin - ';
+		\$msg_class = 'itw_setup';
+		\$loginUrl = \$instagram->authorizeUrl(REDIRECT_URI.'?return_uri='.htmlentities(ITW_RETURN_URI));
+
+	} else {
+
+		//logged in
+		try {
+			\$username = get_option('itw_username');
+			\$userid = get_option('itw_userid');
+			\$msg = \$username;
+			\$msg_class = 'itw_connected';
+
+			\$max_id = 0;
+			if ( !empty(\$params['max_id']) ) {
+				\$max_id .= \$params['max_id'];
+			}
+			\$cache_key = 'instagram_feed_' . \$username . '_' . \$max_id;
+
+			\$cached = get_transient(\$cache_key);
+
+			if ( \$cached !== false ) {
+				return \$cached; // Disable Cache
+			}
+
+			\$data = array();
+
+			\$feed = \$instagram->get('users/'.\$userid.'/media/recent', \$params);
+
+			if ( !is_wp_error(\$feed) ) {
+				if( \$feed->meta->code == 200 ) {
+					\$images = array();
+					if( !empty(\$feed->data ) ) {
+						\$i = 0;
+						foreach(\$feed->data as \$img) {
+							\$i++;
+							\$data[\$img->created_time .  '_' . \$i] = array(
+								'image_src' => \$img->images->standard_resolution->url,
+								'image_url' => \$img->link,
+								'created_time' => \$img->created_time,
+								'id' => \$img->id,
+							);
+						}
+					}
+				}
+			}
+
+			if( \$data ) {
+				krsort(\$data);
+				foreach(\$data as \$image) {
+					\$asc_data[] = \$image;
+				}
+				\$data = \$asc_data;
+			}
+
+			if( empty(\$data) ) {
+				\$data = get_transient(\$cache_key);
+			}
+			if ( isset(\$data->errors) && isset(\$data->error) ) {
+				\$data = isset(\$cached['data']) ? \$cached['data'] : false;
+			} else {
+				if( \$data ) {
+					set_transient(\$cache_key, \$data, HOUR_IN_SECONDS);
+				}
+			}
+			return \$data;
+
+		} catch (Exception \$e) {
+
+		}
+	}
+}
+
+// Solve the problem with instagram feed 20 posts limit, using multiple calls to "crb_get_instagram_feed"
+function crb_get_instagram_feed_extend(\$count = 20, \$params = array()) {
+	if( !class_exists('itw_Instagram') ) {
+		return;
+	}
+
+	\$feed_result = array();
+	\$limit = \$count;
+
+	while ( count(\$feed_result) < \$count ) {
+		\$start_from_id = '';
+
+		// Limit the result, prevent returning more than \$count
+		\$limit = \$count - count(\$feed_result);
+
+		// If this is not the first loop, get the last image ID
+		if ( !empty(\$feed_result) ) {
+			\$last_found_image = array_slice(\$feed_result, -1, 1); 
+
+			if ( !empty(\$last_found_image[0]['id']) ) {
+				\$start_from_id = \$last_found_image[0]['id'];
+			}
+		}
+
+		// Set Pagination Parameter
+		if ( !empty(\$start_from_id) ) {
+			\$params = array(
+				'max_id' => '980200468356523730_1549951016'
+			);
+		}
+
+		// Get Instagram images, with pagination parameter
+		\$single_result = crb_get_instagram_feed(\$params);
+
+		// Trim any excess posts
+		\$single_result = array_slice(\$single_result, 0, \$limit);
+
+		// Append the new images to the main feed
+		\$feed_result = array_merge(\$feed_result, \$single_result);
+
+		// If the last feed had less than the maximum post, we need to break the loop
+		if ( count(\$single_result) < 20 ) {
+			break;
+		}
+	}
+
+	return \$feed_result;
+}
+
 
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->

@@ -1,0 +1,169 @@
+<snippet>
+	<content><![CDATA[
+
+function get_images() {
+	\$format = 'php_serial';
+	// \$format = 'xml';
+
+	try {
+		\$flickr_api_feed = fetch_feed_data(\$format);
+		\$flickr_images = parse_feed_data_into_array(\$flickr_api_feed, \$format);
+		\$filtered_images = filter_data(\$flickr_images);
+		return \$filtered_images;
+	} catch (Exception \$e) {
+		echo 'Error: ',  \$e->getMessage(), '<br />';
+		return array();
+	}
+}
+
+function fetch_feed_data(\$format) {
+	\$link = 'http://api.flickr.com/services/feeds/photos_public.gne?format=' . \$format;
+
+	\$ch = curl_init();
+	\$curl_options = array(
+		CURLOPT_URL => \$link,
+		CURLOPT_HEADER => 0,
+		CURLOPT_RETURNTRANSFER => true,
+	);
+	if ( !curl_setopt_array(\$ch, \$curl_options) ) {
+		throw new Exception('Invalid one or more Curl options.');
+	}
+
+	\$flickr_api_feed = curl_exec(\$ch);
+	if (!\$flickr_api_feed) {
+		throw new Exception('Invalid feed. Curl error: ' . curl_error(\$ch));
+	}
+
+	curl_close(\$ch);
+
+	return \$flickr_api_feed;
+}
+
+function parse_feed_data_into_array(\$flickr_api_feed, \$format) {
+	if (\$format === 'php_serial') {
+		\$flickr_unformatted_array = unserialize(\$flickr_api_feed);
+		\$images = \$flickr_unformatted_array['items'];
+		\$filter = array('title' => '', 'm_url' => '');
+		\$new_keys = array('title', 'image_url');
+
+		foreach (\$images as \$key => \$image) {
+			if ( !array_key_exists('m_url', \$image) || !array_key_exists('title', \$image) ) {
+				throw new Exception('Missing data from feed.');	
+			}
+
+			\$new_image = array_intersect_key(\$image, \$filter);
+			\$new_image = array_combine(\$new_keys, \$new_image);
+			\$images[\$key] = \$new_image;
+		}
+
+		return \$images;
+	}
+
+	if (\$format === 'xml') {
+		\$flicker_xml = new DOMDocument();
+		\$flicker_xml->loadXML(\$flickr_api_feed);
+		if (!\$flicker_xml) {
+			throw new Exception('Invalid xml feed.');
+		}
+
+		\$images = array();
+		\$entries = \$flicker_xml->getElementsByTagName('entry');
+		if (\$entries->length === 0) { 
+			throw new Exception('Invalid xml feed - no entry tag.');
+		}
+
+		foreach (\$entries as \$entry) {
+			\$title = \$entry->getElementsByTagName('title');
+			if (\$title->length === 0) { 
+				throw new Exception('Invalid xml feed - no title tag.');
+			}
+
+			\$title = \$title->item(0);
+			\$title = \$title->textContent;
+
+			\$url = \$entry->getElementsByTagName('link');
+			if (\$url->length === 0) { 
+				throw new Exception('Invalid xml feed - no link tag.');
+			}
+
+			\$last_link = \$url->length - 1;
+			\$url = \$url->item(\$last_link);
+
+			if ( !\$url->hasAttribute('href') ) {
+				throw new Exception('Invalid xml feed - no href attribute in link tag.');
+			}
+			\$url = \$url->getAttribute('href');
+
+			array_push(\$images, array(
+				'image_url' => \$url,
+				'title' => \$title
+			));
+		}
+
+		return \$images;
+	}
+
+	throw new Exception('Invalid feed type.');
+}
+
+function filter_data(\$images) {
+	foreach (\$images as \$key => \$image) {
+		\$title = \$image['title'];
+
+		// Leave only keywords starting with #.
+		\$title = preg_replace('/(?:(#[^#\s]+))?([^#]*)?/', "\$1", \$title);
+		\$title = trim(\$title);
+		\$hashes = preg_split('/#/', \$title, NULL, PREG_SPLIT_NO_EMPTY);
+
+		if (empty(\$title)) {
+			unset(\$images[\$key]);
+		} else {
+			\$images[\$key]['hashes'] = \$hashes;
+		}
+	}
+
+	return \$images;
+}
+
+?>
+
+<?php \$flickr_images = get_images(); ?>
+
+<table class="table table-striped table-bordered table-hover table-images">
+	<tr class="info">
+		<th class="col-sm-3"> --Image-- </th>
+		<th class="col-sm-9"> --Hashes-- </th>
+	</tr>
+	<?php if (count(\$flickr_images) === 0) : ?>
+		<tr class="warning">
+			<td> - </td>
+			<td> NO Images with hashes exist in this feed!!! </td>
+		</tr>
+	<?php else : ?>
+		<?php foreach (\$flickr_images as \$image) : ?>
+			<tr>
+				<td class="image-container">
+					<img src="<?php echo \$image['image_url']; ?>" />
+				</td>
+				
+				<td>
+					<?php foreach (\$image['hashes'] as \$hash) : ?>
+						<a href="http://www.flickr.com/photos/tags/<?php echo \$hash; ?>">#<?php echo \$hash; ?></a>
+						<br />
+					<?php endforeach; ?>
+				</td>
+			</tr>
+		<?php endforeach; ?>
+	<?php endif; ?>
+</table>
+
+<?php
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>flickr-learning</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>
