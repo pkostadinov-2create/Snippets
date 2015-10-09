@@ -78,6 +78,14 @@ function crb_get_page_id_from_section_type(\$section_type = '') {
 	return crb_get_page_id_from_section_id(\$section_id);
 }
 
+// Dispaly Edit post button
+add_action('crb_before_section_content', 'crb_before_section_content');
+function crb_before_section_content() {
+	\$type = get_post_type();
+	\$type = str_replace('crb_', '', \$type);
+	edit_post_link(__('Edit this ', 'crb') . \$type, '', '');
+}
+
 
 /* ==========================================================================
 	# includes/admin-columns-callbacks.php
@@ -171,9 +179,13 @@ if ( empty(\$section['content']) ) {
 
 ?>
 
-<div class="section" data-scroll-section="#<?php echo crb_get_slug(); ?>">
+<div class="section section-default" data-scroll-section="#<?php echo crb_get_slug(); ?>">
 	or
-<div class="section" id="#section-<?php echo crb_get_slug(); ?>">
+<div class="section section-default" id="#section-<?php echo crb_get_slug(); ?>">
+
+	<?php do_action('crb_before_section_content'); ?>
+
+<?
 
 /* ==========================================================================
 	# options/custom-fields.php
@@ -243,7 +255,7 @@ Carbon_Admin_Columns_Manager::modify_columns('post', array('crb_section') )
 ));
 
 /* ==========================================================================
-	# options/post-types.js
+	# options/post-types.php
 ========================================================================== */
 register_post_type('crb_section', array(
 	'labels' => array(

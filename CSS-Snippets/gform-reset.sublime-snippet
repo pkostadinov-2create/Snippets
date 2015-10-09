@@ -1,0 +1,48 @@
+<snippet>
+	<content><![CDATA[
+/* =========================================================================
+	#Reset GForm
+========================================================================= */
+.gform_wrapper form li.gfield.gfield_error.gfield_contains_required div.ginput_container,
+.gform_wrapper form .top_label .gfield_error .ginput_container,
+.gform_wrapper form li.gfield_html,
+div.gform_wrapper { max-width: 100%; }
+
+.gform_wrapper form .gform_footer { padding: 0; margin: 0; clear: none; }
+
+div.gform_wrapper,
+.gform_wrapper form .top_label .gfield_label { margin: 0; }
+
+.gform_wrapper form .top_label .gfield_error input.large,
+.gform_wrapper form .top_label .gfield_error select.large,
+.gform_wrapper form .top_label .gfield_error textarea.textarea,
+.gform_wrapper form .gform_heading,
+.gform_wrapper form .top_label .gfield_error,
+.gform_wrapper form .top_label input.large,
+.gform_wrapper form .top_label select.large,
+.gform_wrapper form .top_label textarea.textarea { width: 100%; }
+
+.gform_wrapper form .gform_heading,
+.gform_wrapper form div.validation_error { margin-bottom: 0; }
+.gform_wrapper form li.gfield.gfield_error.gfield_contains_required { padding-left: 0 !important; margin-top: 0 !important; margin-bottom: 0 !important; }
+
+.gform_wrapper form li.gfield.gfield_error,
+.gform_wrapper form li.gfield.gfield_error.gfield_contains_required.gfield_creditcard_warning { border-width: 0; padding: 0 !important; margin-bottom: 0 !important; background: transparent; }
+html body .gform_wrapper label.gfield_label + div.ginput_container,
+.gform_wrapper form .gfield_html.gfield_no_follows_desc,
+.gform_wrapper form li.gfield.gfield_error.gfield_contains_required label.gfield_label,
+.gform_wrapper form li.gfield.gfield_error.gfield_contains_required div.ginput_container,
+.gform_wrapper form .ginput_container + .gfield_description.validation_message { margin-top: 0; }
+.gform_wrapper form .top_label .gfield_description.validation_message,
+.gform_wrapper form .gfield_description.validation_message { padding: 0 !important; }
+
+.gform_wrapper form li.gfield.gfield_error.gfield_contains_required div.ginput_container,
+.gform_wrapper form li.gfield.gfield_error.gfield_contains_required div.gfield_description,
+.gform_wrapper form li.gfield.gfield_error.gfield_contains_required label.gfield_label,
+.gform_wrapper form li.gfield.gfield_error.gfield_contains_required fieldset legend.gfield_label { margin-left: 0; }
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>gform-reset</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.css</scope>
+</snippet>

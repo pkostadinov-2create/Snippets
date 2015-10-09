@@ -1,0 +1,10 @@
+<snippet>
+    <content><![CDATA[<?${TM_PHP_OPEN_TAG:php} if ( ${1:\$custom_query->}have_posts() ): ?>
+	<?${TM_PHP_OPEN_TAG:php} while ( ${1:\$custom_query->}have_posts() ): ${1:\$custom_query->}the_post(); ?>
+	<?${TM_PHP_OPEN_TAG:php} endwhile; ?>
+	<?${TM_PHP_OPEN_TAG:php} wp_reset_postdata(); ?>
+<?${TM_PHP_OPEN_TAG:php} endif; ?>]]></content>
+    <tabTrigger>while_have_posts</tabTrigger>
+    <scope>text.html - source</scope>
+    <description>&lt;?php while_have_posts (…) … &lt;?php endwhile ?&gt;</description>
+</snippet>

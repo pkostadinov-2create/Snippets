@@ -29,6 +29,11 @@ function crb_wp_get_attachment_image_src(\$image_id, \$args) {
 		}
 
 		\$image_src = \$image_data[0];
+
+		// Gif fix
+		if ( is_string(\$image_src) && strrpos(\$image_src, '.gif') !== false ) {
+			return \$image_src;
+		}
 	} else {
 		\$image_src = \$image_id;
 	}

@@ -1,0 +1,30 @@
+<snippet>
+	<tabTrigger>gform_blink</tabTrigger>
+	<content><![CDATA[
+$(document).bind('gform_post_render', function(){
+	blink_fields();
+});
+
+function blink_fields() {
+	$('.gfield input, .gfield textarea').on('focusin', function(){
+		$(this).parent().siblings('label').addClass('hidden');
+	}).on('focusout', function(){
+		var $this = $(this);
+
+		if ( $this.val() == '' ) {
+			$this.parent().siblings('label').removeClass('hidden');
+		}
+	}).each(function(){
+		var $this = $(this);
+
+		if ( $this.val() !== '' ) {
+			$this.parent().siblings('label').addClass('hidden');
+		}
+	});
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<!-- <tabTrigger>hello</tabTrigger> -->
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

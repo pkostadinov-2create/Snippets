@@ -1,0 +1,34 @@
+<snippet>
+	<content><![CDATA[
+/*  WP gallery  */
+.gallery { overflow: hidden; }
+.gallery .gallery-item { display: inline-block; position: relative; background: red; margin-left: 1%; -webkit-background-size: cover; background-size: cover; }
+.gallery .gallery-item img { padding-bottom: 0;   position: absolute;  width: 100%; height: 100%; display: none; }
+.gallery .gallery-item .gallery-icon { position: absolute; top: 0; left: 0; right: 0; bottom: 0;  }
+.gallery .gallery-item .gallery-icon a { display: block; width: 100%; height: 100%;}
+
+.gallery-columns-1 .gallery-item { width: 100%; padding-bottom: 100%; }
+.gallery-columns-2 .gallery-item { width: 49.5%; padding-bottom: 49.5%; }
+.gallery-columns-3 .gallery-item { width: 32.6%; padding-bottom: 32.6%; }
+.gallery-columns-4 .gallery-item { width: 24.25%; padding-bottom: 24.25%; }
+.gallery-columns-5 .gallery-item { width: 19.2%; padding-bottom: 19.2%; }
+.gallery-columns-6 .gallery-item { width: 15.83%; padding-bottom: 15.83%; }
+.gallery-columns-7 .gallery-item { width: 13.43%; padding-bottom: 13.43%; }
+.gallery-columns-8 .gallery-item { width: 11.6%; padding-bottom: 11.6%; }
+.gallery-columns-9 .gallery-item { width: 10.22%; padding-bottom: 10.22%; }
+
+.gallery-columns-1 .gallery-item:nth-child(1n+1),
+.gallery-columns-2 .gallery-item:nth-child(2n+1),
+.gallery-columns-3 .gallery-item:nth-child(3n+1),
+.gallery-columns-4 .gallery-item:nth-child(4n+1),
+.gallery-columns-5 .gallery-item:nth-child(5n+1),
+.gallery-columns-6 .gallery-item:nth-child(6n+1),
+.gallery-columns-7 .gallery-item:nth-child(7n+1),
+.gallery-columns-8 .gallery-item:nth-child(8n+1),
+.gallery-columns-9 .gallery-item:nth-child(9n+1) { margin-left: 0; }
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>wp_gallery</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.css</scope>
+</snippet>
