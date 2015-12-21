@@ -21,11 +21,6 @@ paginate_links(array(
 	'after_page_number' => ''
 );
 
-
-
-
-
-
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
 	<tabTrigger>paginate_links</tabTrigger>

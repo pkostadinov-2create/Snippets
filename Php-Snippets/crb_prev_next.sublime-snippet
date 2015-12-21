@@ -1,0 +1,22 @@
+<snippet>
+	<content><![CDATA[
+<?php if (  \$wp_query->max_num_pages > 1 ) : ?>
+	<div class="navigation">
+		<div class="alignleft"><?php next_posts_link(__('&laquo; Older Entries', 'crb')); ?></div>
+		<div class="alignright"><?php previous_posts_link(__('Newer Entries &raquo;', 'crb')); ?></div>
+	</div>
+<?php elseif ( is_singular('post') ): ?>
+	<div class="navigation">
+		<div class="alignleft"><?php previous_post_link(__('&laquo; %link', 'crb')); ?></div>
+		<div class="alignright"><?php next_post_link(__('%link &raquo;', 'crb')); ?></div>
+	</div>
+<?php endif; ?>
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_prev_next</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>text.html</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> fragment</description>
+</snippet>

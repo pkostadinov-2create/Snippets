@@ -1,0 +1,30 @@
+<snippet>
+	<content><![CDATA[
+// Return the current paged var
+// This snippet is required due to different page query var on "Front Page" and "Inner Pages"
+function crb_get_paged_var() {
+	global \$paged;
+
+	\$paged_var = ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1;
+	\$page_var = ( get_query_var( 'page' ) ) ? absint( get_query_var( 'page' ) ) : 1;
+
+	\$paged_var = intval(\$paged_var);
+	\$page_var = intval(\$page_var);
+
+	if ( \$paged_var > \$page_var ) {
+		\$paged = \$paged_var;
+	} else {
+		\$paged = \$page_var;
+	}
+
+	return \$paged;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_paged_var</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

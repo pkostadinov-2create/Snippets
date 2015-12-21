@@ -4,18 +4,11 @@
 function crb_get_attachment_help(\$args) {
 	\$args = crb_sanitize_image_size_args(\$args);
 
-	\$before = 'Largest image size: ';
-
-	\$after = ' px. Larger images will be scaled down ';
 	if ( \$args['crop'] ) {
-		\$before = 'Recommended image size: ';
-		\$after .= 'and cropped ';
+		return sprintf(__('Recommended image size: %s x %s px. Larger images will be scaled down and cropped automatically.', 'crb'), \$args['width'], \$args['height']);
 	} else {
-		\$after .= 'to fit this size ';
+		return sprintf(__('Largest image size: %s x %s px. Larger images will be scaled down to fit this size automatically.', 'crb'), \$args['width'], \$args['height']);
 	}
-	\$after .= 'automatically.';
-	
-	return \$before . \$args['width'] . ' x ' . \$args['height'] . \$after;
 }
 
 ]]></content>

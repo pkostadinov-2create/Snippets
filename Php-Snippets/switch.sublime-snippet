@@ -1,0 +1,14 @@
+<snippet>
+    <content><![CDATA[
+<?${TM_PHP_OPEN_TAG:php} switch ( ${1:\$variable} ) : ?>
+	<?${TM_PHP_OPEN_TAG:php} case 'value': ?>
+		<?${TM_PHP_OPEN_TAG:php} # code... ?>
+		<?${TM_PHP_OPEN_TAG:php} break; ?>
+	<?${TM_PHP_OPEN_TAG:php} default: ?>
+		<?${TM_PHP_OPEN_TAG:php} # code... ?>
+		<?${TM_PHP_OPEN_TAG:php} break; ?>
+<?${TM_PHP_OPEN_TAG:php} endswitch; ?>
+]]></content>
+    <tabTrigger>switch</tabTrigger>
+    <scope>text.html - source</scope>
+</snippet>

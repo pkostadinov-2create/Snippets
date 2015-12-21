@@ -1,0 +1,22 @@
+<snippet>
+	<content><![CDATA[
+carbon_pagination('posts', array(
+	'wrapper_before' => '<div class="pagination">',
+	'wrapper_after' => '</div>',
+	'enable_numbers' => true,
+	'prev_html' => '<a href="{URL}" class="paging-prev">&lt;</a>',
+	'next_html' => '<a href="{URL}" class="paging-next">&gt;</a>',
+	'large_page_number_limit' => 1,
+	'large_page_number_interval' => 1,
+	'number_limit' => 4,
+	'limiter_html' => '<li class="paging-spacer">.....</li>',
+));
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>carbon_pagination_paginate_links</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> paginate_links</description>
+</snippet>

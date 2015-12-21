@@ -1,13 +1,14 @@
 <snippet>
 	<content><![CDATA[
 // Normalize paths
-\$error_file = str_replace('\\\\', '/', \$errfile);
 \$plugins_dir = str_replace('\\\\', '/', WP_CONTENT_DIR . '/plugins');
-\$wp_includes_dir = str_replace('\\\\', '/', ABSPATH . WPINC);
-
-if (strpos(\$error_file, \$plugins_dir) !== false || strpos(\$error_file, \$wp_includes_dir) !== false) {
-	// Do nothing for errors in wp-content/plugins directory
-	return true;
+\$debug_backtrace = debug_backtrace();
+foreach (\$debug_backtrace as \$debug_entry) {
+    \$debug_error_file = str_replace('\\\\', '/', \$debug_entry['file']);
+    if (strpos(\$debug_error_file, \$plugins_dir) !== false) {
+        // Do nothing for errors in wp-content/plugins directory
+        return true;
+    }
 }
 
 ]]></content>

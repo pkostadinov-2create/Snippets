@@ -1,0 +1,126 @@
+<snippet>
+	<content><![CDATA[
+function crb_attach_theme_options() {
+	# Attach fields
+	\$suffix = crb_get_multilingual_suffix();
+	crb_get_fragment('options/theme-options', array(
+		'suffix' => \$suffix,
+	));
+
+	// include_once(CRB_THEME_DIR . 'options/theme-options.php');
+	include_once(CRB_THEME_DIR . 'options/custom-fields.php');
+}
+
+// Includes
+function crb_get_fragment( \$template, \$args = array() ) {
+	extract( \$args );
+	include( locate_template( \$template . '.php' ) );
+}
+
+// Return current language suffix. In cases "All Language" option is selected, an empty string is returned.
+// This is handled accordingly in carbon_get_theme_option
+function crb_get_multilingual_suffix() {
+	\$suffix = '';
+	if ( !crb_is_wpml_active() ) {
+		return \$suffix;
+	}
+
+	\$languages = icl_get_languages('skip_missing=0&orderby=KEY&order=DIR&link_empty_to=str');
+	foreach (\$languages as \$language) {
+		if ( !empty(\$language['active']) ) {
+			\$suffix = '_' . str_replace('-', '_', \$language['language_code']);
+			break;
+		}
+	}
+
+	return \$suffix;
+}
+
+// Return the default language prefix
+function crb_get_default_multilingual_suffix() {
+	\$suffix = '';
+	if ( !crb_is_wpml_active() ) {
+		return \$suffix;
+	}
+
+	\$suffix = icl_get_default_language();
+	
+	return \$suffix;
+}
+
+// Override carbon functions
+add_filter('carbon_before_include', 'crb_carbon_before_include');
+function crb_carbon_before_include() {
+	include_once(CRB_THEME_DIR . 'includes/carbon-functions-override.php');
+}
+
+/* ==========================================================================
+	# includes/carbon-functions-override.php
+========================================================================== */
+<?php
+
+if ( !function_exists('carbon_get_theme_option') ) :
+
+function carbon_get_theme_option(\$name, \$type = null) {
+	\$suffix = crb_get_multilingual_suffix();
+	\$default_suffix = crb_get_default_multilingual_suffix();
+	
+	\$multilingual_name = \$name . \$suffix;
+	\$default_multilingual_name = \$name . \$default_suffix;
+
+	\$names = array(\$multilingual_name, \$default_multilingual_name, \$name);
+	foreach (\$names as \$current_name) {
+		\$value = carbon_get_theme_option_inner(\$current_name, \$type);
+		if ( !empty(\$value) ) {
+			break;
+		}
+	}
+
+	return \$value;
+}
+
+endif;
+
+if ( !function_exists('carbon_get_theme_option_inner') ) :
+
+function carbon_get_theme_option_inner(\$name, \$type = null) {
+	switch (\$type) {
+		case 'complex':
+			\$value = carbon_get_complex_fields('ThemeOptions', \$name);
+		break;
+
+		case 'map':
+		case 'map_with_address':
+			\$value =  array(
+				'lat' => (float) get_option(\$name . '-lat'),
+				'lng' => (float) get_option(\$name . '-lng'),
+				'address' => get_option(\$name . '-address'),
+				'zoom' => (int) get_option(\$name . '-zoom'),
+			);
+		break;
+
+		case 'association':
+			\$raw_value = get_option(\$name);
+			\$value = carbon_parse_relationship_field(\$raw_value, \$type);
+		break;
+
+		default:
+			\$value = get_option(\$name);
+
+			// backward compatibility for the old Relationship field
+			\$value = crb_maybe_old_relationship_field(\$value);
+	}
+
+	return \$value;
+}
+
+endif;
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_theme_options_api</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

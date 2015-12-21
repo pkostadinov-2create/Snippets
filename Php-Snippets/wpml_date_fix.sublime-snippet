@@ -1,0 +1,14 @@
+<snippet>
+	<content><![CDATA[
+add_filter('the_time', 'crb_translate_the_time', 10, 2);
+function crb_translate_the_time(/$time, /$format) {
+	return date_i18n(/$format, get_the_time('U'));
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>wpml_date_fix</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

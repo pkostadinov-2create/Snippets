@@ -53,6 +53,12 @@ function crb_wp_get_attachment_image(\$image_id, \$args, \$additional_atts = arr
 	}
 
 	\$image_src = crb_wp_get_attachment_image_src(\$image_id, 'full');
+
+	// Check image has been deleted
+	if ( empty(\$image_src) ) {
+		return;
+	}
+
 	\$args = crb_sanitize_image_size_args(\$args);
 
 	// Add default image classes, defined with the custom image size

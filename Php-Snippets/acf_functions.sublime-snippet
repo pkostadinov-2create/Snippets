@@ -1,0 +1,34 @@
+<snippet>
+	<content><![CDATA[
+if ( !function_exists('carbon_get_theme_option') ) :
+function carbon_get_theme_option(\$field_name) {
+	return Crb_ACF::get_theme_option(\$field_name, 'option');
+}
+endif;
+
+if ( !function_exists('carbon_get_the_post_meta') ) :
+function carbon_get_the_post_meta(\$field_name) {
+	return Crb_ACF::get_the_post_meta(\$field_name);
+}
+endif;
+
+if ( !function_exists('carbon_get_post_meta') ) :
+function carbon_get_post_meta(\$field_name, \$page_id) {
+	return Crb_ACF::get_post_meta(\$field_name, \$page_id);
+}
+endif;
+
+if ( !function_exists('carbon_get_term_meta') ) :
+function carbon_get_term_meta(\$term_obj, \$meta_key) {
+	return Crb_ACF::get_term_meta(\$term_obj, \$meta_key);
+}
+endif;
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>acf_functions</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

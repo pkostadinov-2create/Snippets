@@ -1,0 +1,24 @@
+<snippet>
+	<content><![CDATA[
+/**
+ * 
+ * wp-includes/script-loader.php
+ * Add line: under 650
+ * 
+ * \$open_sans_font_url = apply_filters('open_sans_font_url', \$open_sans_font_url);
+ * 
+*/
+add_filter('get_avatar_url', 'crb_get_avatar_url');
+add_filter('open_sans_font_url', 'crb_get_avatar_url');
+function crb_get_avatar_url(\$avatar) {
+	return '#';
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_kill_internet_requests_when_office_is_online</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

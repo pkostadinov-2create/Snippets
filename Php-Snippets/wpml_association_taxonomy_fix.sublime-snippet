@@ -1,0 +1,28 @@
+<snippet>
+	<content><![CDATA[
+# Resolving WPML and Carbon_Field_Association incompatibilities
+add_filter('get_terms', 'crb_fix_get_terms_wpml', 0);
+function crb_fix_get_terms_wpml(\$terms) {
+	global \$wp_filter, \$sitepress;
+
+	if ( is_admin() && !empty(\$sitepress) && !empty( \$wp_filter['get_terms'] ) ) {
+		foreach (\$wp_filter['get_terms'] as \$priority => \$callbacks) {
+			foreach (\$callbacks as \$callback_key => \$callback) {
+				if ( !empty(\$callback['function'][0]) && \$callback['function'][0] instanceof iclNavMenu ) {
+					unset( \$wp_filter['get_terms'][\$priority][\$callback_key] );
+				}
+			}
+		}
+	}
+
+	return \$terms;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>wpml_association_taxonomy_fix</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

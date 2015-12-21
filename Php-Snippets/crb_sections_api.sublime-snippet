@@ -19,12 +19,34 @@ function crb_get_slug(\$post_id = '') {
 	return get_post_field( 'post_name', \$post_id );
 }
 
+/* ==========================================================================
+	# includes/sections-functions.php
+========================================================================== */
+
 // Find pages, where the current section is used in
-function crb_get_page_id_from_section_id(\$section_id, \$singular = true) {
+// If \$is_section_name is used, the SQL will search a section name, instead of section id. Use underscored name.
+function crb_get_page_id_from_section_id(\$section_id, \$singular = true, \$is_section_name = false) {
 	\$page_id = 0;
 
 	global \$wpdb;
-	\$results = \$wpdb->get_results( "SELECT post_id FROM \$wpdb->postmeta WHERE meta_key = '_crb_page_sections' and meta_value like '%post:crb_section:" . \$section_id . "%'", ARRAY_A );
+	if ( \$is_section_name ) {
+		\$results = \$wpdb->get_results( "
+				SELECT post_id
+				FROM \$wpdb->postmeta 
+				WHERE 
+					meta_key = '_crb_page_sections' 
+					and 
+					meta_value like CONCAT(
+						'%post:crb_section:',
+						(SELECT post_id FROM \$wpdb->postmeta WHERE meta_key LIKE '%_crb_section_\$section_id%' GROUP BY post_id),
+						'%'
+					)
+				LIMIT 1;
+			", ARRAY_A );
+	} else {
+		\$results = \$wpdb->get_results( "SELECT post_id FROM \$wpdb->postmeta WHERE meta_key = '_crb_page_sections' and meta_value like '%post:crb_section:" . \$section_id . "%'", ARRAY_A );
+	}
+	
 
 	if ( empty(\$results[0]) ) {
 		return \$page_id;
@@ -85,12 +107,6 @@ function crb_before_section_content() {
 	\$type = str_replace('crb_', '', \$type);
 	edit_post_link(__('Edit this ', 'crb') . \$type, '', '');
 }
-
-
-/* ==========================================================================
-	# includes/admin-columns-callbacks.php
-========================================================================== */
-
 // Column callback, displays all pages in which the current section is displayed.
 function crb_column_section_link(\$section_id) {
 	\$links = '';

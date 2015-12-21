@@ -8,57 +8,182 @@ Carbon_Container::factory('theme_options', __('Flickr', 'crb'))
 			->help_text('<a href="http://idgettr.com/" target="_blank">Find my Flickr ID</a>'),
 		Carbon_Field::factory('text', 'crb_flickr_api_key', __('API key', 'crb'))
 			->help_text('<a href="https://www.flickr.com/services/apps/create/apply" target="_blank">Create api key</a> or <a href="https://www.flickr.com/services/api/keys/" target="_blank">Use already existing one</a>'),
+		Carbon_Field::factory('select', 'album', __('Select specific album to pull from', 'crb'))
+				->set_required(false)
+				->set_options('crb_get_albums_options'),
 	));
 
-function crb_get_flickr_images(\$count = 300, \$page = 1) {
-	/**
-	 * 
-	 * Feed Expected Format:
-	 * 
-	 *  \$entry => Array (
-	 *  	[tag] => photo
-	 *  	[type] => complete
-	 *  	[level] => 3
-	 *  	[attributes] => Array (
-	 *  		[id] => 15144041417
-	 *  		[owner] => 60190001@N02
-	 *  		[secret] => af996aaa50
-	 *  		[server] => 2942
-	 *  		[farm] => 3
-	 *  		[title] => Chrysanthemum
-	 *  		[ispublic] => 1
-	 *  		[isfriend] => 0
-	 *  		[isfamily] => 0
-	 *  	))
-	 * 
-	 * image => http://farm3.static.flickr.com/2942/15144041417_af996aaa50.jpg
-	 * url => https://www.flickr.com/photos/60190001@N02/15144041417/
-	 * 
-	 */
+function crb_get_flickr_images(\$count = 300, \$page = 1, \$album = false) {
+	\$flickr = new Crb_Flickr(\$count, \$page, \$album);
+	\$images = \$flickr->get_images();
 
-	\$images = array();
+	return \$images;
+}
 
-	try {
-		\$flicker_id = carbon_get_theme_option('crb_flickr_username');
-		\$api_key = carbon_get_theme_option('crb_flickr_api_key');
-		\$api_url = 'https://api.flickr.com/services/rest/';
-		\$api_url = add_query_arg(array(
-			'method' => 'flickr.people.getPhotos',
-			'api_key' => \$api_key,
-			'user_id' => \$flicker_id,
-			'per_page' => \$count,
-			'page' => \$page,
-			'format' => 'rest',
-		), \$api_url);
+// crb_get_flickr_albums();
+function crb_get_flickr_albums(\$count = 300, \$page = 1) {
+	\$flickr = new Crb_Flickr(\$count, \$page);
+	\$albums = \$flickr->get_albums();
 
-		\$data = wp_remote_retrieve_body(wp_remote_get(\$api_url));
-		\$parser = xml_parser_create();
-		xml_parser_set_option(\$parser, XML_OPTION_CASE_FOLDING, 0);
-		xml_parse_into_struct(\$parser, \$data, \$values, \$entries);
-		xml_parser_free(\$parser);
+	return \$albums;
+}
 
-		foreach (\$values as \$entry) {
-			if (!empty(\$entry['attributes']['id'])) {
+function crb_get_albums_options() {
+	\$options = array(
+		'' => ' --- Select Flickr Album --- ',
+	);
+
+	\$albums = crb_get_flickr_albums();
+	if ( !empty(\$albums) ) {
+		foreach (\$albums as \$index => \$album) {
+			\$options[strval(\$index)] = \$album['title'];
+		}
+	}
+
+	return \$options;
+}
+
+class Crb_Flickr {
+	protected \$flicker_id;
+	protected \$api_key;
+	protected \$api_url = 'https://api.flickr.com/services/rest/';
+	protected \$count;
+	protected \$page;
+	protected \$transient_albums = 'crb_flickr_albums';
+
+	public function __construct(\$count = 300, \$page = 1, \$album = false) {
+		\$this->flicker_id = carbon_get_theme_option('crb_flickr_username');
+		\$this->api_key = carbon_get_theme_option('crb_flickr_api_key');
+
+		\$this->count = \$count;
+		\$this->page = \$page;
+		\$this->album = \$this->get_album_id_from_index(\$album);
+	}
+
+	public function get_images() {
+		\$this->set_args('photos');
+		\$this->set_values();
+
+		if ( empty(\$this->album) ) {
+			\$images = \$this->parse_all_photos();
+		} else {
+			\$images = \$this->parse_album_photos();
+		}
+
+		return \$images;
+	}
+
+	public function get_albums() {
+		\$this->set_args('albums');
+		\$this->set_values();
+
+		\$albums = \$this->parse_albums();
+
+		set_transient(\$this->transient_albums, \$albums, 0);
+
+		return \$albums;
+	}
+
+	public function get_album_id_from_index(\$index) {
+		\$album_id = '';
+
+		if ( !empty(\$index) ) {
+			\$albums = get_transient(\$this->transient_albums);
+			if ( !empty(\$albums[\$index]['id']) ) {
+				\$album_id = \$albums[\$index]['id'];
+			}
+		}
+
+		return \$album_id;
+	}
+
+	public function set_args(\$type = 'photos') {
+		if ( \$type == 'photos' && empty(\$this->album) ) {
+			\$args = array(
+				'method' => 'flickr.people.getPhotos',
+				'api_key' => \$this->api_key,
+				'user_id' => \$this->flicker_id,
+				'per_page' => \$this->count,
+				'page' => \$this->page,
+				'format' => 'rest',
+			);
+		} elseif ( \$type == 'photos' && !empty(\$this->album) ) {
+			\$args = array(
+				'method' => 'flickr.photosets.getPhotos',
+				'photoset_id' => \$this->album,
+				'api_key' => \$this->api_key,
+				'user_id' => \$this->flicker_id,
+				'per_page' => \$this->count,
+				'page' => \$this->page,
+				'format' => 'rest',
+			);
+		} elseif ( \$type == 'albums' ) {
+			\$args = array(
+				'method' => 'flickr.photosets.getList',
+				'api_key' => \$this->api_key,
+				'user_id' => \$this->flicker_id,
+				'per_page' => \$this->count,
+				'page' => \$this->page,
+				'format' => 'rest',
+			);
+		}
+
+		\$this->args = \$args;
+	}
+
+	public function set_values() {
+		\$this->api_url = add_query_arg(\$this->args, \$this->api_url);
+
+		\$values = array();
+
+		try {
+			\$data = wp_remote_retrieve_body(wp_remote_get(\$this->api_url, array('decompress' => false)));
+			\$parser = xml_parser_create();
+			xml_parser_set_option(\$parser, XML_OPTION_CASE_FOLDING, 0);
+			xml_parse_into_struct(\$parser, \$data, \$values, \$entries);
+			xml_parser_free(\$parser);
+		} catch (Exception \$e) {
+			// Print Nothing
+		}
+
+		\$this->values = \$values;
+	}
+
+	public function parse_all_photos() {
+		/**
+		 * 
+		 * Feed Expected Format:
+		 * 
+		 *  \$entry => Array (
+		 *  	[tag] => photo
+		 *  	[type] => complete
+		 *  	[level] => 3
+		 *  	[attributes] => Array (
+		 *  		[id] => 15144041417
+		 *  		[owner] => 60190001@N02
+		 *  		[secret] => af996aaa50
+		 *  		[server] => 2942
+		 *  		[farm] => 3
+		 *  		[title] => Chrysanthemum
+		 *  		[ispublic] => 1
+		 *  		[isfriend] => 0
+		 *  		[isfamily] => 0
+		 *  	))
+		 * 
+		 * image => http://farm3.static.flickr.com/2942/15144041417_af996aaa50.jpg
+		 * url => https://www.flickr.com/photos/60190001@N02/15144041417/
+		 * 
+		 */
+		\$images = array();
+
+		foreach (\$this->values as \$entry) {
+			if ( empty(\$entry['tag']) || empty(\$entry['type']) ) {
+				continue;
+			}
+
+			\$is_photo = \$entry['tag'] == 'photo';
+			\$is_type_complete = \$entry['type'] == 'complete';
+			if ( \$is_photo && \$is_type_complete ) {
 				\$id = \$entry['attributes']['id'];
 				\$secret = \$entry['attributes']['secret'];
 				\$farm = \$entry['attributes']['farm'];
@@ -69,11 +194,139 @@ function crb_get_flickr_images(\$count = 300, \$page = 1) {
 				);
 			}
 		}
-	} catch (Exception \$e) {
-	    // Print Nothing
+
+		return \$images;
 	}
 
-	return \$images;
+	public function parse_album_photos() {
+		/**
+		 * 
+		 * Feed Expected Format:
+		 * 
+		 *  \$entry => Array (
+		 *  	[tag] => photo
+		 *  	[type] => complete
+		 *  	[level] => 3
+		 *  	[attributes] => Array (
+		 *  		[id] => 15144041417
+		 *  		[secret] => af996aaa50
+		 *  		[server] => 2942
+		 *  		[farm] => 3
+		 *  		[title] => Chrysanthemum
+		 *  		[isprimary] => 1
+		 *  		[ispublic] => 1
+		 *  		[isfriend] => 0
+		 *  		[isfamily] => 0
+		 *  	))
+		 * 
+		 * image => http://farm3.static.flickr.com/2942/15144041417_af996aaa50.jpg
+		 * url => https://www.flickr.com/photos/60190001@N02/15144041417/
+		 * 
+		 */
+
+		\$images = array();
+
+		foreach (\$this->values as \$entry) {
+			if ( empty(\$entry['tag']) || empty(\$entry['type']) ) {
+				continue;
+			}
+
+			\$is_photoset = \$entry['tag'] == 'photoset';
+			\$is_type_open = \$entry['type'] == 'open';
+			if ( \$is_photoset && \$is_type_open ) {
+				\$owner = \$entry['attributes']['owner'];
+			}
+
+			\$is_photo = \$entry['tag'] == 'photo';
+			\$is_type_complete = \$entry['type'] == 'complete';
+			if ( \$is_photo && \$is_type_complete ) {
+				\$id = \$entry['attributes']['id'];
+				\$secret = \$entry['attributes']['secret'];
+				\$farm = \$entry['attributes']['farm'];
+				\$server = \$entry['attributes']['server'];
+				\$images[] = array(
+					'image' => 'http://farm' . \$farm . '.static.flickr.com/' . \$server . '/' . \$id . '_' . \$secret . '.jpg',
+					'url' => 'https://www.flickr.com/photos/' . \$owner . '/' . \$entry['attributes']['id'] . '/',
+				);
+			}
+		}
+
+		return \$images;
+	}
+
+	public function parse_albums() {
+		/**
+		 * 
+		 * Feed Expected Format:
+		 * 
+		 *  \$entry => Array (
+		 *  	[tag] => photoset
+		 *  	[type] => open
+		 *  	[level] => 3
+		 *  	[attributes] => Array (
+		 *  		[id] => 72157661565389706
+		 *  		[primary] => 22915942259
+		 *  		[secret] => 152270356a
+		 *  		[server] => 748
+		 *  		[farm] => 1
+		 *  		[photos] => 40
+		 *  		[videos] => 0
+		 *  		[needs_interstitial] => 0
+		 *  		[visibility_can_see_set] => 1
+		 *  		[count_views] => 0
+		 *  		[count_comments] => 0
+		 *  		[can_comment] => 0
+		 *  		[date_create] => 1448395853
+		 *  		[date_update] => 1448458569
+		 *  	))
+		 * 
+		 *  \$entry => Array (
+		 *  	[tag] => title
+		 *  	[type] => complete
+		 *  	[level] => 4
+		 *  	[value] => Business Celebrations
+		 * 
+		 *  \$entry => Array (
+		 *  	[tag] => description
+		 *  	[type] => complete
+		 *  	[level] => 4
+		 *  	[value] => One of the benefits of Chamber membership is the popular Celebration Kit. Here are some of the photos we've taken while helping our members celebrate anniversaries, grand openings, remodels and more!
+		 * 
+		 */
+
+		\$photosets = array();
+		\$current_photoset = 0;
+
+		foreach (\$this->values as \$entry) {
+			if ( empty(\$entry['tag']) || empty(\$entry['type']) ) {
+				continue;
+			}
+
+			// Attributes
+			\$is_photoset = \$entry['tag'] == 'photoset';
+			\$is_type_open = \$entry['type'] == 'open';
+			if ( \$is_photoset && \$is_type_open ) {
+				\$current_photoset++;
+				\$photosets[\$current_photoset]['count'] = \$entry['attributes']['photos'];
+				\$photosets[\$current_photoset]['id'] = \$entry['attributes']['id'];
+			}
+
+			// Title
+			\$is_title = \$entry['tag'] == 'title';
+			\$is_type_complete = \$entry['type'] == 'complete';
+			if ( \$is_title && \$is_type_complete ) {
+				\$photosets[\$current_photoset]['title'] = \$entry['value'];
+			}
+
+			// Description
+			\$is_description = \$entry['tag'] == 'description';
+			if ( \$is_description && \$is_type_complete ) {
+				\$photosets[\$current_photoset]['description'] = \$entry['value'];
+			}
+		}
+
+		return \$photosets;
+	}
 }
 
 ]]></content>

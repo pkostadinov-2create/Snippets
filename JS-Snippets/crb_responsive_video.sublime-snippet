@@ -1,0 +1,50 @@
+<snippet>
+	<content><![CDATA[
+fixYoutubeEmbed();
+
+\$win.on('resize', function(){
+	updateYoutubeSizes();
+});
+
+function fixYoutubeEmbed () {
+	// The element that is fluid width
+	var \$allVideos = \$('iframe[src*="youtube.com"], iframe[src*="vimeo.com"]');
+
+	// Figure out and save aspect ratio for each video
+	\$allVideos.each(function() {
+
+	\$(this)
+		.data('aspectRatio', this.height / this.width)
+
+		// and remove the hard coded width/height
+		.removeAttr('height')
+		.removeAttr('width');
+	});
+
+	updateYoutubeSizes();
+}
+
+function updateYoutubeSizes() {
+	// The element that is fluid width
+	var \$allVideos = \$('iframe[src*="youtube.com"], iframe[src*="vimeo.com"]');
+
+	// Resize all videos according to their own aspect ratio
+	\$allVideos.each(function() {
+		var \$el = \$(this);
+		var \$fluidEl = \$el.parent();
+		var newWidth = \$fluidEl.width();
+
+		\$el
+			.width(newWidth)
+			.height(newWidth * \$el.data('aspectRatio'));
+	});
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_responsive_video</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.js,source.ts</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> video fix</description>
+</snippet>

@@ -1,0 +1,35 @@
+<snippet>
+	<content><![CDATA[
+\$doc.ready(function() {
+	plugin_samehight();
+});
+
+\$win.on('load resize', function(event) {
+	plugin_samehight();
+});
+
+function plugin_samehight() {
+	\$('.features .feature').equalizeHeight();
+}
+
+\$.fn.equalizeHeight = function() {
+	var maxHeight = 0, itemHeight;
+	this.height('auto');
+
+	for (var i = 0; i < this.length; i++) {
+		itemHeight = \$(this[i]).height();
+		if (maxHeight < itemHeight) {
+			maxHeight = itemHeight;
+		}
+	}
+
+	return this.height(maxHeight);
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>same_height</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.js,source.ts</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> equalize</description>
+</snippet>

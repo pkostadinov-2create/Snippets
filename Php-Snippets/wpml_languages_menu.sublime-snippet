@@ -1,0 +1,26 @@
+<snippet>
+	<content><![CDATA[
+<?php
+if ( crb_is_wpml_active() ) :
+	\$languages = icl_get_languages('skip_missing=N');
+	if ( !empty(\$languages) ) : ?>
+		<nav class="nav-lang">
+			<ul class="menu">
+				<?php foreach (\$languages as \$key => \$language): ?>
+					<li>
+						<a href="<?php echo esc_url(\$language['url']);?>"><div><?php echo \$language['native_name']; ?></div></a>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		</nav><!-- /.nav-lang -->
+	<?php endif; ?>
+<?php endif; ?>
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>wpml_languages_menu</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>text.html</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> lang menu</description>
+</snippet>
