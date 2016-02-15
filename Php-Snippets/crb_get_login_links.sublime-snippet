@@ -1,0 +1,32 @@
+<snippet>
+	<content><![CDATA[
+\$links = array(
+	'my-account' => array(
+		'url' => admin_url('profile.php'),
+		'condition' => is_user_logged_in(),
+		'title' => __('My Account', 'crb'),
+	),
+	'logout' => array(
+		'url' => wp_logout_url(\$home_url),
+		'condition' => is_user_logged_in(),
+		'title' => __('Logout', 'crb'),
+	),
+	'login' => array(
+		'url' => wp_login_url(\$home_url),
+		'condition' => !is_user_logged_in(),
+		'title' => __('log In', 'crb'),
+	),
+	'register' => array(
+		'url' => wp_registration_url(),
+		'condition' => !is_user_logged_in(),
+		'title' => __('Register', 'crb'),
+	),
+);
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_login_links</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

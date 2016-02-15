@@ -1,8 +1,8 @@
 <snippet>
 	<content><![CDATA[
-/* =========================================================================
-	#Reset GForm
-========================================================================= */
+/* ------------------------------------------------------------ *\
+	Reset GForm
+\* ------------------------------------------------------------ */
 .gform_wrapper form li.gfield.gfield_error.gfield_contains_required div.ginput_container,
 .gform_wrapper form .top_label .gfield_error .ginput_container,
 .gform_wrapper form li.gfield_html,
@@ -40,6 +40,28 @@ html body .gform_wrapper label.gfield_label + div.ginput_container,
 .gform_wrapper form li.gfield.gfield_error.gfield_contains_required div.gfield_description,
 .gform_wrapper form li.gfield.gfield_error.gfield_contains_required label.gfield_label,
 .gform_wrapper form li.gfield.gfield_error.gfield_contains_required fieldset legend.gfield_label { margin-left: 0; }
+
+/* ------------------------------------------------------------ *\
+	Default GForm
+\* ------------------------------------------------------------ */
+body .gform_wrapper {  }
+body .gform_wrapper .validation_error { display: none; }
+body .gform_wrapper form li.gfield.gfield_error.gfield_contains_required,
+body .gform_wrapper form li.gfield { padding-bottom: 0 !important; }
+body .gform_wrapper form li.gfield .top_label input.medium,
+body .gform_wrapper form li.gfield .top_label select.medium,
+body .gform_wrapper form li.gfield input[type=email],
+body .gform_wrapper form li.gfield input[type=number],
+body .gform_wrapper form li.gfield input[type=password],
+body .gform_wrapper form li.gfield input[type=tel],
+body .gform_wrapper form li.gfield input[type=text],
+body .gform_wrapper form li.gfield input[type=url],
+body .gform_wrapper form li.gfield textarea { text-indent: 0; }
+
+body .gform_wrapper form .gform_footer input.button,
+body .gform_wrapper form .gform_footer input[type=image],
+body .gform_wrapper form .gform_footer input[type=submit] {  }
+
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
 	<tabTrigger>gform-reset</tabTrigger>

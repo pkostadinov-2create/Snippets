@@ -1,15 +1,15 @@
 <snippet>
 	<content><![CDATA[
 // Pulls single cat ID, for category page would be category id, for post would be the first category ID
-function crb_get_single_term_id() {
+function crb_get_single_term_id(\$taxonomy = 'crb_event_category', \$post_type = 'crb_event') {
 	global \$wp_query;
 	\$single_term_id = false;
 
 	if ( is_tax() ) {
 		\$single_term_id = \$wp_query->queried_object->term_id;
-	} elseif ( is_singular('crb_event') ) {
-		\$categories = wp_get_post_terms(get_the_id(), 'crb_event_category');
-		if ( !empty(\$categories[0]) ) {
+	} elseif ( is_singular(\$post_type) ) {
+		\$categories = wp_get_post_terms(get_the_id(), \$taxonomy);
+		if ( !is_wp_error(\$categories) && !empty(\$categories[0]) ) {
 			\$single_term_id = \$categories[0]->term_id;
 		}
 	}

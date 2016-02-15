@@ -1,0 +1,55 @@
+<snippet>
+	<content><![CDATA[
+function crb_is_woocommerce_active() {
+	return class_exists('WooCommerce');
+}
+
+function crb_is_woocommerce() {
+	return crb_is_woocommerce_active() && (is_woocommerce() || is_cart() || is_checkout() || is_account_page() || is_wc_endpoint_url());
+}
+
+function crb_get_woocommerce_links(\$link = '') {
+	\$home_url = home_url('/');
+	if ( crb_is_woocommerce_active() ) {
+		\$myaccount_link = get_permalink(get_option('woocommerce_myaccount_page_id'));
+
+		\$links = array(
+			'my account' => \$myaccount_link,
+			'logout' => \$home_url . '?customer-logout=true',
+			'login' => \$myaccount_link,
+			'register' => \$myaccount_link . '?customer-register=true',
+		);
+	} else {
+		\$links = array(
+			'my account' => admin_url('profile.php'),
+			'logout' => wp_logout_url(\$home_url),
+			'login' => wp_login_url(\$home_url),
+			'register' => wp_registration_url(),
+		);
+	}
+
+	if ( !empty(\$link) && !empty(\$links[\$link]) ) {
+		return \$links[\$link];
+	}
+
+	return \$links;
+}
+
+function crb_get_woocommerce_shop_url() {
+	if ( !crb_is_woocommerce_active() ) {
+		return home_url('/');
+	}
+
+	\$shop_page_url = get_permalink( woocommerce_get_page_id('shop') );
+
+	return \$shop_page_url;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_woocommerce_shop_url</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> wpthumb wrapper</description>
+</snippet>
