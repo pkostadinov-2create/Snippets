@@ -1,0 +1,30 @@
+<snippet>
+	<content><![CDATA[
+add_filter('wpthumb_cache_file_path', 'crb_fix_wpthumb_path_for_SEO', 10, 2);
+function crb_fix_wpthumb_path_for_SEO(\$path, \$object) {
+	\$path_pieces = preg_split('~[\\/]~', \$path);
+	\$path_pieces_first = array_slice(\$path_pieces, 0, -2);
+	\$path_pieces_last = array_slice(\$path_pieces, -2);
+
+	\$filename = \$path_pieces_last[0];
+
+	\$temp_dir_array = explode('.', \$path_pieces_last[1]);
+	\$temp_dir = \$temp_dir_array[0];
+	\$extension = \$temp_dir_array[1];
+
+	\$path_pieces_first[] = \$temp_dir;
+	\$path_pieces_first[] = \$filename . '.' . \$extension;
+
+	\$path = implode('/', \$path_pieces_first);
+
+	return \$path;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_fix_wpthumb_path_for_SEO</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>
