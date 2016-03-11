@@ -2,14 +2,14 @@
 	<content><![CDATA[
 /**
  * Swap wpthumb path from "wp-content/uploads/cache/2016/01/{filename}/{crc32-name}.{extension}"
- *                     to "wp-content/uploads/cache/2016/01/{crc32-name}/{filename}.{extension}"
+ * 					   to "wp-content/uploads/cache/2016/01/{crc32-name}/{filename}.{extension}"
  */
 add_filter('wpthumb_cache_file_path', 'crb_fix_wpthumb_path_for_SEO', 10, 2);
 function crb_fix_wpthumb_path_for_SEO(\$path, \$object) {
-    //                     (\$1      )(\$2   )(\$3      )(\$4      )\$~'
-    \$path = preg_replace('~([^\\\\/]+?)([\\\\/])([^.\\\\/]+)([.][^.]+)\$~', "\$3\$2\$1\$4", \$path);
+	//                     (\$1      )(\$2   )(\$3      )(\$4      )\$~'
+	\$path = preg_replace('~([^\\\\/]+?)([\\\\/])([^.\\\\/]+)([.][^.]+)\$~', "\$3\$2\$1\$4", \$path);
 
-    return \$path;
+	return \$path;
 }
 
 ]]></content>
