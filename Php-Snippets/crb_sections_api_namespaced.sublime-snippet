@@ -75,7 +75,13 @@ function crb_nav_menu_link_attributes(\$atts, \$item, \$args, \$depth) {
 	\$slug = get_post_field('post_name', \$post_id);
 
 	\$page_id = crb_get_page_id_from_section_id(\$post_id);
-	\$atts['href'] = get_permalink(\$page_id) . '#' . \$slug;
+
+	\$atts['href'] = '';
+	if ( !is_singular('page') || \$page_id != get_the_id() ) {
+		\$atts['href'] = get_permalink(\$page_id);
+	}
+
+	\$atts['href'] .= '#' . \$slug;
 	\$atts['data-scrollto'] = \$slug;
 
 	return \$atts;
@@ -197,7 +203,7 @@ if ( empty(\$section['content']) ) {
 
 <div class="section section-default" data-scroll-section="#<?php echo crb_get_slug(); ?>">
 	or
-<div class="section section-default" id="#section-<?php echo crb_get_slug(); ?>">
+<div class="section section-default" id="section-<?php echo crb_get_slug(); ?>">
 
 	<?php do_action('crb_before_section_content'); ?>
 
@@ -251,7 +257,49 @@ crb_get_fragment('load-sections', array(
 /* ==========================================================================
 	# js/functions.js
 ========================================================================== */
-Refference Appetizer mobile
+;(function($, window, document, undefined) {
+	var $win = $(window);
+	var $doc = $(document);
+
+	$doc.ready(function() {
+		$('.nav .sub-menu a, .footer-widget a').on('click', function(e){
+			var this_ = $(this);
+			var href = this_.attr('href');
+
+			if ( href.substr(0, 1) == '#' ){
+				e.preventDefault();
+				scrollToSection( href );
+			}
+		});
+
+		$win
+			.on('load', function(){
+				if ( window.location.hash ){
+					var hash_href = window.location.hash;
+					scrollToSection( hash_href );
+				}
+			});
+
+		function scrollToSection($href){
+			$href = $href.replace('#', '');
+			console.log($href);
+			console.log('#section-' + $href);
+			var $target = $('#section-' + $href);
+			console.log($target);
+			// var offset = $('.header-row.mobile-row').outerHeight();
+
+			/*if ( $win.width() < 1020 ){
+				offset = $('.header').outerHeight();
+			}*/
+
+			if ( $target.length ) {
+				$('html, body').animate({
+					scrollTop: $target.offset().top /*- offset*/
+				}, 1000);	
+			};
+		}
+	});
+})(jQuery, window, document);
 
 /* ==========================================================================
 	# options/admin-columns.js
