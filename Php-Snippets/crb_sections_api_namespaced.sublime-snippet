@@ -113,6 +113,7 @@ function crb_before_section_content() {
 	\$type = str_replace('crb_', '', \$type);
 	edit_post_link(__('Edit this ', 'crb') . \$type, '', '');
 }
+
 // Column callback, displays all pages in which the current section is displayed.
 function crb_column_section_link(\$section_id) {
 	\$links = '';
@@ -257,13 +258,13 @@ crb_get_fragment('load-sections', array(
 /* ==========================================================================
 	# js/functions.js
 ========================================================================== */
-;(function($, window, document, undefined) {
-	var $win = $(window);
-	var $doc = $(document);
+;(function(\$, window, document, undefined) {
+	var \$win = \$(window);
+	var \$doc = \$(document);
 
-	$doc.ready(function() {
-		$('.nav .sub-menu a, .footer-widget a').on('click', function(e){
-			var this_ = $(this);
+	\$doc.ready(function() {
+		\$('.nav .sub-menu a, .footer-widget a').on('click', function(e){
+			var this_ = \$(this);
 			var href = this_.attr('href');
 
 			if ( href.substr(0, 1) == '#' ){
@@ -272,7 +273,7 @@ crb_get_fragment('load-sections', array(
 			}
 		});
 
-		$win
+		\$win
 			.on('load', function(){
 				if ( window.location.hash ){
 					var hash_href = window.location.hash;
@@ -280,21 +281,21 @@ crb_get_fragment('load-sections', array(
 				}
 			});
 
-		function scrollToSection($href){
-			$href = $href.replace('#', '');
-			console.log($href);
-			console.log('#section-' + $href);
-			var $target = $('#section-' + $href);
-			console.log($target);
-			// var offset = $('.header-row.mobile-row').outerHeight();
+		function scrollToSection(\$href){
+			\$href = \$href.replace('#', '');
+			console.log(\$href);
+			console.log('#section-' + \$href);
+			var \$target = \$('#section-' + \$href);
+			console.log(\$target);
+			// var offset = \$('.header-row.mobile-row').outerHeight();
 
-			/*if ( $win.width() < 1020 ){
-				offset = $('.header').outerHeight();
+			/*if ( \$win.width() < 1020 ){
+				offset = \$('.header').outerHeight();
 			}*/
 
-			if ( $target.length ) {
-				$('html, body').animate({
-					scrollTop: $target.offset().top /*- offset*/
+			if ( \$target.length ) {
+				\$('html, body').animate({
+					scrollTop: \$target.offset().top /*- offset*/
 				}, 1000);	
 			};
 		}
