@@ -1,6 +1,6 @@
 <snippet>
 	<content><![CDATA[
-// Refference Bledina
+// Refference task id 2077916
 ;(function(\$, window, document, undefined) {
 	var \$win = \$(window);
 	var \$doc = \$(document);
