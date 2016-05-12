@@ -1,0 +1,71 @@
+<snippet>
+	<content><![CDATA[
+/**
+ * Generates WP_Query for latest posts
+ * @param (int) \$related_count - how many entries will the query hold
+ * @param (array) \$taxonomies - list of taxonomies to pull related by
+ * @param (mixed - string|array) \$post_type - post types
+ * @param (int - post_id) \$current_post - current post for which we are searching related items
+ */
+function crb_get_related_query(\$related_count = 3, \$taxonomies = array('category', 'tag'), \$post_type = 'post', \$current_post = 0) {
+	// Get the current post if missing
+	if ( empty(\$current_post) ) {
+		\$current_post = get_the_id();
+	}
+
+	// Initialize tax query
+	\$tax_query = array();
+
+	// Holds all current taxonomies and terms
+	\$taxonomy_terms = array();
+
+	foreach (\$taxonomies as \$taxonomy) {
+		// Predefined Category, Tag and Custom terms
+		if ( \$taxonomy == 'category' ) {
+			\$terms = get_the_category();
+		} elseif ( \$taxonomy == 'tag' ) {
+			\$terms = get_the_tags();
+		} else {
+			\$terms = wp_get_post_terms(\$current_post, \$taxonomy);
+		}
+
+		if ( !empty(\$terms) ) {
+			\$taxonomy_terms[\$taxonomy] = \$terms;
+		}
+	}
+
+	if ( !empty(\$taxonomy_terms) ) {
+		\$tax_query['relation'] = 'OR';
+	}
+
+	foreach (\$taxonomy_terms as \$terms) {
+		if ( !empty(\$terms) ) {
+			foreach (\$terms as \$term) {
+				\$tax_query[] = array(
+					'taxonomy' => \$term->taxonomy,
+					'field' => 'id',
+					'terms' => \$term->term_id,
+				);
+			}
+		}
+	}
+
+	\$related_query = new WP_Query(array(
+		'post_type' => \$post_type,
+		'orderby' => 'rand',
+		'post__not_in' => array(\$current_post),
+		'posts_per_page' => \$related_count,
+		'tax_query' => \$tax_query,
+	));
+
+	return \$related_query;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_related_query</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

@@ -1,31 +1,26 @@
 <snippet>
 	<content><![CDATA[
+\$related_count = 3;
+
 \$tax_query = array();
 
 \$categories = get_the_category();
 \$tags = get_the_tags();
+\$example_terms = wp_get_post_terms(get_the_id(), 'crb_example_term');
 
-if ( !empty(\$categories) || !empty(\$tags) ) {
+if ( !empty(\$categories) || !empty(\$tags) || !empty(\$example_terms) ) {
 	\$tax_query['relation'] = 'OR';
 }
 
-if ( !empty(\$categories) ) {
-	foreach (\$categories as \$category) {
-		\$tax_query[] = array(
-			'taxonomy' => 'category',
-			'field' => 'id',
-			'terms' => \$category->term_id,
-		);
-	}
-}
-
-if ( !empty(\$tags) ) {
-	foreach (\$tags as \$tag) {
-		\$tax_query[] = array(
-			'taxonomy' => 'tag',
-			'field' => 'id',
-			'terms' => \$tag->term_id,
-		);
+foreach (array(\$categories, \$tags, \$example_terms) as \$terms) {
+	if ( !empty(\$terms) ) {
+		foreach (\$terms as \$term) {
+			\$tax_query[] = array(
+				'taxonomy' => \$term->taxonomy,
+				'field' => 'id',
+				'terms' => \$term->term_id,
+			);
+		}
 	}
 }
 

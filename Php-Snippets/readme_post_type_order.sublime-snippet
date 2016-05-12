@@ -1,7 +1,7 @@
 <snippet>
 	<content><![CDATA[
 <li>
-	<h3 id="post-types-order">Activate the &quot;Post Types Order&quot; plugin</h3>
+	<h3 id="post-types-order-plugin">Activate the &quot;Post Types Order&quot; plugin</h3>
 	<p>Go to <span class="admin-path">Settings &raquo; Post Types Order</span> and setup plugin options: <strong>Minimum Level to use this plugin</strong> to <em>Administrator</em>, <strong>Auto Sort</strong> to <em>disabled</em> and <strong>Admin Sort</strong> to <em>enabled</em>.</p>
 </li>
 ]]></content>

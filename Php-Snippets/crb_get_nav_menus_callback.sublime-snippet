@@ -1,0 +1,24 @@
+<snippet>
+	<content><![CDATA[
+// Callback for Nav Menu dropdown
+function crb_get_nav_menus_callback() {
+	\$default_option = array(0 => ' --- Select Menu --- ');
+	\$nav_menus = get_terms('nav_menu', array(
+		'hide_empty' => false,
+	));
+
+	\$ids = wp_list_pluck(\$nav_menus, 'slug');
+	\$titles = wp_list_pluck(\$nav_menus, 'name');
+	\$options = array_combine(\$ids, \$titles);
+
+	return \$default_option + \$options; 
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_nav_menus_callback</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> Callback</description>
+</snippet>

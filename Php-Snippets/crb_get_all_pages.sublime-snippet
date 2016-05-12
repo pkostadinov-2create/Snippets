@@ -21,6 +21,21 @@ function crb_get_all_pages() {
 	return \$pages_formated;
 }
 
+function crb_get_page_depth(\$id) {
+	\$page = get_page(\$id);
+
+	\$depth = 0;
+	\$parent_id = \$page->post_parent;
+	while (\$parent_id > 0) {
+		\$depth++;
+
+		\$page = get_page(\$parent_id);
+		\$parent_id = \$page->post_parent;
+	}
+
+	return \$depth;
+}
+
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
 	<tabTrigger>crb_get_all_pages</tabTrigger>

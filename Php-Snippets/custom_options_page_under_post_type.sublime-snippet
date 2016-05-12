@@ -1,0 +1,30 @@
+<snippet>
+	<content><![CDATA[
+
+add_action('admin_menu', 'crb_test_attachment');
+function crb_test_attachment() {
+	add_submenu_page(
+		'edit.php?post_type=crb_project',
+		'Test Title', 
+		'Test Title2', 
+		'manage_options', 
+		'crbn-crb_project-media-look.php',
+		'crb_test_attachment_render_callback',
+		''
+	);
+}
+
+function crb_test_attachment_render_callback() {
+	?>
+
+	<?php
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>custom_options_page_under_post_type</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

@@ -1,0 +1,102 @@
+<snippet>
+	<content><![CDATA[
+// Refference Bledina
+;(function(\$, window, document, undefined) {
+	var \$win = \$(window);
+	var \$doc = \$(document);
+	var recipesCount = 0;
+	var \$recipesContainer;
+
+	// Windon on Load
+	\$win.on('load', function() {
+		recipesCount = \$('.recipes .recipe').length;
+
+		// Isotope
+		\$recipesContainer = \$('.section-recipes .recipes').isotope({
+			itemSelector: '.section-recipes .recipes .recipe',
+			layoutMode: 'masonry'
+		});
+
+		// infinitescroll init
+		\$('.section-recipes .recipes').infinitescroll(
+			{
+				navSelector: '#more',
+				nextSelector: '#more a:first', 
+				itemSelector: '.section-recipes .recipes .recipe',
+				loading: {
+					finishedMsg: '',
+					msgText: '',
+					finished : function(){
+						/*
+						\$('#infscr-loading').fadeOut(400);
+
+						setTimeout(function() {
+							\$('#infscr-loading').remove();						
+						}, 400);
+						*/
+					}
+				},
+				maxPage : \$('#more').data('max')
+			},
+
+			function( newElements ) {
+				\$recipesContainer.isotope('appended', \$(newElements));		
+			}
+		);
+			
+		// bind filter dropdown change
+		\$('.section-recipes .section-filters .form-controls').on( 'change', 'select', function(e) {
+			e.preventDefault();
+
+			var filterValue = getFilterValue();
+			\$recipesContainer.isotope({ filter: filterValue });
+			\$win.trigger('scroll');
+		});
+
+		// On Isotope arrange trigger scroll so the infinity load will arrange content
+		\$recipesContainer.on('arrangeComplete', updateInfinityScrollItems);
+		\$win.on('scroll', updateInfinityScrollItems);
+	});
+
+	function getFilterValue() {
+		var filterValue = [];
+		\$('.section-recipes .section-filters .form-controls select').each(function(index, element) {
+			var filter = \$(this).find(':selected').attr('data-filter');
+			if ( typeof filter != 'undefined' && filter.length > 0 ) {
+				filterValue.push(filter);
+			};
+		});
+
+		filterValue = filterValue.join('');
+
+		return filterValue;
+	};
+
+	// Check the number of available elements before and after the infinity load
+	function updateInfinityScrollItems() {
+		console.log('updateInfinityScrollItems - ' + recipesCount);
+
+		var after, filterValue;
+
+		after = \$('.recipes .recipe').length;
+
+		// Check the number of available elements before and after the infinity load
+		if ( recipesCount !== after ) {
+			recipesCount = after;
+
+			\$win.trigger('scroll');
+			filterValue = getFilterValue();
+			\$recipesContainer.isotope({ filter: filterValue });
+		};
+	}
+
+})(jQuery, window, document);
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_infinity_isotope</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.js,source.ts</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> equalize</description>
+</snippet>
