@@ -264,10 +264,10 @@ crb_get_fragment('load-sections', array(
 
 	\$doc.ready(function() {
 		\$('.nav .sub-menu a, .footer-widget a').on('click', function(e){
-			var this_ = \$(this);
-			var href = this_.attr('href');
+			var \$this = \$(this);
+			var href = \$this.attr('href');
 
-			if ( href.substr(0, 1) == '#' ){
+			if ( href.substr(0, 1) == '#' && href.length > 1 ){
 				e.preventDefault();
 				scrollToSection( href );
 			}
