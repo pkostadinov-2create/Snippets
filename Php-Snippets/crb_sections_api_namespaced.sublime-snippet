@@ -146,7 +146,13 @@ function crb_column_section_type(\$page_id) {
 	\$type = ucfirst(\$type);
 
 	return \$type;
+}
 
+// Returns a select sections help text
+function crb_get_sections_help_text() {
+	\$sections_help_text = sprintf(__('You can select from already created sections, or create a new one from <strong><a href="%s" target="_blank">Sections</a> > <a href="%s" target="_blank">Add New</a></strong>', 'crb'), admin_url('edit.php?post_type=crb_section'), admin_url('post-new.php?post_type=crb_section'));
+
+	return \$sections_help_text;
 }
 
 /* ==========================================================================
@@ -214,6 +220,8 @@ if ( empty(\$section['content']) ) {
 	# options/post-meta.php
 ========================================================================== */
 
+$sections_help_text = crb_get_sections_help_text();
+
 /* ==========================================================================
 	# Page - Post Type
 ========================================================================== */
@@ -221,6 +229,7 @@ Container::make('post_meta', __('Sections Settings', 'crb'))
 	->show_on_post_type('page')
 	->add_fields(array(
 		Field::make('association', 'crb_page_sections', __('Select Page Sections', 'crb'))
+			->help_text($sections_help_text)
 			->set_types(array(
 				array(
 					'type' => 'post',
@@ -303,7 +312,7 @@ crb_get_fragment('load-sections', array(
 })(jQuery, window, document);
 
 /* ==========================================================================
-	# options/admin-columns.js
+	# options/admin-columns.php
 ========================================================================== */
 Carbon_Admin_Columns_Manager::modify_columns('post', array('crb_section') )
 	->add( array(
