@@ -1,0 +1,61 @@
+<snippet>
+	<content><![CDATA[
+/**
+ * Translate Complex Fields Post Meta
+ */
+add_filter('wpml_config_array', 'crb_wpml_config_array');
+function crb_wpml_config_array(\$wpml_config) {
+	global \$wpdb;
+
+	\$complex_fields_meta = \$wpdb->get_col("
+		SELECT meta_key
+			FROM \$wpdb->postmeta
+			WHERE 
+				meta_key like '%_crb_home_slider%'
+				OR
+				meta_key like '%_crb_home_boxes%'
+				OR
+				meta_key like '%_crb_post_sections%'
+			GROUP BY meta_key
+	");
+
+	if ( empty(\$wpml_config) ) {
+		\$wpml_config = array();
+	}
+
+	if ( empty(\$wpml_config['wpml-config']) ) {
+		\$wpml_config['wpml-config'] = array();
+	}
+
+	if ( empty(\$wpml_config['wpml-config']['custom-fields']) ) {
+		\$wpml_config['wpml-config']['custom-fields'] = array();
+	}
+
+	if ( empty(\$wpml_config['wpml-config']['custom-fields']['custom-field']) ) {
+		\$wpml_config['wpml-config']['custom-fields']['custom-field'] = array();
+	}
+
+	\$custom_fields = \$wpml_config['wpml-config']['custom-fields']['custom-field'];
+
+	foreach (\$complex_fields_meta as \$meta) {
+		\$custom_fields[] =  array(
+			'value' => \$meta,
+			'attr' => array(
+				'action' => 'translate',
+			)
+		);
+	}
+
+	\$wpml_config['wpml-config']['custom-fields']['custom-field'] = \$custom_fields;
+
+	return \$wpml_config;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>wpml_translate_complex_fields</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

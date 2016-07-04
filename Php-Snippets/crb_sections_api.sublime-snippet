@@ -118,7 +118,7 @@ function crb_before_section_content() {
 function crb_column_section_link(\$section_id) {
 	\$links = '';
 
-	\$page_ids = crb_get_page_id_from_section_id(\$section_id, false);
+	\$page_ids = crb_get_page_id_from_section_id(\$section_id, false, false, false);
 	if ( empty(\$page_ids) ) {
 		return \$links;
 	}
@@ -220,7 +220,7 @@ if ( empty(\$section['content']) ) {
 	# options/custom-fields.php
 ========================================================================== */
 
-$sections_help_text = crb_get_sections_help_text();
+\$sections_help_text = crb_get_sections_help_text();
 
 /* ==========================================================================
 	# Page - Post Type
@@ -229,7 +229,7 @@ Carbon_Container::factory('custom_fields', __('Sections Settings', 'crb'))
 	->show_on_post_type('page')
 	->add_fields(array(
 		Carbon_Field::factory('association', 'crb_page_sections', __('Select Page Sections', 'crb'))
-			->help_text($sections_help_text)
+			->help_text(\$sections_help_text)
 			->set_types(array(
 				array(
 					'type' => 'post',
@@ -246,6 +246,10 @@ Carbon_Container::factory('custom_fields', __('Section Settings', 'crb'))
 	->add_fields(array(
 		Carbon_Field::factory('complex', 'crb_section', __('Section Settings', 'crb'))
 			->set_max(1)
+			->setup_labels(array(
+				'singular_name' => 'Section',
+				'plural_name' => 'Sections',
+			))
 
 			/* ==========================================================================
 				# Example Section
@@ -263,6 +267,17 @@ Carbon_Container::factory('custom_fields', __('Section Settings', 'crb'))
 crb_get_fragment('load-sections', array(
 	'crb_sections' => \$crb_page_sections,
 ));
+
+/* ==========================================================================
+	# single-crb_section.php
+========================================================================== */
+get_header();
+
+crb_get_fragment('load-sections', array(
+	'crb_sections' => array(get_the_id()),
+));
+
+get_footer();
 
 /* ==========================================================================
 	# js/functions.js

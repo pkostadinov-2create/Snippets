@@ -1,0 +1,39 @@
+<snippet>
+	<content><![CDATA[
+// Return true for darker image, return false for lighter image
+function crb_is_image_color_scheme_dark(\$img) {
+	\$scaled = wpthumb(\$img, array('width' => 1, 'height' => 1));
+	\$file = imagecreatefromstring(crb_get_image_file_data(\$scaled));
+	\$rgb = imagecolorat(\$file, 0, 0);
+
+	\$r = (\$rgb >> 16) & 0xFF;
+	\$g = (\$rgb >> 8) & 0xFF;
+	\$b = \$rgb & 0xFF;
+
+	\$average = array_sum(array(\$r, \$g, \$b)) / 3;
+
+	return \$average > 128;
+}
+
+//returns False if failed, else the contents up to FileSize bytes.
+function crb_get_image_file_data(\$file_path){
+	\$fp = fopen(wpthumb_img_shortcode_convert_url_to_path(\$file_path), 'rb');
+	\$buf = '';
+
+	while( !feof(\$fp) ){
+		\$buf .= fgets(\$fp, 4096);
+	}
+
+	fclose(\$fp);
+
+	return \$buf;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_is_image_color_scheme_dark</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

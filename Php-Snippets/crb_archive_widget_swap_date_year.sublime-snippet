@@ -1,0 +1,20 @@
+<snippet>
+	<content><![CDATA[
+// Swap Month/Year text in Date Widget
+add_filter('gettext', 'crb_archive_widget_swap_date_year', 10, 3);
+function crb_archive_widget_swap_date_year( \$translations, \$text, \$domain ) {
+	if ( \$text == '%1\$s %2\$d' && \$domain == 'default' ) {
+		\$translations = '%2\$d %1\$s';
+	}
+
+	return \$translations;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_archive_widget_swap_date_year</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

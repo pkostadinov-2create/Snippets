@@ -1,0 +1,23 @@
+<snippet>
+	<content><![CDATA[
+// Empty cached year results
+add_action('edit_post', 'crb_edit_post_clean_transients');
+function crb_edit_post_clean_transients() {
+	global \$wpdb;
+	\$wpdb->query("
+		DELETE FROM \$wpdb->options
+		WHERE
+			option_name like '_transient_crb_years_%'
+			OR
+			option_name like '_transient_crb_tags_%';
+	");
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_clean_transient_partial_match</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

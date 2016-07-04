@@ -1,0 +1,18 @@
+<snippet>
+	<content><![CDATA[
+// ?test=test123
+if ( isset(\$_GET['test']) && \$_GET['test'] === 'test123' ) {
+	\$path = get_home_path();
+	echo '<pre>';
+	print_r( \$path );
+	echo '</pre>';
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_ftp_path</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

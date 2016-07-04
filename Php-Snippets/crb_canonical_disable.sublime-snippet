@@ -1,0 +1,13 @@
+<snippet>
+	<content><![CDATA[
+// FIX Canonical redirects, that breaks /page/2/ on home page
+remove_filter('template_redirect', 'redirect_canonical');
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_canonical_disable</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

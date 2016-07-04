@@ -1,0 +1,71 @@
+<snippet>
+	<content><![CDATA[
+;(function(\$, window, document, undefined) {
+	var \$win = \$(window);
+	var \$doc = \$(document);
+
+	\$doc.ready(function() {
+		\$('.postbox-container').on('change', '[name="_crb_conference_start_date"]', function() {
+			var \$startDate = \$('[name="_crb_conference_start_date"]');
+			var \$endDate = \$('[name="_crb_conference_end_date"]');
+
+			updateDates(\$startDate, \$endDate, 'start');
+		});
+
+		\$('.postbox-container').on('change', '[name="_crb_conference_end_date"]', function() {
+			var \$startDate = \$('[name="_crb_conference_start_date"]');
+			var \$endDate = \$('[name="_crb_conference_end_date"]');
+
+			updateDates(\$startDate, \$endDate, 'end');
+		});
+
+		\$('.postbox-container').on('change', '[name="_crb_project_start_date"]', function() {
+			var \$startDate = \$('[name="_crb_project_start_date"]');
+			var \$endDate = \$('[name="_crb_project_end_date"]');
+
+			updateDates(\$startDate, \$endDate, 'start');
+		});
+
+		\$('.postbox-container').on('change', '[name="_crb_project_end_date"]', function() {
+			var \$startDate = \$('[name="_crb_project_start_date"]');
+			var \$endDate = \$('[name="_crb_project_end_date"]');
+
+			updateDates(\$startDate, \$endDate, 'end');
+		});
+
+		function updateDates(\$startDate, \$endDate, currentlyModifying) {
+			if ( \$startDate.length == 0 || \$endDate.length == 0 ) {
+				return;
+			};
+
+			if ( \$endDate.val() == '' ) {
+				\$endDate.val(\$startDate.val());
+			};
+			if ( \$startDate.val() == '' ) {
+				\$startDate.val(\$endDate.val());
+			};
+
+			var startDateObject = \$startDate.datepicker("getDate");
+			var startDate = \$.datepicker.formatDate('@', startDateObject);
+
+			var endDateObject = \$endDate.datepicker("getDate");
+			var endDate = \$.datepicker.formatDate('@', endDateObject);
+
+			if ( startDate > endDate && currentlyModifying == 'start' ) {
+				\$endDate.val(\$startDate.val());
+			};
+
+			if ( startDate > endDate && currentlyModifying == 'end' ) {
+				\$startDate.val(\$endDate.val());
+			};
+		}
+	});
+})(jQuery, window, document);
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_start_end_date</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.js,source.ts</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> equalize</description>
+</snippet>
