@@ -89,19 +89,28 @@ function crb_nav_menu_link_attributes(\$atts, \$item, \$args, \$depth) {
 
 // Find the first page where the current section type is used
 function crb_get_page_id_from_section_type(\$section_type = '') {
+	// If used within the context if single Section
 	if ( empty(\$section_type) ) {
-		\$crb_sections = carbon_get_the_post_meta('crb_page_sections');
-		if ( empty(\$crb_sections[0]['_type']) ) {
+		\$crb_section = carbon_get_the_post_meta('crb_section', 'complex');
+		if ( empty(\$crb_section) || empty(\$crb_section[0]['_type']) ) {
 			return '';
 		}
 
-		\$section_type = \$crb_sections[0]['_type'];
+		\$section_type = substr(\$crb_section[0]['_type'], 1);
 	}
 
+	// Replace dashes with underscore
+	\$section_type = str_replace('-', '_', \$section_type);
+
+	// Search for post meta, from the current \$section_type
 	global \$wpdb;
-	\$results = \$wpdb->get_results( "SELECT post_id FROM \$wpdb->postmeta WHERE meta_key = '_crb_section_projects-_show_categories_filter_0'", ARRAY_A );
-	\$results = wp_list_pluck(\$results, 'post_id');
-	\$section_id = \$results[0];
+	\$results = \$wpdb->get_results( "SELECT post_id FROM \$wpdb->postmeta WHERE meta_key like '_crb_section_\$section_type%'", ARRAY_A );
+
+	if ( empty(\$results) || empty(\$results[0]) || empty(\$results[0]['post_id']) ) {
+		return 0;
+	}
+
+	\$section_id = \$results[0]['post_id'];
 
 	return crb_get_page_id_from_section_id(\$section_id);
 }

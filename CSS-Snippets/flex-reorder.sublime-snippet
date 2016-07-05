@@ -1,0 +1,23 @@
+<snippet>
+	<content><![CDATA[
+/* Reorder Connect Section on mobile */
+.section-connect .cols {
+	display: -webkit-flex;
+	display: -moz-flex;
+	display: -ms-flex;
+	display: -o-flex;
+	display: flex;
+	-webkit-flex-direction: column;
+	   -moz-flex-direction: column;
+		-ms-flex-direction: column;
+		 -o-flex-direction: column;
+			flex-direction: column;
+}
+.section-connect .col { padding-top: 60px; }
+.section-connect .col:nth-child(3n+2) { order: -1; padding-top: 0; }
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>flex-reorder</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.css</scope>
+</snippet>

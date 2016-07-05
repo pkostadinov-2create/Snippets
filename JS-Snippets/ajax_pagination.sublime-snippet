@@ -1,0 +1,45 @@
+<snippet>
+	<content><![CDATA[
+/***
+ * Infinity Load, based on customly added classes
+ * 
+ * section-ajax-load - holder (all items bellow should be located here)
+ * ajax-infinity-entries - listing holder (items will be inserted inside this container)
+ * ajax-infinity-entry - single entry holder (item class)
+ * ajax-infinity-load - button (link)
+ */
+function ajaxPagination() {
+	\$('.section-ajax-load').on('click', '.ajax-infinity-load', function(e) {
+		e.preventDefault();
+
+		var \$loadBtn = \$(this);
+		var link = \$loadBtn.find('a').attr('href');
+		\$.ajax({
+			url: link,
+			type: 'GET',
+			dataType: 'html'
+		})
+		.done(function(responce) {
+			var \$html = \$(responce).find('.section-ajax-load');
+			var \$entries = \$html.find('.ajax-infinity-entry');
+			var \$button = \$html.find('.ajax-infinity-load');
+
+			\$entries.appendTo('.section-ajax-load .ajax-infinity-entries');
+
+			if ( \$button.length > 0 ) {
+				\$button.insertAfter(\$loadBtn)
+			};
+		})
+		.always(function() {
+			\$loadBtn.remove();
+		});
+	});
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>ajax_pagination</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.js,source.ts</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> ajax</description>
+</snippet>
