@@ -3,8 +3,6 @@
 function crb_get_prev_next_post_alphabetically(\$current_post_id, \$post_type, \$next = false) {
 	\$post_ids = get_posts(array(
 		'post_type' => \$post_type,
-		'order' => 'ASC',
-		'orderby' => 'title',
 		'posts_per_page' => -1,
 		'fields' => 'ids'
 	));
@@ -31,6 +29,41 @@ function crb_get_prev_next_post_alphabetically(\$current_post_id, \$post_type, \
 		return \$post_ids[\$next_post_index];
 	} else {
 		return \$post_ids[\$prev_post_index];
+	}
+}
+
+function crb_get_prev_next_post(\$current_post_id, \$post_type, \$next = false) {
+	\$post_ids = get_posts(array(
+		'post_type' => \$post_type,
+		'posts_per_page' => -1,
+		'fields' => 'ids'
+	));
+
+	if ( empty(\$post_ids) ) {
+		return;
+	}
+
+	\$current_post_index = array_search(\$current_post_id, \$post_ids);
+
+
+	\$next_post_index = \$current_post_index+1;
+	\$prev_post_index = \$current_post_index-1;
+	\$last_post_index = count(\$post_ids) - 1;
+
+	if ( \$prev_post_index < 0 ) {
+		// \$prev_post_index = \$last_post_index;
+		\$prev_post_index = false;
+	}
+
+	if ( \$next_post_index > \$last_post_index ) {
+		// \$next_post_index = 0;
+		\$next_post_index = false;
+	}
+
+	if ( \$next ) {
+		return \$next_post_index !== false ? \$post_ids[\$next_post_index] : \$next_post_index;
+	} else {
+		return \$prev_post_index !== false ? \$post_ids[\$prev_post_index] : \$prev_post_index;
 	}
 }
 

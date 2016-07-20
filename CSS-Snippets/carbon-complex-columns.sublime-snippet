@@ -1,0 +1,12 @@
+<snippet>
+	<content><![CDATA[
+#carbon-_crb_section-complex-container [value="_content_columned"] ~ .fields-container .carbon-groups-holder { overflow: hidden; }
+#carbon-_crb_section-complex-container [value="_content_columned"] ~ .fields-container .carbon-groups-holder .carbon-group-row { width: 32%; float: left; margin-top: 0; margin-left: 2%; }
+#carbon-_crb_section-complex-container [value="_content_columned"] ~ .fields-container .carbon-groups-holder .carbon-group-row:nth-child(3n+3) ~ .carbon-group-row { margin-top: 14px; }
+#carbon-_crb_section-complex-container [value="_content_columned"] ~ .fields-container .carbon-groups-holder .carbon-group-row:nth-child(3n+1) { margin-left: 0; clear: both; }
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>carbon-complex-columns</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.css</scope>
+</snippet>

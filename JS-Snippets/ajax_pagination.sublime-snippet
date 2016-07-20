@@ -2,18 +2,20 @@
 	<content><![CDATA[
 /***
  * Infinity Load, based on customly added classes
- * 
+ *
  * section-ajax-load - holder (all items bellow should be located here)
  * ajax-infinity-entries - listing holder (items will be inserted inside this container)
  * ajax-infinity-entry - single entry holder (item class)
  * ajax-infinity-load - button (link)
  */
 function ajaxPagination() {
-	\$('.section-ajax-load').on('click', '.ajax-infinity-load', function(e) {
+	\$('.section-ajax-load').on('click', '.ajax-infinity-load a', function(e) {
 		e.preventDefault();
 
-		var \$loadBtn = \$(this);
-		var link = \$loadBtn.find('a').attr('href');
+		var \$link = \$(this);
+		var link = \$link.attr('href');
+		var \$loadBtn = \$link.closest('.ajax-infinity-load');
+
 		\$.ajax({
 			url: link,
 			type: 'GET',
@@ -27,13 +29,22 @@ function ajaxPagination() {
 			\$entries.appendTo('.section-ajax-load .ajax-infinity-entries');
 
 			if ( \$button.length > 0 ) {
-				\$button.insertAfter(\$loadBtn)
+				\$button.insertAfter(\$loadBtn);
 			};
+
+			ajaxNextPage();
 		})
 		.always(function() {
 			\$loadBtn.remove();
 		});
 	});
+}
+
+/**
+ * Hook Any Next Page events
+ */
+function ajaxNextPage() {
+	// Do nothing
 }
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->

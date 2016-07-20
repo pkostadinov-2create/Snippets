@@ -1,0 +1,58 @@
+<snippet>
+	<content><![CDATA[
+\$filter_search = crb_request_param('filter_search');
+
+// Search will be injected through pure SQL
+if ( !empty(\$filter_search) ) {
+	add_filter('posts_join', 'crb_posts_join_papers_search');
+	add_filter('posts_where', 'crb_posts_where_papers_search');
+}
+
+\$query = new WP_Query(\$args);
+remove_filter('posts_join', 'crb_posts_join_papers_search');
+remove_filter('posts_where', 'crb_posts_where_papers_search');
+
+function crb_posts_join_papers_search(\$join) {
+	global \$wpdb;
+
+	\$filter_search = crb_request_param('filter_search');
+	if ( !empty(\$filter_search) ) {
+		\$join .= "INNER JOIN \$wpdb->postmeta as postmetaForSearch ON ( \$wpdb->posts.ID = postmetaForSearch.post_id )";
+	}
+
+	return \$join;
+}
+
+function crb_posts_where_papers_search(\$where) {
+	global \$wpdb;
+
+	\$filter_search = crb_request_param('filter_search');
+	if ( !empty(\$filter_search) ) {
+		\$where .= \$wpdb->prepare(
+			"AND (
+				(\$wpdb->posts.post_title LIKE '%%%s%%') 
+				OR 
+				(\$wpdb->posts.post_excerpt LIKE '%%%s%%') 
+				OR 
+				(\$wpdb->posts.post_content LIKE '%%%s%%') 
+				OR 
+				( postmetaForSearch.meta_key = '_crb_paper_author' AND postmetaForSearch.meta_value LIKE '%%%s%%' )
+			)",
+			\$filter_search,
+			\$filter_search,
+			\$filter_search,
+			\$filter_search
+		);
+	}
+
+	return \$where;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>acf_functions</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

@@ -24,10 +24,10 @@ div.gform_wrapper,
 
 .gform_wrapper form .gform_heading,
 .gform_wrapper form div.validation_error { margin-bottom: 0; }
-.gform_wrapper form li.gfield.gfield_error.gfield_contains_required { padding-left: 0 !important; margin-top: 0 !important; margin-bottom: 0 !important; }
+.gform_wrapper form li.gfield.gfield_error.gfield_contains_required { padding-left: 0 !important; margin-top: 16px !important; margin-bottom: 0 !important; }
 
 .gform_wrapper form li.gfield.gfield_error,
-.gform_wrapper form li.gfield.gfield_error.gfield_contains_required.gfield_creditcard_warning { border-width: 0; padding: 0 !important; margin-bottom: 0 !important; background: transparent; }
+.gform_wrapper form li.gfield.gfield_error.gfield_contains_required.gfield_creditcard_warning { border-width: 0; padding-top: 0 !important; margin-bottom: 0 !important; background: transparent; }
 html body .gform_wrapper label.gfield_label + div.ginput_container,
 .gform_wrapper form .gfield_html.gfield_no_follows_desc,
 .gform_wrapper form li.gfield.gfield_error.gfield_contains_required label.gfield_label,
@@ -62,7 +62,7 @@ body .gform_wrapper form li.gfield textarea { text-indent: 0; }
 
 body .gform_wrapper form .gform_footer input.button,
 body .gform_wrapper form .gform_footer input[type=image],
-body .gform_wrapper form .gform_footer input[type=submit] {  }
+body .gform_wrapper form .gform_footer input[type=submit] { }
 
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
