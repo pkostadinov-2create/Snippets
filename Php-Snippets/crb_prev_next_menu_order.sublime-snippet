@@ -1,0 +1,23 @@
+<snippet>
+	<content><![CDATA[
+// Return Prev/Next post ids by Menu Order for specific post type
+function crb_get_prev_next_work() {
+	global \$wpdb, \$post;
+
+	\$prev = \$wpdb->get_var("SELECT p.ID FROM \$wpdb->posts AS p  WHERE p.menu_order < \$post->menu_order AND p.post_type = 'crb_work'  AND ( p.post_status = 'publish' ) ORDER BY p.menu_order DESC LIMIT 1");
+	\$next = \$wpdb->get_var("SELECT p.ID FROM \$wpdb->posts AS p  WHERE p.menu_order > \$post->menu_order AND p.post_type = 'crb_work'  AND ( p.post_status = 'publish' ) ORDER BY p.menu_order ASC LIMIT 1");
+
+	return array(
+		'prev' => \$prev,
+		'next' => \$next,
+	);
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_prev_next_menu_order</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

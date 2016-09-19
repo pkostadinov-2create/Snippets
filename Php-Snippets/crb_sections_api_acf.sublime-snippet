@@ -1,0 +1,578 @@
+<snippet>
+	<content><![CDATA[
+
+/* ==========================================================================
+	# Functions.php
+========================================================================== */
+
+// Includes
+function crb_get_fragment( \$template, \$fragment_passed_args = array() ) {
+	include( locate_template( 'fragments/' . \$template . '.php' ) );
+}
+
+// Return the current page slug. Works inside loop.
+function crb_get_slug(\$post_id = '') {
+	if ( empty(\$post_id) ) {
+		\$post_id = get_the_id();
+	}
+
+	return get_post_field( 'post_name', \$post_id );
+}
+
+/* ==========================================================================
+	# includes/sections-functions.php
+========================================================================== */
+
+<?php
+
+// Find pages, where the current section is used in
+// If \$is_section_name is used, the SQL will search a section name, instead of section id. Use underscored name.
+function crb_get_page_id_from_section_id(\$section_id, \$singular = true, \$is_section_name = false) {
+	\$page_id = 0;
+
+	global \$wpdb;
+	if ( \$is_section_name ) {
+		\$results = \$wpdb->get_results( "
+				SELECT post_id
+				FROM \$wpdb->postmeta 
+				WHERE 
+					meta_key = '_crb_page_sections' 
+					and 
+					meta_value like CONCAT(
+						'%post:crb_section:',
+						(SELECT post_id FROM \$wpdb->postmeta WHERE meta_key LIKE '%_crb_section_\$section_id%' GROUP BY post_id),
+						'%'
+					)
+				LIMIT 1;
+			", ARRAY_A );
+	} else {
+		\$results = \$wpdb->get_results( "
+				SELECT post_id
+				FROM \$wpdb->postmeta as pm
+				INNER JOIN
+					\$wpdb->posts as p
+					ON ( pm.post_id = p.ID )
+				WHERE 
+					pm.meta_key = 'crb_page_sections' 
+					and 
+					pm.meta_value like '%\"\$section_id\"%'
+					and
+					p.post_status = 'publish'
+					and
+					p.post_type = 'page'
+				GROUP BY post_id;
+			", ARRAY_A );
+	}
+
+	if ( empty(\$results[0]) ) {
+		return \$page_id;
+	}
+
+	\$results = wp_list_pluck(\$results, 'post_id');
+	\$page_id = \$results[0];
+
+	if ( !\$singular ) {
+		return \$results;
+	}
+
+	return \$page_id;
+}
+
+// Modify Top Navigation Links
+add_filter('nav_menu_link_attributes', 'crb_nav_menu_link_attributes', 100, 4);
+function crb_nav_menu_link_attributes(\$atts, \$item, \$args, \$depth) {
+	\$post_type = \$item->object;
+
+	if ( \$post_type != 'crb_section' ) {
+		return \$atts;
+	}
+
+	\$post_id = \$item->object_id;
+	\$slug = get_post_field('post_name', \$post_id);
+
+	\$page_id = crb_get_page_id_from_section_id(\$post_id);
+
+	\$atts['href'] = '';
+	if ( !is_singular('page') || \$page_id != get_the_id() ) {
+		\$atts['href'] = get_permalink(\$page_id);
+	}
+
+	\$atts['href'] .= '#' . \$slug;
+	\$atts['data-scrollto'] = \$slug;
+
+	return \$atts;
+}
+
+// Find the first page where the current section type is used
+function crb_get_page_id_from_section_type(\$section_type = '') {
+	if ( empty(\$section_type) ) {
+		\$crb_sections = carbon_get_the_post_meta('crb_page_sections');
+		if ( empty(\$crb_sections[0]['acf_fc_layout']) ) {
+			return '';
+		}
+
+		\$section_type = \$crb_sections[0]['acf_fc_layout'];
+	}
+
+	global \$wpdb;
+	\$results = \$wpdb->get_results( "SELECT post_id FROM \$wpdb->postmeta WHERE meta_key = '_crb_section_projects-_show_categories_filter_0'", ARRAY_A );
+	\$results = wp_list_pluck(\$results, 'post_id');
+	\$section_id = \$results[0];
+
+	return crb_get_page_id_from_section_id(\$section_id);
+}
+
+// Dispaly Edit post button
+add_action('crb_before_section_content', 'crb_before_section_content');
+function crb_before_section_content() {
+	\$type = get_post_type();
+	\$type = str_replace('crb_', '', \$type);
+	edit_post_link(__('Edit this ', 'crb') . \$type, '', '');
+}
+
+// Column callback, displays all pages in which the current section is displayed.
+function crb_column_section_link(\$section_id) {
+	\$links = '';
+
+	\$page_ids = crb_get_page_id_from_section_id(\$section_id, false);
+	if ( empty(\$page_ids) ) {
+		return \$links;
+	}
+
+	foreach (\$page_ids as \$index => \$page_id) {
+		if ( \$index != 0 ) {
+			\$links .= ', ';
+		}
+		\$links .= '<strong><a href="' . get_permalink(\$page_id) . '#' . crb_get_slug(\$section_id) . '" target="_blank">' . get_the_title(\$page_id) . '</a></strong>';
+	}
+
+	return \$links;
+}
+
+// Callback for "Section Type" column
+function crb_column_section_type(\$page_id) {
+	\$section = carbon_get_post_meta(\$page_id, 'crb_section', 'complex');
+	
+	if ( empty(\$section) || empty(\$section[0]['acf_fc_layout'])) {
+		return '';
+	}
+
+	\$type = \$section[0]['acf_fc_layout'];
+	\$type =  str_replace(array('_', '-'), array(' ', ' '), \$type);
+	\$type = ucfirst(\$type);
+
+	return \$type;
+}
+
+// Returns a select sections help text
+function crb_get_sections_help_text() {
+	\$sections_help_text = sprintf(__('You can select from already created sections, or create a new one from <strong><a href="%s" target="_blank">Sections</a> > <a href="%s" target="_blank">Add New</a></strong>', 'crb'), admin_url('edit.php?post_type=crb_section'), admin_url('post-new.php?post_type=crb_section'));
+
+	return \$sections_help_text;
+}
+
+/* ==========================================================================
+	# includes/Crb_ACF.php
+========================================================================== */
+
+/*
+ * Useful functions for ACF Integrations
+ * Documentation : http://www.advancedcustomfields.com/resources
+ */
+
+class Crb_ACF {
+
+	public static function exists() {
+		return class_exists('Acf');
+	}
+
+	public static function get_theme_option( \$option_name = null ) {
+		if ( !self::exists() || !\$option_name) {
+			return;
+		}
+
+		return get_field( \$option_name, 'option' );
+	}
+
+	public static function get_post_meta( \$post_id = false, \$meta_key, \$format_value = true ) {
+		if (
+			!self::exists()
+			|| !\$meta_key
+			|| !\$post_id
+		) {
+			return;
+		}
+
+		return get_field( \$meta_key, \$post_id, \$format_value );
+	}
+
+	public static function get_the_post_meta( \$meta_key, \$format_value = true ) {
+		\$post_id = get_the_id();
+
+		if (
+			!self::exists()
+			|| !\$meta_key
+			|| !\$post_id
+		) {
+			return;
+		}
+
+		return get_field( \$meta_key, \$post_id, \$format_value );
+	}
+
+	public static function get_term_meta( \$term_obj, \$meta_key ) {
+		if ( !self::exists() || !is_object( \$term_obj ) ) {
+			return;
+		}
+
+		return get_field( \$meta_key, \$term_obj );
+	}
+
+	public static function get_widget_meta( \$widget_id, \$meta_key ) {
+		if (
+			!self::exists()
+			|| !\$meta_key
+			|| !\$widget_id
+		) {
+			return;
+		}
+
+		return get_field( \$meta_key, 'widget_' . \$widget_id );
+	}
+
+	# http://www.advancedcustomfields.com/resources/acf_add_options_page/
+	public static function add_options_page( \$params = array() ) {
+		if ( !self::exists() || !function_exists('acf_add_options_page') ) {
+			return;
+		}
+
+		\$params = array_merge(array(
+			'page_title' 	=> __('Options','crb'),
+			'menu_title'	=> __('Options','crb'),
+			'menu_slug' 	=> 'acf-options',
+			'capability'	=> 'edit_posts',
+			'parent_slug'	=> '',
+			'position'		=> false,
+			'icon_url'		=> false,
+			'redirect'		=> true
+		), \$params);
+
+		acf_add_options_page( \$params );
+	}
+}
+
+/* ==========================================================================
+	# includes/carbon-functions-override.php
+========================================================================== */
+
+if ( !function_exists('carbon_get_theme_option') ) :
+function carbon_get_theme_option(\$field_name) {
+	return Crb_ACF::get_theme_option(\$field_name, 'option');
+}
+endif;
+
+if ( !function_exists('carbon_get_theme_option') ) :
+function carbon_get_theme_option(\$field_name) {
+	return Crb_ACF::get_theme_option(\$field_name, 'option');
+}
+endif;
+
+if ( !function_exists('carbon_get_the_post_meta') ) :
+function carbon_get_the_post_meta(\$field_name) {
+	return Crb_ACF::get_the_post_meta(\$field_name);
+}
+endif;
+
+if ( !function_exists('carbon_get_post_meta') ) :
+function carbon_get_post_meta(\$field_name, \$page_id) {
+	return Crb_ACF::get_post_meta(\$field_name, \$page_id);
+}
+endif;
+
+if ( !function_exists('carbon_get_term_meta') ) :
+function carbon_get_term_meta(\$term_obj, \$meta_key) {
+	if ( is_numeric(\$term_obj) ) {
+		\$term_obj = get_term(\$term_obj);
+	}
+
+	return Crb_ACF::get_term_meta(\$term_obj, \$meta_key);
+}
+endif;
+
+
+/* ==========================================================================
+	# fragments/load-sections.php
+========================================================================== */
+
+\$crb_sections = \$fragment_passed_args['crb_sections'];
+if ( empty(\$crb_sections) ) {
+	return;
+}
+
+\$sections_query = new WP_Query(array(
+	'post__in' => \$crb_sections,
+	'post_type' => 'crb_section',
+	'order' => 'ASC',
+	'orderby' => 'post__in',
+	'posts_per_page' => -1,
+));
+
+if ( \$sections_query->have_posts() ) {
+	while ( \$sections_query->have_posts() ) { \$sections_query->the_post();
+		\$crb_section = carbon_get_the_post_meta('crb_section', 'complex');
+
+		if ( empty(\$crb_section[0]['acf_fc_layout']) ) {
+			continue;
+		}
+
+		\$type = \$crb_section[0]['acf_fc_layout'];
+		\$type = str_replace('_', '-', \$type);
+
+		crb_get_fragment('section-' . \$type, array(
+			'crb_section' => \$crb_section[0],
+			'index' => \$sections_query->current_post,
+			'total_posts' => \$sections_query->found_posts,
+		));
+	}
+
+	wp_reset_postdata();
+}
+
+/* ==========================================================================
+	# fragments/section-example.php
+========================================================================== */
+<?php
+
+\$section = \$fragment_passed_args['crb_section'];
+if ( empty(\$section) ) {
+	return;
+}
+
+if ( empty(\$section['content']) ) {
+	return;
+}
+
+?>
+
+<div class="section section-default" data-scroll-section="#<?php echo crb_get_slug(); ?>">
+	or
+<div class="section section-default" id="section-<?php echo crb_get_slug(); ?>">
+
+	<?php do_action('crb_before_section_content'); ?>
+
+<?
+
+/* ==========================================================================
+	# options/post-meta.php
+========================================================================== */
+
+\$sections_help_text = crb_get_sections_help_text();
+
+/* ==========================================================================
+	# Page - Post Type
+========================================================================== */
+Container::make('post_meta', __('Sections Settings', 'crb'))
+	->show_on_post_type('page')
+	->add_fields(array(
+		Field::make('association', 'crb_page_sections', __('Select Page Sections', 'crb'))
+			->help_text(\$sections_help_text)
+			->set_types(array(
+				array(
+					'type' => 'post',
+					'post_type' => 'crb_section',
+				),
+			)),
+	));
+
+/* ==========================================================================
+	# Section - Post Type
+========================================================================== */
+Container::make('post_meta', __('Section Settings', 'crb'))
+	->show_on_post_type('crb_section')
+	->add_fields(array(
+		Field::make('complex', 'crb_section', __('Section Settings', 'crb'))
+			->set_max(1)
+			->setup_labels(array(
+				'singular_name' => 'Section',
+				'plural_name' => 'Sections',
+			))
+
+			/* ==========================================================================
+				# Example Section
+			========================================================================== */
+			->add_fields('Example', array(
+				Field::make('rich_text', 'content')
+					->set_required(true),
+			)),
+	));
+
+/* ==========================================================================
+	# templates/homepage.php
+========================================================================== */
+\$crb_page_sections = carbon_get_the_post_meta('crb_page_sections');
+crb_get_fragment('load-sections', array(
+	'crb_sections' => \$crb_page_sections,
+));
+
+/* ==========================================================================
+	# single-crb_section.php
+========================================================================== */
+get_header();
+
+crb_get_fragment('load-sections', array(
+	'crb_sections' => array(get_the_id()),
+));
+
+get_footer();
+
+/* ==========================================================================
+	# js/functions.js
+========================================================================== */
+;(function(\$, window, document, undefined) {
+	var \$win = \$(window);
+	var \$doc = \$(document);
+
+	\$doc.ready(function() {
+		\$('.nav .sub-menu a, .footer-widget a').on('click', function(e){
+			var \$this = \$(this);
+			var href = \$this.attr('href');
+
+			if ( href.substr(0, 1) == '#' && href.length > 1 ){
+				e.preventDefault();
+				scrollToSection( href );
+			}
+		});
+
+		\$win
+			.on('load', function(){
+				if ( window.location.hash ){
+					var hash_href = window.location.hash;
+					scrollToSection( hash_href );
+				}
+			});
+
+		function scrollToSection(\$href){
+			\$href = \$href.replace('#', '');
+			console.log(\$href);
+			console.log('#section-' + \$href);
+			var \$target = \$('#section-' + \$href);
+			console.log(\$target);
+			// var offset = \$('.header-row.mobile-row').outerHeight();
+
+			/*if ( \$win.width() < 1020 ){
+				offset = \$('.header').outerHeight();
+			}*/
+
+			if ( \$target.length ) {
+				\$('html, body').animate({
+					scrollTop: \$target.offset().top /*- offset*/
+				}, 1000);	
+			};
+		}
+	});
+})(jQuery, window, document);
+
+/* ==========================================================================
+	# options/admin-columns.php
+========================================================================== */
+Carbon_Admin_Columns_Manager::modify_columns('post', array('crb_section') )
+	->add( array(
+		Carbon_Admin_Column::create('Link')
+			->set_name( 'crb-link-column' )
+			->set_callback('crb_column_section_link'),
+));
+
+Carbon_Admin_Columns_Manager::modify_columns('post', array('crb_section') )
+	->add( array(
+		Carbon_Admin_Column::create('Section Type')
+			->set_name( 'crb-section-type-column' )
+			->set_callback('crb_column_section_type'),
+));
+
+/* ==========================================================================
+	# options/post-types.php
+========================================================================== */
+register_post_type('crb_section', array(
+	'labels' => array(
+		'name'	 => __('Sections', 'crb'),
+		'singular_name' => __('Section', 'crb'),
+		'add_new' => __('Add New', 'crb'),
+		'add_new_item' => __('Add new Section', 'crb'),
+		'view_item' => __('View Section', 'crb'),
+		'edit_item' => __('Edit Section', 'crb'),
+		'new_item' => __('New Section', 'crb'),
+		'view_item' => __('View Section', 'crb'),
+		'search_items' => __('Search Sections', 'crb'),
+		'not_found' =>  __('No sections found', 'crb'),
+		'not_found_in_trash' => __('No sections found in trash', 'crb'),
+	),
+	'public' => true,
+	'exclude_from_search' => true,
+	'show_ui' => true,
+	'rewrite' => array(
+		'slug' => 'section',
+		'with_front' => false,
+	),
+	'menu_icon' => 'dashicons-exerpt-view',
+	'supports' => array('title', 'page-attributes'),
+));
+
+/* ==========================================================================
+	# includes/images.php
+========================================================================== */
+...
+
+
+// Dynamic help texts for images
+add_filter('acf/load_field', 'crb_acf_dynamic_help_text');
+function crb_acf_dynamic_help_text( \$field ) {
+	// Debug optoins
+	// \$debug = true;
+	if ( !empty(\$debug) ) {
+		echo '<pre>';
+		print_r( \$field );
+		echo '</pre>';
+	}
+
+	\$sections_help_text = crb_get_sections_help_text();
+	\$section = array(
+		'field_57557f299c0fb' => 'crb_page_sections',
+	);
+	if ( !empty(\$section[\$field['key']]) ) {
+		\$field['instructions'] = \$sections_help_text;
+	}
+
+	\$sizes = array(
+		'field_57557fdd64456' => 'crb_top_background_image',
+		'field_57558084b1ad0' => 'crb_bottom_background_image',
+		'field_5755811cb1ad3' => 'crb_section_intro_slider',
+		'field_57580f0988ced' => 'crb_section_boxes_custom',
+		'field_57594f244644f' => 'crb_actor_single_work',
+		'field_575ab43365e93' => 'crb_section_executives_image',
+		'field_575abd7784d91' => 'crb_section_company_info_and_gallery',
+		'field_575ac618cd87d' => 'crb_section_contact_information',
+		'field_575e9869a013e' => 'crb_news_slider',
+		'field_57877804d2dcc' => 'crb_single_work',
+		'field_57b6a2b096742' => 'crb_section_executives_mobile_image',
+		'field_57b6a57bb130d' => 'crb_section_featured_actors_mobile_image',
+	);
+	if ( !empty(\$sizes[\$field['key']]) ) {
+		\$size = \$sizes[\$field['key']];
+
+		\$field['instructions'] = crb_get_attachment_help(\$size);
+	}
+
+
+	// return the field
+	return \$field;
+}
+
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_sections_api_acf</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

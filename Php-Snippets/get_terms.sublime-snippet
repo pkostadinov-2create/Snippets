@@ -1,24 +1,25 @@
 <snippet>
 	<content><![CDATA[
-\$some_terms = get_terms(\$taxonomies_string_array, array(
-	'orderby'           => 'name', 
+\$some_terms = get_terms(array(
+	'taxonomy'          => 'category',
+	'orderby'           => 'name',
 	'order'             => 'ASC',
-	'hide_empty'        => true, 
-	'exclude'           => array(), 
-	'exclude_tree'      => array(), 
+	'hide_empty'        => true,
+	'exclude'           => array(),
+	'exclude_tree'      => array(),
 	'include'           => array(),
-	'number'            => '', 
-	'fields'            => 'all', 
-	'slug'              => '', 
+	'number'            => '',
+	'fields'            => 'all',
+	'slug'              => '',
 	'parent'            => '',
-	'hierarchical'      => true, 
-	'child_of'          => 0, 
-	'get'               => '', 
+	'hierarchical'      => true,
+	'child_of'          => 0,
+	'get'               => '',
 	'name__like'        => '',
 	'description__like' => '',
-	'pad_counts'        => false, 
-	'offset'            => '', 
-	'search'            => '', 
+	'pad_counts'        => false,
+	'offset'            => '',
+	'search'            => '',
 	'cache_domain'      => 'core'
 ));
 ]]></content>

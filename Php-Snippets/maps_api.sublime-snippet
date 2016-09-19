@@ -1,0 +1,26 @@
+<snippet>
+	<content><![CDATA[
+\$api_key = apply_filters( 'carbon_map_api_key', false );
+crb_enqueue_script('theme-google-maps', '//maps.googleapis.com/maps/api/js?sensor=false' . ( \$api_key ? '&key=' . \$api_key : '' ));
+
+add_filter('carbon_map_api_key', 'crb_carbon_map_api_key');
+function crb_carbon_map_api_key() {
+	\$key = get_option( '_crb_maps_api_key' );
+	if ( !empty(\$key) ) {
+		return \$key;
+	}
+
+	return '';
+}
+
+Field::make('text', 'crb_maps_api_key', __('Google maps api key', 'crb'))
+	->help_text('You can create new api key from your google account. Just visit the following link: <a href="https://developers.google.com/maps/documentation/javascript/get-api-key">https://developers.google.com/maps/documentation/javascript/get-api-key</a>, and than click on the "GET A KEY" button.'),
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>acf_functions</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>
