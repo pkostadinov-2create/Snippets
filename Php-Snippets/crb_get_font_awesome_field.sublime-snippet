@@ -1,14 +1,14 @@
 <snippet>
 	<content><![CDATA[
 
-Carbon_Field::factory('complex', 'crb_social_icons', __('Social Icons', 'crb'))
+Field::make('complex', 'crb_social_icons', __('Social Icons', 'crb'))
 	->add_fields(array(
-		Carbon_Field::factory('text', 'link', __('Social link', 'crb'))
+		Field::make('text', 'link', __('Social link', 'crb'))
 			->set_required(true),
-		Carbon_Field::factory('select', 'icon', __('Social Icon', 'crb'))
+		Field::make('select', 'icon', __('Social Icon', 'crb'))
 			->set_required(true)
 			->set_options(crb_get_font_awesome_options())
-			->help_text('You can preview all font awesome icons from: <a href="http://fortawesome.github.io/Font-Awesome/cheatsheet/" target="_blank">Font Awesome Cheatsheet</a>'),
+			->help_text('You can preview all font awesome icons from: <a href="http://fontawesome.io/cheatsheet/" target="_blank">Font Awesome Cheatsheet</a>'),
 	))
 
 ]]></content>

@@ -1,0 +1,57 @@
+<snippet>
+	<content><![CDATA[
+// Frontend Hook to update post views count
+add_action( 'wp_head', 'crb_update_views_count' );
+function crb_update_views_count() {
+	if ( !is_singular() ) {
+		return;
+	}
+
+	\$crb_views = carbon_get_the_post_meta( 'crb_views' );
+	if ( empty( \$crb_views ) ) {
+		\$crb_views = 0;
+	}
+
+	\$crb_views++;
+
+	update_post_meta( get_the_id(), '_crb_views', \$crb_views );
+}
+
+// Make sure that there is a post meta value for all posts
+// This is needed for correct sorting
+add_action( 'save_post', 'crb_initialize_views_count' );
+function crb_initialize_views_count( \$post_id ) {
+	\$crb_views = carbon_get_post_meta( \$post_id, 'crb_views' );
+	if ( !empty( \$crb_views ) ) {
+		return;
+	}
+
+	\$crb_views = 0;
+
+	update_post_meta(\$post_id, '_crb_views', \$crb_views);
+}
+
+// Hook at "init", after Register_post_type is called
+add_action( 'init', 'crb_add_admin_column_for_views_count' );
+function crb_add_admin_column_for_views_count() {
+	\$all_post_types = array_values( get_post_types( array(
+		'public' => true,
+		'show_ui' => true,
+	) ) );
+
+	Carbon_Admin_Columns_Manager::modify_columns( 'post', \$all_post_types )
+		->add( array(
+			Carbon_Admin_Column::create( 'Views' )
+				->set_name( 'crb-views-column' )
+				->set_field( '_crb_views' ),
+	));
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_post_views</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

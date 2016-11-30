@@ -1,0 +1,15 @@
+<snippet>
+	<content><![CDATA[
+set_header_template('<span class="counter"></span>')
+
+.group-tabs-nav-holder > .group-tabs-nav { counter-reset: group-name; }
+.group-tabs-nav-holder > .group-tabs-nav .group-name { counter-increment: group-name; }
+.group-tabs-nav-holder > .group-tabs-nav .group-name span.counter:after { content: counter(group-name) " "; }
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>set_header_template_color</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

@@ -5,6 +5,7 @@ Task ID 2049973
 Task ID 2052415
 
 Task ID 2062440 - /themes/***/includes/instagram-feed.php
+Task ID 2086554
 
 function crb_get_instagram_feed(\$params = array()) {
 	if( !class_exists('itw_Instagram') ) {

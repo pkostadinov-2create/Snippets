@@ -1,0 +1,40 @@
+<snippet>
+	<content><![CDATA[
+set_header_template('<span class="image-holder" style="background-image: url(../crb_attachment/{{ image }})"></span>')
+
+.group-tabs-nav .group-name span.image-holder { display: inline-block; width: 18px; height: 18px; border: 1px solid  #ccc; border-radius: 3px; vertical-align: bottom; background-repeat: no-repeat; background-position: 50% 50%;
+	-webkit-background-size: contain;
+			background-size: contain;
+}
+.group-tabs-nav .group-name span.image-holder-double { width: 72px; height: 72px; }
+
+// Create custom URL endpoint that will redirect to image from endpoint: /crb_attachment/{{attachment_id}}
+// This will be used in Administration label
+// To convert Attachment ID into an image URL
+add_action('template_redirect', 'crb_template_redirect');
+function crb_template_redirect() {
+	\$crb_attachment_id = crb_request_param('crb_attachment_id');
+	\$current_url = \$_SERVER['REQUEST_SCHEME'] . '://' . \$_SERVER['HTTP_HOST'] . \$_SERVER['REQUEST_URI'];
+	\$attachment_id = str_replace(home_url('/crb_attachment/'), '', \$current_url);
+	\$attachment = get_post(\$attachment_id);
+
+	if ( !\$attachment || !\$attachment->post_type == 'attachment' ) {
+		return;
+	}
+
+	\$data = wp_get_attachment_image_src(\$attachment->ID, 'thumbnail');
+	if ( empty(\$data) || empty(\$data[0]) ) {
+		return;
+	}
+
+	wp_redirect(\$data[0]);
+	exit;
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>set_header_template_image</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

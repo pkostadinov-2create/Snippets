@@ -1,9 +1,12 @@
 <snippet>
 	<content><![CDATA[
-set_layout(Carbon_Field_Complex::LAYOUT_LIST)
+// Force errors ON
+error_reporting(E_ALL);
+ini_set('display_errors', 'On');
+
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
-	<tabTrigger>set_layout</tabTrigger>
+	<tabTrigger>crb_force_errors_on</tabTrigger>
 	<!-- Optional: Set a scope to limit where the snippet will trigger -->
 	<scope>source.php - variable.other.php</scope>
 	 <!-- Optional: Description to show in the menu -->

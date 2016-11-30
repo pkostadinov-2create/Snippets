@@ -1,0 +1,127 @@
+<snippet>
+	<content><![CDATA[
+<?php
+
+/**
+ * Keep the form state
+ */
+class Crb_Gform_Keep_State {
+	function __construct() {
+		add_filter( 'gform_save_and_continue_resume_url', array( $this, 'save_state' ), 10, 4 );
+		add_filter( 'gform_confirmation', array( $this, 'clear_state' ), 10, 4 );
+		add_action( 'template_redirect', array( $this, 'redirect_form_to_saved_state' ), 10 );
+	}
+
+	/**
+	 * Save the state when the user clicks Save and Continues
+	 */
+	function save_state( $url=null, $form=null, $resume_token=null, $email=null ) {
+		if ( !is_user_logged_in() ) {
+			return $url;
+		}
+
+		$user_id = get_current_user_id();
+
+		update_user_meta( $user_id, '_crb_gform_save_state_url_' . $form['id'], $url );
+
+		return $url;
+	}
+
+	/**
+	 * Clear the state after succesfull submission
+	 */
+	function clear_state( $confirmation=null, $form=null, $entry=null, $ajax=null ) {
+		if ( !is_user_logged_in() ) {
+			return $confirmation;
+		}
+
+		$user_id = get_current_user_id();
+
+		update_user_meta( $user_id, '_crb_gform_save_state_url_' . $form['id'], '' );
+
+		return $confirmation;
+	}
+
+	/**
+	 * Redirect to the saved form state
+	 */
+	function redirect_form_to_saved_state() {
+		if ( !is_singular() || crb_request_param('gf_token') || crb_request_param('gform_save') ) {
+			return;
+		}
+
+		$content = get_post_field( 'post_content', get_the_id() );
+		if ( !preg_match( '~(\[gravityform)([^\]])*(id=")(?<id>\d+)(")([^\]])*(\])~', $content, $matches ) ) {
+			return;
+		}
+
+		if ( empty( $matches['id'] ) ) {
+			return;
+		}
+
+		$user_id = get_current_user_id();
+		$form_id = $matches['id'];
+
+		$url = carbon_get_user_meta( $user_id, '_crb_gform_save_state_url_' . $form_id );
+		if ( empty( $url ) ) {
+			return;
+		}
+
+		wp_redirect( $url );
+		exit;
+	}
+}
+
+new Crb_Gform_Keep_State();
+
+?>
+
+<script>
+;(function($, window, document, undefined) {
+	var timeoutDebounceHook;
+
+	// code to trigger on AJAX form render
+	$(document).bind('gform_post_render', function(event, form_id, current_page) {
+		var $form = $(document).find('#gform_wrapper_' + form_id + ' form');
+		var hasSaveForLater = $form.find('.gform_footer .gform_save_link').length > 0;
+
+		if ( !hasSaveForLater ) {
+			return;
+		};
+
+		$form.find('li.gfield input').on('change', function() {
+			clearTimeout( timeoutDebounceHook );
+
+			timeoutDebounceHook = setTimeout(debounceSaveStateCallback, 2000, $form);
+		});
+
+	});
+
+	function debounceSaveStateCallback( $form ) {
+		var submitData = $form.serializeArray();
+		submitData.push({
+			name: 'gform_save',
+			value: '1'
+		});
+
+		$.ajax({
+			// url: SELF,
+			type: 'POST',
+			data: submitData,
+		});
+	}
+})(jQuery, window, document);
+</script>
+
+<style>
+.gform_save_link { display: none; }
+</style>
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_gform_save_state</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

