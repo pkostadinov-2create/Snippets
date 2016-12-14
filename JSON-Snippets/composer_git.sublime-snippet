@@ -1,0 +1,36 @@
+<snippet>
+	<content><![CDATA[
+"repositories": [
+	{
+		"type": "package",
+		"package": {
+			"version": "dev-patch-2",
+			"name": "pkostadinov-2create/carbon-fields",
+			"source": {
+				"url": "https://github.com/pkostadinov-2create/carbon-fields.git",
+				"type": "git",
+				"reference": "patch-2"
+			},
+			"autoload": {
+				"psr-4": {
+					"Carbon_Fields\\\\": "core/"
+				},
+				"files": [
+					"carbon-fields.php",
+					"core/functions.php"
+				]
+			}
+		}
+	}
+],
+"require": {
+	"pkostadinov-2create/carbon-fields": "dev-patch-2",
+},
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>composer_git</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.json,source.ts</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> composer</description>
+</snippet>

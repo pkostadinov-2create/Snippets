@@ -1,16 +1,28 @@
 <snippet>
 	<content><![CDATA[
-add_filter('mce_buttons_2', 'crb_wysiwyg_editor_buttons');
-function crb_wysiwyg_editor_buttons(\$buttons) {	
+add_filter('mce_buttons', 'crb_wysiwyg_editor_buttons1');
+function crb_wysiwyg_editor_buttons1(\$buttons) {
 	/**
 	 * Add in a core button that's disabled by default
 	 */
 	array_shift( \$buttons );
-	array_unshift( \$buttons, 'subscript');
-	array_unshift( \$buttons, 'superscript');
-	array_unshift( \$buttons, 'fontselect');
 	array_unshift( \$buttons, 'fontsizeselect');
 	array_unshift( \$buttons, 'formatselect');
+
+	return \$buttons;
+}
+
+add_filter('mce_buttons_2', 'crb_wysiwyg_editor_buttons2');
+function crb_wysiwyg_editor_buttons2(\$buttons) {
+	/**
+	 * Add in a core button that's disabled by default
+	 */
+	// array_shift( \$buttons );
+	array_unshift( \$buttons, 'subscript');
+	array_unshift( \$buttons, 'superscript');
+	// array_unshift( \$buttons, 'fontselect');
+	// array_unshift( \$buttons, 'fontsizeselect');
+	// array_unshift( \$buttons, 'formatselect');
 
 	return \$buttons;
 }

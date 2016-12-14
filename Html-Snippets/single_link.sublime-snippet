@@ -1,12 +1,11 @@
 <snippet>
 	<content><![CDATA[
-mce
-
+rel="bookmark" title="<?php echo esc_attr( sprintf( __( 'Permanent Link to %s', 'crb' ), get_the_title() ) ); ?>"
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
-	<tabTrigger>crb_rich_text_fontsizeselect</tabTrigger>
+	<tabTrigger>single_link</tabTrigger>
 	<!-- Optional: Set a scope to limit where the snippet will trigger -->
-	<scope>source.php - variable.other.php</scope>
+	<scope>text.html(.basic) text.html.textile</scope>
 	 <!-- Optional: Description to show in the menu -->
-	<description> Video</description>
+	<description> with args</description>
 </snippet>

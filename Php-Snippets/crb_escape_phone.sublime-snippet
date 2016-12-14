@@ -1,0 +1,27 @@
+<snippet>
+	<content><![CDATA[
+/**
+ * Filter the escaping of phone numbers in "tel:" links.
+ */
+add_filter( 'clean_url', 'crb_sanitize_phone_number', 10, 3 );
+function crb_sanitize_phone_number( \$good_protocol_url, \$original_url, \$_context ) {
+	\$maybe_tel_protocol = substr( \$good_protocol_url, 0, 4 );
+
+	if ( \$maybe_tel_protocol === 'tel:' ) {
+		\$phone_number = substr( \$good_protocol_url, 4 );
+		\$phone_number = preg_replace( '/[^0-9\-\_\+]*/', '', \$phone_number );
+
+		\$good_protocol_url = \$maybe_tel_protocol . \$phone_number;
+	}
+
+	return \$good_protocol_url;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_escape_phone</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>
