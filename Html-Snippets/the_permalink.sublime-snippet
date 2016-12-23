@@ -3,7 +3,7 @@
 rel="bookmark" title="<?php echo esc_attr( sprintf( __( 'Permanent Link to %s', 'crb' ), get_the_title() ) ); ?>"
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
-	<tabTrigger>single_link</tabTrigger>
+	<tabTrigger>the_permalink</tabTrigger>
 	<!-- Optional: Set a scope to limit where the snippet will trigger -->
 	<scope>text.html(.basic) text.html.textile</scope>
 	 <!-- Optional: Description to show in the menu -->
