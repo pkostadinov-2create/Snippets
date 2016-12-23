@@ -1,37 +1,34 @@
 <snippet>
 	<content><![CDATA[
-add_filter('mce_buttons', 'crb_wysiwyg_editor_buttons1');
-function crb_wysiwyg_editor_buttons1(\$buttons) {
-	/**
-	 * Add in a core button that's disabled by default
-	 */
+/**
+ * Add Font Select and Font Size Select
+ */
+add_filter( 'mce_buttons', 'crb_wysiwyg_editor_buttons1' );
+function crb_wysiwyg_editor_buttons1( \$buttons ) {
 	array_shift( \$buttons );
+	// array_unshift( \$buttons, 'fontselect');
 	array_unshift( \$buttons, 'fontsizeselect');
 	array_unshift( \$buttons, 'formatselect');
 
 	return \$buttons;
 }
 
-add_filter('mce_buttons_2', 'crb_wysiwyg_editor_buttons2');
-function crb_wysiwyg_editor_buttons2(\$buttons) {
-	/**
-	 * Add in a core button that's disabled by default
-	 */
-	// array_shift( \$buttons );
+/**
+ * Add Subscript and Superscript
+ */
+add_filter( 'mce_buttons_2', 'crb_wysiwyg_editor_buttons2' );
+function crb_wysiwyg_editor_buttons2( \$buttons ) {
 	array_unshift( \$buttons, 'subscript');
 	array_unshift( \$buttons, 'superscript');
-	// array_unshift( \$buttons, 'fontselect');
-	// array_unshift( \$buttons, 'fontsizeselect');
-	// array_unshift( \$buttons, 'formatselect');
 
 	return \$buttons;
 }
 
 // Assigns crb_customize_text_sizes_for_fontsizeselect() to "tiny_mce_before_init" filter
-add_filter('tiny_mce_before_init', 'crb_customize_text_sizes_for_fontsizeselect');
-function crb_customize_text_sizes_for_fontsizeselect(\$initArray){
+add_filter( 'tiny_mce_before_init', 'crb_customize_text_sizes_for_fontsizeselect' );
+function crb_customize_text_sizes_for_fontsizeselect( \$initArray ) {
 	// Populating all sizes from 8 to 300 px;
-	\$initArray['fontsize_formats'] = implode('px ', range(8, 300)) . 'px';
+	\$initArray['fontsize_formats'] = implode( 'px ', range( 8, 300 ) ) . 'px';
 
 	\$initArray['font_formats'] = 'Arial=arial,helvetica,sans-serif;Arial Black=arial black,avant garde;Book Antiqua=book antiqua,palatino;Courier New=courier new,courier;Georgia=georgia,palatino;Helvetica=helvetica;Impact=impact,chicago;Symbol=symbol;Tahoma=tahoma,arial,helvetica,sans-serif;Terminal=terminal,monaco;Times New Roman=times new roman,times;Trebuchet MS=trebuchet ms,geneva;Verdana=verdana,geneva';
 
