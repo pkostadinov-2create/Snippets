@@ -1,0 +1,32 @@
+<snippet>
+	<content><![CDATA[
+// Guarantee Unique Slug
+function crb_get_unique_slug( \$title ) {
+	static \$registered_titles;
+	if ( empty( \$registered_titles ) ) {
+		\$registered_titles = array();
+	}
+
+	if ( in_array( \$title, \$registered_titles ) ) {
+		\$next_index = 2;
+		if ( preg_match( '~\d+\$~', \$title, \$matches ) ) {
+			\$next_index = intval( \$matches[0] ) + 1;
+			preg_replace( '~\d+\$~', \$next_index, \$title );
+		} else {
+			\$title = \$title . '_' . \$next_index;
+		}
+	}
+
+	\$registered_titles[] = \$title;
+
+	return \$title;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_unique_slug</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

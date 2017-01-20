@@ -1,8 +1,8 @@
 <snippet>
 	<content><![CDATA[
 // Return the current page slug. Works inside loop.
-function crb_get_slug(\$post_id = '') {
-	if ( empty(\$post_id) ) {
+function crb_get_slug( \$post_id = '' ) {
+	if ( empty( \$post_id ) ) {
 		\$post_id = get_the_id();
 	}
 

@@ -1,0 +1,11 @@
+<snippet>
+	<content><![CDATA[
+Task ID: 2088733
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>scroll_spy</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.js,source.ts</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> equalize</description>
+</snippet>
