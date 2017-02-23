@@ -1,0 +1,37 @@
+<snippet>
+	<content><![CDATA[
+/**
+ * Return Dropdown for Select Field
+ */
+function crb_dropdown_category() {
+	return crb_dropdown_taxonomy( 'category', ' --- Select Category --- ' );
+}
+
+function crb_dropdown_taxonomy( /$taxonomy, /$default_option_title = ' --- Select --- ' ) {
+	/$options = array( /$default_option_title );
+
+	/$terms = get_terms(array(
+		'taxonomy'          => /$taxonomy,
+		'orderby'           => 'name',
+		'order'             => 'ASC',
+		'hide_empty'        => false,
+		'fields'            => 'id=>name',
+	) );
+
+	if ( is_wp_error( /$terms ) || empty( /$terms ) ) {
+		return /$options;
+	}
+
+	/$options = /$options + /$terms;
+
+	return /$options;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_dropdown_category</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

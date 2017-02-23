@@ -1,13 +1,13 @@
 <snippet>
 	<content><![CDATA[
 if ( is_https() ) {
-	crb_enqueue_script('theme-sharethis-https', 'https://ws.sharethis.com/button/buttons.js', array('jquery'));
+	crb_enqueue_script( 'theme-sharethis-https', 'https://ws.sharethis.com/button/buttons.js', array( 'jquery' ) );
 } else {
-	crb_enqueue_script('theme-sharethis', 'http://w.sharethis.com/button/buttons.js', array('jquery'));
+	crb_enqueue_script( 'theme-sharethis', 'http://w.sharethis.com/button/buttons.js', array( 'jquery' ) );
 }
 
-function is_https(){ 
-	return ( !empty(\$_SERVER['HTTPS']) && \$_SERVER['HTTPS'] !== 'off' ) || \$_SERVER['SERVER_PORT'] == 443; 
+function is_https(){
+	return ( !empty( \$_SERVER['HTTPS'] ) && \$_SERVER['HTTPS'] !== 'off' ) || \$_SERVER['SERVER_PORT'] == 443;
 }
 
 ]]></content>

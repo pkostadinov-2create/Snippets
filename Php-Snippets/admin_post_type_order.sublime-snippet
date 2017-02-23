@@ -1,14 +1,14 @@
 <snippet>
 	<content><![CDATA[
 // Show Image on Post Type order plugin Page
-add_filter('the_title', 'crb_post_type_order_title_with_thumb', 99, 2);
-function crb_post_type_order_title_with_thumb(\$title, \$id = 0) {
+add_filter( 'the_title', 'crb_post_type_order_title_with_thumb', 99, 2 );
+function crb_post_type_order_title_with_thumb( \$title, \$id = 0 ) {
 	\$show_on_pages = array(
 		'order-post-types-crb_slider',
 	);
 
-	if ( is_admin() && in_array(crb_request_param('page'), \$show_on_pages) ) {
-		\$title = crb_column_render_post_thumbnail(\$id) . ' ' . \$title;
+	if ( is_admin() && in_array( crb_request_param( 'page' ), \$show_on_pages ) ) {
+		\$title = crb_column_render_post_thumbnail( \$id ) . ' ' . \$title;
 	}
 
 	return \$title;

@@ -1,12 +1,10 @@
 <snippet>
 	<content><![CDATA[
-setup_labels( array(
-	'singular_name' => __( 'Slide', 'crb' ),
-	'plural_name' => __( 'Slides', 'crb' ),
-) )
+Task ID 2092719
+
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
-	<tabTrigger>setup_labels</tabTrigger>
+	<tabTrigger>vue_js_form_integration</tabTrigger>
 	<!-- Optional: Set a scope to limit where the snippet will trigger -->
 	<scope>source.php - variable.other.php</scope>
 	 <!-- Optional: Description to show in the menu -->

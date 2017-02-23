@@ -3,9 +3,9 @@
 /**
  * Button Shortcode
  */
-add_shortcode('button', 'crb_shortcode_button');
-add_shortcode('button-white', 'crb_shortcode_button');
-function crb_shortcode_button(\$atts, \$content, \$shortcode) {
+add_shortcode( 'button', 'crb_shortcode_button' );
+add_shortcode( 'button-white', 'crb_shortcode_button' );
+function crb_shortcode_button( \$atts, \$content, \$shortcode ) {
 	\$atts = shortcode_atts(
 		array(
 			'link' => '#',
@@ -22,14 +22,14 @@ function crb_shortcode_button(\$atts, \$content, \$shortcode) {
 	);
 
 	\$target = '';
-	if ( !empty(\$atts['target']) ) {
-		\$target = 'target="_' . esc_attr(\$atts['target']) . '"';
+	if ( !empty( \$atts['target'] ) ) {
+		\$target = 'target="_' . esc_attr( \$atts['target'] ) . '"';
 	}
 
 	ob_start();
 	?>
 	<a
-		href="<?php echo esc_url(\$atts['link']); ?>"
+		href="<?php echo esc_url( \$atts['link'] ); ?>"
 		class="<?php echo \$button_settings['classes'][\$shortcode]; ?>"
 		<?php echo \$target; ?>
 	>

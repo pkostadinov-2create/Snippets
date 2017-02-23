@@ -1,0 +1,69 @@
+<snippet>
+	<content><![CDATA[
+/**
+ * Clone of default WP function with proper data validation and skipping invalid entries
+ */
+function crb_wp_list_pluck( \$list, \$field, \$index_key = null ) {
+	if ( ! \$index_key ) {
+		/*
+		 * This is simple. Could at some point wrap array_column()
+		 * if we knew we had an array of arrays.
+		 */
+		foreach ( \$list as \$key => \$value ) {
+			if ( is_object( \$value ) ) {
+				if ( !isset( \$value->\$field ) ) {
+					continue;
+				}
+
+				\$list[ \$key ] = \$value->\$field;
+			} else {
+				if ( !isset( \$value[ \$field ] ) ) {
+					continue;
+				}
+
+				\$list[ \$key ] = \$value[ \$field ];
+			}
+		}
+		return \$list;
+	}
+
+	/*
+	 * When index_key is not set for a particular item, push the value
+	 * to the end of the stack. This is how array_column() behaves.
+	 */
+	\$newlist = array();
+	foreach ( \$list as \$value ) {
+		if ( is_object( \$value ) ) {
+			if ( !isset( \$value->\$field ) ) {
+				continue;
+			}
+
+			if ( isset( \$value->\$index_key ) ) {
+				\$newlist[ \$value->\$index_key ] = \$value->\$field;
+			} else {
+				\$newlist[] = \$value->\$field;
+			}
+		} else {
+			if ( !isset( \$value[ \$field ] ) ) {
+				continue;
+			}
+
+			if ( isset( \$value[ \$index_key ] ) ) {
+				\$newlist[ \$value[ \$index_key ] ] = \$value[ \$field ];
+			} else {
+				\$newlist[] = \$value[ \$field ];
+			}
+		}
+	}
+
+	return \$newlist;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_wp_list_pluck</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

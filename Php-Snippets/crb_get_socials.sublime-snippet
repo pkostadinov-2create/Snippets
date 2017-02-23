@@ -5,7 +5,7 @@ use Carbon_Fields\Container\Container;
 use Carbon_Fields\Field\Field;
 
 function crb_get_socials() {
-	return array('twitter', 'facebook', 'instagram', 'youtube');
+	return array( 'twitter', 'twitter', 'twitter', 'twitter' );
 }
 
 function crb_get_social_fields() {
