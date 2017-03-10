@@ -1,13 +1,13 @@
 <snippet>
 	<content><![CDATA[
 // Returns image help text from image size name or image dimensions
-function crb_get_attachment_help(\$args) {
-	\$args = crb_sanitize_image_size_args(\$args);
+function crb_get_attachment_help( \$args ) {
+	\$args = crb_sanitize_image_size_args( \$args );
 
 	if ( \$args['crop'] ) {
-		return sprintf(__('Recommended image size: %s x %s px. Larger images will be scaled down and cropped automatically.', 'crb'), \$args['width'], \$args['height']);
+		return sprintf( __( 'Recommended image size: %s x %s px. If the image is larger, it will be scaled down and cropped to match exactly both the recommended width and height.', 'crb' ), \$args['width'], \$args['height'] );
 	} else {
-		return sprintf(__('Largest image size: %s x %s px. Larger images will be scaled down to fit this size automatically.', 'crb'), \$args['width'], \$args['height']);
+		return sprintf( __( 'Largest image size: %s x %s px. If the image is larger, it will be scaled down proportionately to fit within either the recommended width or height.', 'crb' ), \$args['width'], \$args['height'] );
 	}
 }
 

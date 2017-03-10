@@ -1,17 +1,17 @@
 <snippet>
 	<content><![CDATA[
-Carbon_Admin_Columns_Manager::modify_columns('post', array('crb_project') )
+Carbon_Admin_Columns_Manager::modify_columns( 'post', array( 'crb_project' ) )
 	->add( array(
-		Carbon_Admin_Column::create('Show on Featured')
+		Carbon_Admin_Column::create( 'Show on Featured' )
 			->set_name( 'crb-featured-featured-column' )
-			->set_callback('crb_column_render_featured'),
+			->set_callback( 'crb_column_render_featured' ),
 ));
 
-function crb_column_render_featured(\$post_id) {
-	\$crb_project_is_featured = carbon_get_post_meta(\$post_id,'crb_project_is_featured');
-	if ( !empty(\$crb_project_is_featured) ) {
+function crb_column_render_featured( \$post_id ) {
+	\$crb_project_is_featured = carbon_get_post_meta( \$post_id, 'crb_project_is_featured' );
+	if ( !empty( \$crb_project_is_featured ) ) {
 		return '<span class="dashicons dashicons-yes" style="font-size: 40px;"></span>';
-	} 
+	}
 }
 
 ]]></content>

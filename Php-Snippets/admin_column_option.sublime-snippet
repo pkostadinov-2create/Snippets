@@ -7,7 +7,7 @@ Carbon_Admin_Columns_Manager::modify_columns( 'post', array( 'crb_slider' ) )
 			->set_name( 'crb-thumbnail-column' )
 			->set_callback( 'crb_column_render_post_thumbnail' )
 			->set_width( 100 ),
-));
+) );
 
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->

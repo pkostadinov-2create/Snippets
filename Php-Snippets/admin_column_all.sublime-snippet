@@ -13,13 +13,13 @@ function crb_column_render_post_thumbnail( \$post_id ) {
 	return \$thumbnail;
 }
 
-Carbon_Admin_Columns_Manager::modify_columns('post', array('crb_slider') )
-	->sort( array('cb', 'crb-thumbnail-column') )
+Carbon_Admin_Columns_Manager::modify_columns( 'post', array( 'crb_slider' ) )
+	->sort( array( 'cb', 'crb-thumbnail-column' ) )
 	->add( array(
-		Carbon_Admin_Column::create('Thumbnail')
+		Carbon_Admin_Column::create( 'Thumbnail' )
 			->set_name( 'crb-thumbnail-column' )
-			->set_callback('crb_column_render_post_thumbnail')
-			->set_width(100),
+			->set_callback( 'crb_column_render_post_thumbnail' )
+			->set_width( 100 ),
 ));
 
 ]]></content>

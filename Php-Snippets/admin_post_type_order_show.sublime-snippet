@@ -10,6 +10,8 @@ function crb_show_post_type_order() {
 	}
 
 	\$custom_post_type_order = new CPTO();
+	\$custom_post_type_order->checkPost();
+
 	add_submenu_page( 'edit.php?post_type=' . \$post_type_name, __( 'Re-Order', 'cpt' ), __( 'Re-Order', 'cpt' ), 'switch_themes', 'order-post-types-' . \$post_type_name, array( \$custom_post_type_order, 'SortPage' ) );
 }
 
