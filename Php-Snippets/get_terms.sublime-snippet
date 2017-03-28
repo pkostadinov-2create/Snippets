@@ -1,6 +1,6 @@
 <snippet>
 	<content><![CDATA[
-\$some_terms = get_terms(array(
+\$some_terms = get_terms( array(
 	'taxonomy'          => 'category',
 	'orderby'           => 'name',
 	'order'             => 'ASC',
@@ -21,7 +21,7 @@
 	'offset'            => '',
 	'search'            => '',
 	'cache_domain'      => 'core'
-));
+) );
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
 	<tabTrigger>get_terms</tabTrigger>

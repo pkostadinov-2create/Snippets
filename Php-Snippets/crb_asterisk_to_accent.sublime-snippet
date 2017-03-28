@@ -1,0 +1,14 @@
+<snippet>
+	<content><![CDATA[
+function crb_asterisk_to_accent( \$text, \$tag_name = 'strong' ) {
+	return preg_replace( '~\*([^\*]*)\*~', '<' . \$tag_name . '>\$1</' . \$tag_name . '>', \$text );
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_asterisk_to_accent</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

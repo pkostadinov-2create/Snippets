@@ -1,0 +1,91 @@
+<snippet>
+	<content><![CDATA[
+// Excerpt with specific part of the content that matches the Search Words
+add_filter( 'the_excerpt', 'crb_search_excerpt', 20, 2 );
+function crb_search_excerpt( \$excerpt, \$page_id = 0 ) {
+	\$settings = array(
+		'words_around' => 5,
+		'not_more_matches_than' => 5,
+	);
+
+	if ( ! is_search() ) {
+		return \$excerpt;
+	}
+
+	if ( get_post_type() !== 'page' ) {
+		return \$excerpt;
+	}
+
+	\$search_string = get_search_query();
+	if ( empty( \$search_string ) ) {
+		return \$excerpt;
+	}
+
+	if ( empty( \$page_id ) ) {
+		\$page_id = get_the_id();
+	}
+	\$post = get_post( \$page_id );
+
+	\$parsed_excerpt = '';
+	\$parsed_excerpt = implode( "\n\n", array(
+		\$post->post_content,
+		\$post->post_excerpt,
+		carbon_get_post_meta( \$page_id, 'crb_cached_sectiion_content' )
+	) );
+
+	\$parsed_excerpt = strip_tags( do_shortcode( \$parsed_excerpt ) );
+
+	\$words = array_merge(
+		array( \$search_string ),
+		explode( ' ', \$search_string )
+	);
+
+	\$words = array_map( function( \$word ) {
+		return preg_quote( \$word, '~' );
+	}, \$words );
+
+	\$words_regex = implode( '|', \$words );
+	\$parsed_excerpt = preg_replace( '~([\s])(' . \$words_regex . ')([\s])~', '\$1{{\$2}}\$3', \$parsed_excerpt );
+
+	/**
+	 * [0] full match
+	 * [1] all words before
+	 * [2] last word before
+	 * [3] SEARCH WORD MATCH
+	 * [4] all words after
+	 * [5] last word after
+	 */
+
+	preg_match_all("/(([^\s{}\/\<>]+\s){0," . \$settings['words_around'] . "}){{([^}]+)}}((\s[^\s{}\/\<>]+){0," . \$settings['words_around'] . "})/i", \$parsed_excerpt, \$content_pieces );
+
+	if ( count( \$content_pieces ) != 6 ) {
+		return \$excerpt;
+	}
+
+	\$new_excerpt = array();
+	foreach ( \$content_pieces[3] as \$index => \$value ) {
+		\$current_excerpt = \$content_pieces[1][\$index] . \$content_pieces[3][\$index] . \$content_pieces[4][\$index];
+
+		if ( str_word_count( \$content_pieces[4][\$index] ) == \$settings['words_around'] ) {
+			\$current_excerpt .= '...';
+		}
+
+		\$new_excerpt[] = \$current_excerpt;
+
+		// End matches to prevent too-long excerpt
+		if ( \$settings['not_more_matches_than'] <= (\$index+1) ) {
+			break;
+		}
+	}
+
+	return implode( ' ', \$new_excerpt );
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_search_excerpt</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>
