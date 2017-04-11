@@ -5,31 +5,31 @@
  * Supports Scope parameter, and continuous suffix index
  * Each run with the same parameters will return string with increased number
  */
-function crb_get_unique_string( $base_string, $scope = 'global', $suffix_index = 1 ) {
-	static $section_indexes;
-	if ( ! isset( $section_indexes ) ) {
-		$section_indexes = array();
+function crb_get_unique_string( \$base_string, \$scope = 'global', \$suffix_index = 1 ) {
+	static \$section_indexes;
+	if ( ! isset( \$section_indexes ) ) {
+		\$section_indexes = array();
 	}
 
-	if ( ! isset( $section_indexes[$scope] ) ) {
-		$section_indexes[$scope] = array();
+	if ( ! isset( \$section_indexes[\$scope] ) ) {
+		\$section_indexes[\$scope] = array();
 	}
 
-	if ( $suffix_index === 1 ) {
-		$test_string = $base_string;
+	if ( \$suffix_index === 1 ) {
+		\$test_string = \$base_string;
 	} else {
-		$test_string = sprintf( '%s-%s', $base_string, $suffix_index );
+		\$test_string = sprintf( '%s-%s', \$base_string, \$suffix_index );
 	}
 
-	if ( in_array( $test_string, $section_indexes[$scope] ) ) {
-		$suffix_index++;
+	if ( in_array( \$test_string, \$section_indexes[\$scope] ) ) {
+		\$suffix_index++;
 
-		return crb_get_unique_string( $base_string, $scope, $suffix_index );
+		return crb_get_unique_string( \$base_string, \$scope, \$suffix_index );
 	}
 
-	$section_indexes[$scope][] = $test_string;
+	\$section_indexes[\$scope][] = \$test_string;
 
-	return $test_string;
+	return \$test_string;
 }
 
 ]]></content>

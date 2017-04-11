@@ -1,7 +1,7 @@
 <snippet>
 	<content><![CDATA[
 // Override carbon functions
-add_filter('carbon_before_include', 'crb_carbon_before_include');
+add_filter('after_setup_theme', 'crb_carbon_before_include');
 function crb_carbon_before_include() {
 	include_once(CRB_THEME_DIR . 'includes/carbon-functions-override.php');
 }
@@ -37,7 +37,7 @@ function crb_get_default_multilingual_suffix() {
 	}
 
 	\$suffix = icl_get_default_language();
-	
+
 	return \$suffix;
 }
 
@@ -51,7 +51,7 @@ if ( !function_exists('carbon_get_theme_option') ) :
 function carbon_get_theme_option(\$name, \$type = null) {
 	\$suffix = crb_get_multilingual_suffix();
 	\$default_suffix = crb_get_default_multilingual_suffix();
-	
+
 	\$multilingual_name = \$name . \$suffix;
 	\$default_multilingual_name = \$name . \$default_suffix;
 
