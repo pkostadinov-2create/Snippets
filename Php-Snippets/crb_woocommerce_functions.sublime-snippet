@@ -12,7 +12,8 @@ function crb_get_woocommerce_links( \$link = '' ) {
 	\$home_url = home_url( '/' );
 	if ( crb_is_woocommerce_active() ) {
 		global \$woocommerce;
-		\$cart_url = \$woocommerce->cart->get_cart_url();
+		\$cart_url = wc_get_cart_url();
+		\$cart_count = \$woocommerce->cart->get_cart_contents_count();
 
 		\$myaccount_link = get_permalink( get_option( 'woocommerce_myaccount_page_id' ) );
 
@@ -22,6 +23,7 @@ function crb_get_woocommerce_links( \$link = '' ) {
 			'login' => \$myaccount_link,
 			'register' => \$myaccount_link . '?customer-register=true',
 			'cart' => \$cart_url,
+			'cart_count' => \$cart_count,
 		);
 	} else {
 		\$links = array(
@@ -30,6 +32,7 @@ function crb_get_woocommerce_links( \$link = '' ) {
 			'login' => wp_login_url( \$home_url ),
 			'register' => wp_registration_url(),
 			'cart' => '',
+			'cart_count' => 0,
 		);
 	}
 
@@ -45,7 +48,7 @@ function crb_get_woocommerce_shop_url() {
 		return home_url( '/' );
 	}
 
-	\$shop_page_url = get_permalink( woocommerce_get_page_id( 'shop' ) );
+	\$shop_page_url = get_permalink( wc_get_page_id( 'shop' ) );
 
 	return \$shop_page_url;
 }

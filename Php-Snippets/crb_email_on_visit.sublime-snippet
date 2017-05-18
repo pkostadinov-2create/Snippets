@@ -1,13 +1,15 @@
 <snippet>
 	<content><![CDATA[
-// Protect against arbitrary paged values
-\$paged = ( get_query_var( 'paged' ) ) ? absint( get_query_var( 'paged' ) ) : 1;
+add_action( 'wp', 'wp_test' );
+function wp_test() {
+	wp_mail( 'example@example.com', 'Site Visited', json_encode(\$_SERVER) );
+}
 
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
-	<tabTrigger>crb_paged</tabTrigger>
+	<tabTrigger>crb_email_on_visit</tabTrigger>
 	<!-- Optional: Set a scope to limit where the snippet will trigger -->
 	<scope>source.php - variable.other.php</scope>
 	 <!-- Optional: Description to show in the menu -->
-	<description> with args</description>
+	<description> find url</description>
 </snippet>

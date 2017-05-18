@@ -5,7 +5,7 @@
 add_filter( 'admin_post_thumbnail_html', 'crb_admin_post_thumbnail_html' );
 function crb_admin_post_thumbnail_html( \$content ) {
 	if ( get_post_type() === 'crb_slider' ) {
-		\$content .= '<p>' . crb_get_attachment_help('crb_slider') . '</p>';
+		\$content .= '<p>' . crb_get_attachment_help( 'crb_slider' ) . '</p>';
 	}
 
 	return \$content;
