@@ -6,7 +6,7 @@ crb_enqueue_script('theme-google-maps', '//maps.googleapis.com/maps/api/js?senso
 add_filter('carbon_map_api_key', 'crb_carbon_map_api_key');
 function crb_carbon_map_api_key() {
 	\$key = get_option( '_crb_maps_api_key' );
-	if ( !empty(\$key) ) {
+	if ( ! empty(\$key) ) {
 		return \$key;
 	}
 

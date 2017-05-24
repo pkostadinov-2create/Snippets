@@ -4,7 +4,7 @@
 add_filter( "page_template", "crb_wpml_fix_search_bug" );
 function crb_wpml_fix_search_bug(\$template) {
 	\$s = crb_request_param('s');
-	if ( !empty(\$s) ) {
+	if ( ! empty(\$s) ) {
 		return locate_template('index.php');
 	}
 

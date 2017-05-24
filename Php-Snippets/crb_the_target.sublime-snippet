@@ -7,7 +7,7 @@ function crb_the_target( \$field = '' ) {
 
 function crb_return_target( \$field = '' ) {
 	\$target = '';
-	if ( !empty( \$field ) ) {
+	if ( ! empty( \$field ) ) {
 		\$target = 'target="_blank"';
 	}
 

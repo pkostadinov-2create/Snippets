@@ -8,12 +8,12 @@
 \$tags = get_the_tags();
 \$example_terms = wp_get_post_terms(get_the_id(), 'crb_example_term');
 
-if ( !empty(\$categories) || !empty(\$tags) || !empty(\$example_terms) ) {
+if ( ! empty(\$categories) || ! empty(\$tags) || ! empty(\$example_terms) ) {
 	\$tax_query['relation'] = 'OR';
 }
 
 foreach (array(\$categories, \$tags, \$example_terms) as \$terms) {
-	if ( !empty(\$terms) ) {
+	if ( ! empty(\$terms) ) {
 		foreach (\$terms as \$term) {
 			\$tax_query[] = array(
 				'taxonomy' => \$term->taxonomy,

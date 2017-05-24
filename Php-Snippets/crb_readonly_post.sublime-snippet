@@ -6,9 +6,9 @@ add_filter('admin_menu','crb_token_conditional_redirect_post_new');
 function crb_token_conditional_redirect_post_new() {
 	global \$_REQUEST,\$pagenow;
 	if (
-		!empty(\$_REQUEST['post_type'])
+		! empty(\$_REQUEST['post_type'])
 		&& 'crb_token' == \$_REQUEST['post_type']
-		&& !empty(\$pagenow)
+		&& ! empty(\$pagenow)
 		&& 'post-new.php' == \$pagenow
 		&& !current_user_can('administrator')
 	) {
@@ -38,12 +38,12 @@ function crb_token_reset_post_new_link() {
 // Prevent sneaky submissions
 add_action('admin_init','crb_token_stop_submit');
 function crb_token_stop_submit() {
-	if (!empty(\$_POST) && \$_POST['post_type'] == 'crb_token' && !current_user_can('administrator')) {
+	if (! empty(\$_POST) && \$_POST['post_type'] == 'crb_token' && !current_user_can('administrator')) {
 		if (DOING_AJAX === true) {
 			exit;
 		}
 
-		if (!empty(\$_POST['post_ID'])) {
+		if (! empty(\$_POST['post_ID'])) {
 			wp_safe_redirect(admin_url('post.php?post='.\$_POST['post_ID'].'&action=edit'));
 			exit;
 		} else {

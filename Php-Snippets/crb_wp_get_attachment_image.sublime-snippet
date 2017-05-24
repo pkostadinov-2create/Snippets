@@ -19,7 +19,7 @@ function crb_wp_get_attachment_image(\$image_id, \$args, \$additional_atts = arr
 	if ( is_numeric(\$image_id) ) {
 		\$current_position = get_post_meta( \$image_id, 'wpthumb_crop_pos', true );
 	}
-	if ( !empty(\$current_position) ) {
+	if ( ! empty(\$current_position) ) {
 		// Add 'crop_from_position' to the default args
 		\$additional_atts = wp_parse_args(\$additional_atts, array(
 			'crop_from_position' => \$current_position,
@@ -37,17 +37,17 @@ function crb_wp_get_attachment_image(\$image_id, \$args, \$additional_atts = arr
 	if ( is_numeric(\$image_id) ) {
 		\$alt_text = get_post_meta( \$image_id, '_wp_attachment_image_alt', true );
 		\$image_metadata = get_post_meta( \$image_id, '_wp_attachment_metadata', true );
-		if ( !empty(\$image_metadata['image_meta']['title']) ) {
+		if ( ! empty(\$image_metadata['image_meta']['title']) ) {
 			\$title_text = \$image_metadata['image_meta']['title'];
 		}
-		if ( empty(\$alt_text) && !empty(\$title_text) ) {
+		if ( empty(\$alt_text) && ! empty(\$title_text) ) {
 			\$alt_text = \$title_text;
 		}
 
-		if ( !empty(\$alt_text) ) {
+		if ( ! empty(\$alt_text) ) {
 			\$additional_atts['alt'] = \$alt_text;
 		}
-		if ( !empty(\$alt_text) ) {
+		if ( ! empty(\$alt_text) ) {
 			\$additional_atts['title'] = \$title_text;
 		}
 	}
@@ -62,7 +62,7 @@ function crb_wp_get_attachment_image(\$image_id, \$args, \$additional_atts = arr
 	\$args = crb_sanitize_image_size_args(\$args);
 
 	// Add default image classes, defined with the custom image size
-	\$additional_atts['class'] .= !empty(\$args['class']) ? ' ' . \$args['class'] : '';
+	\$additional_atts['class'] .= ! empty(\$args['class']) ? ' ' . \$args['class'] : '';
 
 	// Prepare the \$args array for wpthumb_img_shortcode
 	array_unshift(\$args, \$image_src);

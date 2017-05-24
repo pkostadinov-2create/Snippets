@@ -2,7 +2,7 @@
 	<content><![CDATA[
 
 \$crb_social_icons = carbon_get_theme_option('crb_social_icons', 'complex');
-if ( !empty(\$crb_social_icons) ) : ?>
+if ( ! empty(\$crb_social_icons) ) : ?>
 	<div class="socials">
 		<ul>
 			<?php

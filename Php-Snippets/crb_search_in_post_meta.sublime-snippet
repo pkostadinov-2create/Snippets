@@ -3,7 +3,7 @@
 \$filter_search = crb_request_param('filter_search');
 
 // Search will be injected through pure SQL
-if ( !empty(\$filter_search) ) {
+if ( ! empty(\$filter_search) ) {
 	add_filter('posts_join', 'crb_posts_join_papers_search');
 	add_filter('posts_where', 'crb_posts_where_papers_search');
 }
@@ -16,7 +16,7 @@ function crb_posts_join_papers_search(\$join) {
 	global \$wpdb;
 
 	\$filter_search = crb_request_param('filter_search');
-	if ( !empty(\$filter_search) ) {
+	if ( ! empty(\$filter_search) ) {
 		\$join .= "INNER JOIN \$wpdb->postmeta as postmetaForSearch ON ( \$wpdb->posts.ID = postmetaForSearch.post_id )";
 	}
 
@@ -27,15 +27,15 @@ function crb_posts_where_papers_search(\$where) {
 	global \$wpdb;
 
 	\$filter_search = crb_request_param('filter_search');
-	if ( !empty(\$filter_search) ) {
+	if ( ! empty(\$filter_search) ) {
 		\$where .= \$wpdb->prepare(
 			"AND (
-				(\$wpdb->posts.post_title LIKE '%%%s%%') 
-				OR 
-				(\$wpdb->posts.post_excerpt LIKE '%%%s%%') 
-				OR 
-				(\$wpdb->posts.post_content LIKE '%%%s%%') 
-				OR 
+				(\$wpdb->posts.post_title LIKE '%%%s%%')
+				OR
+				(\$wpdb->posts.post_excerpt LIKE '%%%s%%')
+				OR
+				(\$wpdb->posts.post_content LIKE '%%%s%%')
+				OR
 				( postmetaForSearch.meta_key = '_crb_paper_author' AND postmetaForSearch.meta_value LIKE '%%%s%%' )
 			)",
 			\$filter_search,

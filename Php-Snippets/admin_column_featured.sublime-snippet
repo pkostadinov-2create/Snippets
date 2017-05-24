@@ -9,7 +9,7 @@ Carbon_Admin_Columns_Manager::modify_columns( 'post', array( 'crb_project' ) )
 
 function crb_column_render_featured( \$post_id ) {
 	\$crb_project_is_featured = carbon_get_post_meta( \$post_id, 'crb_project_is_featured' );
-	if ( !empty( \$crb_project_is_featured ) ) {
+	if ( ! empty( \$crb_project_is_featured ) ) {
 		return '<span class="dashicons dashicons-yes" style="font-size: 40px;"></span>';
 	}
 }

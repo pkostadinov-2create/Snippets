@@ -22,9 +22,9 @@ class CrbFlickrByUsername extends Carbon_Widget {
 
 	function front_end(\$args, \$instance) {
 		/**
-		 * 
+		 *
 		 * Feed Expected Format:
-		 * 
+		 *
 		 *  \$entry => Array (
 		 *  	[tag] => photo
 		 *  	[type] => complete
@@ -40,10 +40,10 @@ class CrbFlickrByUsername extends Carbon_Widget {
 		 *  		[isfriend] => 0
 		 *  		[isfamily] => 0
 		 *  	))
-		 * 
+		 *
 		 * image => http://farm3.static.flickr.com/2942/15144041417_af996aaa50.jpg
 		 * url => https://www.flickr.com/photos/60190001@N02/15144041417/
-		 * 
+		 *
 		 */
 
 		if (\$instance['title']) {
@@ -63,7 +63,7 @@ class CrbFlickrByUsername extends Carbon_Widget {
 			\$images = array();
 
 			foreach (\$values as \$entry) {
-				if (!empty(\$entry['attributes']['id'])) {
+				if (! empty(\$entry['attributes']['id'])) {
 					\$id = \$entry['attributes']['id'];
 					\$secret = \$entry['attributes']['secret'];
 					\$farm = \$entry['attributes']['farm'];

@@ -5,7 +5,7 @@ add_filter( 'crb_get_title', 'crb_override_title' );
 function crb_override_title( \$title ) {
 	\$page_id = crb_get_page_context();
 	\$crb_override_title = carbon_get_post_meta( \$page_id, 'crb_override_title' );
-	if ( !empty( \$crb_override_title ) ) {
+	if ( ! empty( \$crb_override_title ) ) {
 		\$title = \$crb_override_title;
 	}
 

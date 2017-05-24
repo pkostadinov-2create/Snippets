@@ -19,7 +19,7 @@ function crb_sanitize_url(\$url) {
 	if ( substr(\$url, 0, 2) === '//' ) {
 		\$url = \$protocol . ':' . \$url;
 	}
-	
+
 	return \$url;
 }
 
@@ -27,13 +27,13 @@ function crb_sanitize_url(\$url) {
 function crb_sanitize_image_size_args(\$args) {
 	if ( !is_array(\$args) ) {
 		global \$_wp_additional_image_sizes;
-		if ( !empty(\$_wp_additional_image_sizes[ \$args ]) ) {
+		if ( ! empty(\$_wp_additional_image_sizes[ \$args ]) ) {
 			\$current_size = \$_wp_additional_image_sizes[ \$args ];
 		} else {
 			\$current_size = crb_get_unregistered_image_size(\$args);
 		}
 
-		if (!empty(\$current_size)) {
+		if (! empty(\$current_size)) {
 			\$args = \$current_size;
 		}
 	}

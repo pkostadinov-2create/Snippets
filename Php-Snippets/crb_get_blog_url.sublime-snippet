@@ -3,7 +3,7 @@
 function crb_get_blog_url() {
 	\$page_for_posts = get_option('page_for_posts');
 
-	if( !empty(\$page_for_posts) ) {
+	if( ! empty(\$page_for_posts) ) {
 		return get_permalink( \$page_for_posts );
 	} else {
 		return home_url('/');

@@ -1,7 +1,7 @@
 <snippet>
 	<content><![CDATA[
 /**
- * 
+ *
  * Print Breadcrumbs
  *
  * Settings: $before, $after, $before_items, $after_items, $before_item, $after_item, $separator
@@ -141,13 +141,13 @@ class Crb_Breadcrumbs {
 
 	// protected function _page() {
 	// 	\$antcestors = get_post_ancestors( \$this->post );
-	// 
+	//
 	// 	foreach ( \$antcestors as \$id ) {
 	// 		\$this->breadcrumbs .= \$this->wrap_item( get_the_title(\$id), get_permalink( \$id ) ) . \$this->separator;
 	// 	}
-	// 
+	//
 	// 	\$this->breadcrumbs .= \$this->wrap_item( get_the_title() );
-	// 
+	//
 	// 	return \$this;
 	// }
 
@@ -184,7 +184,7 @@ class Crb_Breadcrumbs {
 			\$term = get_term_by( 'slug', get_query_var('term'), get_query_var('taxonomy') );
 
 			\$title = \$term->name;
-		}elseif ( isset(\$_GET['paged']) && !empty(\$_GET['paged']) ) {
+		}elseif ( isset(\$_GET['paged']) && ! empty(\$_GET['paged']) ) {
 			\$title = __('Blog Archives', 'crb');
 		}
 

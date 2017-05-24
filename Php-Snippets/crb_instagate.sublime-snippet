@@ -32,7 +32,7 @@ function crb_get_instagram_feed(\$params = array()) {
 			\$msg_class = 'itw_connected';
 
 			\$max_id = 0;
-			if ( !empty(\$params['max_id']) ) {
+			if ( ! empty(\$params['max_id']) ) {
 				\$max_id .= \$params['max_id'];
 			}
 			\$cache_key = 'instagram_feed_' . \$username . '_' . \$max_id;
@@ -50,7 +50,7 @@ function crb_get_instagram_feed(\$params = array()) {
 			if ( !is_wp_error(\$feed) ) {
 				if( \$feed->meta->code == 200 ) {
 					\$images = array();
-					if( !empty(\$feed->data ) ) {
+					if( ! empty(\$feed->data ) ) {
 						\$i = 0;
 						foreach(\$feed->data as \$img) {
 							\$i++;
@@ -107,16 +107,16 @@ function crb_get_instagram_feed_extend(\$count = 20, \$params = array()) {
 		\$limit = \$count - count(\$feed_result);
 
 		// If this is not the first loop, get the last image ID
-		if ( !empty(\$feed_result) ) {
-			\$last_found_image = array_slice(\$feed_result, -1, 1); 
+		if ( ! empty(\$feed_result) ) {
+			\$last_found_image = array_slice(\$feed_result, -1, 1);
 
-			if ( !empty(\$last_found_image[0]['id']) ) {
+			if ( ! empty(\$last_found_image[0]['id']) ) {
 				\$start_from_id = \$last_found_image[0]['id'];
 			}
 		}
 
 		// Set Pagination Parameter
-		if ( !empty(\$start_from_id) ) {
+		if ( ! empty(\$start_from_id) ) {
 			\$params = array(
 				'max_id' => '980200468356523730_1549951016'
 			);

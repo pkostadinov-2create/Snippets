@@ -10,7 +10,7 @@ function crb_get_single_term_id(\$taxonomy = 'crb_event_category', \$post_type =
 	// } elseif ( is_singular(\$post_type) ) {
 	} else {
 		\$categories = wp_get_post_terms(get_the_id(), \$taxonomy);
-		if ( !is_wp_error(\$categories) && !empty(\$categories[0]) ) {
+		if ( !is_wp_error(\$categories) && ! empty(\$categories[0]) ) {
 			\$single_term_id = \$categories[0]->term_id;
 		}
 	}

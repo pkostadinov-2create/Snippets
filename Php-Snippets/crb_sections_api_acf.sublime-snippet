@@ -34,10 +34,10 @@ function crb_get_page_id_from_section_id(\$section_id, \$singular = true, \$is_s
 	if ( \$is_section_name ) {
 		\$results = \$wpdb->get_results( "
 				SELECT post_id
-				FROM \$wpdb->postmeta 
-				WHERE 
-					meta_key = '_crb_page_sections' 
-					and 
+				FROM \$wpdb->postmeta
+				WHERE
+					meta_key = '_crb_page_sections'
+					and
 					meta_value like CONCAT(
 						'%post:crb_section:',
 						(SELECT post_id FROM \$wpdb->postmeta WHERE meta_key LIKE '%_crb_section_\$section_id%' GROUP BY post_id),
@@ -52,9 +52,9 @@ function crb_get_page_id_from_section_id(\$section_id, \$singular = true, \$is_s
 				INNER JOIN
 					\$wpdb->posts as p
 					ON ( pm.post_id = p.ID )
-				WHERE 
-					pm.meta_key = 'crb_page_sections' 
-					and 
+				WHERE
+					pm.meta_key = 'crb_page_sections'
+					and
 					pm.meta_value like '%\"\$section_id\"%'
 					and
 					p.post_status = 'publish'
@@ -152,7 +152,7 @@ function crb_column_section_link(\$section_id) {
 // Callback for "Section Type" column
 function crb_column_section_type(\$page_id) {
 	\$section = carbon_get_post_meta(\$page_id, 'crb_section', 'complex');
-	
+
 	if ( empty(\$section) || empty(\$section[0]['acf_fc_layout'])) {
 		return '';
 	}
@@ -466,7 +466,7 @@ get_footer();
 			if ( \$target.length ) {
 				\$('html, body').animate({
 					scrollTop: \$target.offset().top /*- offset*/
-				}, 1000);	
+				}, 1000);
 			};
 		}
 	});
@@ -528,7 +528,7 @@ add_filter('acf/load_field', 'crb_acf_dynamic_help_text');
 function crb_acf_dynamic_help_text( \$field ) {
 	// Debug optoins
 	// \$debug = true;
-	if ( !empty(\$debug) ) {
+	if ( ! empty(\$debug) ) {
 		echo '<pre>';
 		print_r( \$field );
 		echo '</pre>';
@@ -538,7 +538,7 @@ function crb_acf_dynamic_help_text( \$field ) {
 	\$section = array(
 		'field_57557f299c0fb' => 'crb_page_sections',
 	);
-	if ( !empty(\$section[\$field['key']]) ) {
+	if ( ! empty(\$section[\$field['key']]) ) {
 		\$field['instructions'] = \$sections_help_text;
 	}
 
@@ -556,7 +556,7 @@ function crb_acf_dynamic_help_text( \$field ) {
 		'field_57b6a2b096742' => 'crb_section_executives_mobile_image',
 		'field_57b6a57bb130d' => 'crb_section_featured_actors_mobile_image',
 	);
-	if ( !empty(\$sizes[\$field['key']]) ) {
+	if ( ! empty(\$sizes[\$field['key']]) ) {
 		\$size = \$sizes[\$field['key']];
 
 		\$field['instructions'] = crb_get_attachment_help(\$size);

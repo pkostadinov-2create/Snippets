@@ -27,7 +27,7 @@ function crb_get_multilingual_suffix() {
 
 	\$languages = icl_get_languages('skip_missing=0&orderby=KEY&order=DIR&link_empty_to=str');
 	foreach (\$languages as \$language) {
-		if ( !empty(\$language['active']) ) {
+		if ( ! empty(\$language['active']) ) {
 			\$suffix = '_' . str_replace('-', '_', \$language['language_code']);
 			break;
 		}
@@ -44,7 +44,7 @@ function crb_get_default_multilingual_suffix() {
 	}
 
 	\$suffix = icl_get_default_language();
-	
+
 	return \$suffix;
 }
 
@@ -64,14 +64,14 @@ if ( !function_exists('carbon_get_theme_option') ) :
 function carbon_get_theme_option(\$name, \$type = null) {
 	\$suffix = crb_get_multilingual_suffix();
 	\$default_suffix = crb_get_default_multilingual_suffix();
-	
+
 	\$multilingual_name = \$name . \$suffix;
 	\$default_multilingual_name = \$name . \$default_suffix;
 
 	\$names = array(\$multilingual_name, \$default_multilingual_name, \$name);
 	foreach (\$names as \$current_name) {
 		\$value = carbon_get_theme_option_inner(\$current_name, \$type);
-		if ( !empty(\$value) ) {
+		if ( ! empty(\$value) ) {
 			break;
 		}
 	}

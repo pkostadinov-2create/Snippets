@@ -22,7 +22,7 @@ function crb_shortcode_button( \$atts, \$content, \$shortcode ) {
 	);
 
 	\$target = '';
-	if ( !empty( \$atts['target'] ) ) {
+	if ( ! empty( \$atts['target'] ) ) {
 		\$target = 'target="_' . esc_attr( \$atts['target'] ) . '"';
 	}
 

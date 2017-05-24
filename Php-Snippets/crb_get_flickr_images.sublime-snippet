@@ -34,7 +34,7 @@ function crb_get_albums_options() {
 	);
 
 	\$albums = crb_get_flickr_albums();
-	if ( !empty(\$albums) ) {
+	if ( ! empty(\$albums) ) {
 		foreach (\$albums as \$index => \$album) {
 			\$options[strval(\$index)] = \$album['title'];
 		}
@@ -87,9 +87,9 @@ class Crb_Flickr {
 	public function get_album_id_from_index(\$index) {
 		\$album_id = '';
 
-		if ( !empty(\$index) ) {
+		if ( ! empty(\$index) ) {
 			\$albums = get_transient(\$this->transient_albums);
-			if ( !empty(\$albums[\$index]['id']) ) {
+			if ( ! empty(\$albums[\$index]['id']) ) {
 				\$album_id = \$albums[\$index]['id'];
 			}
 		}
@@ -107,7 +107,7 @@ class Crb_Flickr {
 				'page' => \$this->page,
 				'format' => 'rest',
 			);
-		} elseif ( \$type == 'photos' && !empty(\$this->album) ) {
+		} elseif ( \$type == 'photos' && ! empty(\$this->album) ) {
 			\$args = array(
 				'method' => 'flickr.photosets.getPhotos',
 				'photoset_id' => \$this->album,
@@ -151,9 +151,9 @@ class Crb_Flickr {
 
 	public function parse_all_photos() {
 		/**
-		 * 
+		 *
 		 * Feed Expected Format:
-		 * 
+		 *
 		 *  \$entry => Array (
 		 *  	[tag] => photo
 		 *  	[type] => complete
@@ -169,10 +169,10 @@ class Crb_Flickr {
 		 *  		[isfriend] => 0
 		 *  		[isfamily] => 0
 		 *  	))
-		 * 
+		 *
 		 * image => http://farm3.static.flickr.com/2942/15144041417_af996aaa50.jpg
 		 * url => https://www.flickr.com/photos/60190001@N02/15144041417/
-		 * 
+		 *
 		 */
 		\$images = array();
 
@@ -200,9 +200,9 @@ class Crb_Flickr {
 
 	public function parse_album_photos() {
 		/**
-		 * 
+		 *
 		 * Feed Expected Format:
-		 * 
+		 *
 		 *  \$entry => Array (
 		 *  	[tag] => photo
 		 *  	[type] => complete
@@ -218,10 +218,10 @@ class Crb_Flickr {
 		 *  		[isfriend] => 0
 		 *  		[isfamily] => 0
 		 *  	))
-		 * 
+		 *
 		 * image => http://farm3.static.flickr.com/2942/15144041417_af996aaa50.jpg
 		 * url => https://www.flickr.com/photos/60190001@N02/15144041417/
-		 * 
+		 *
 		 */
 
 		\$images = array();
@@ -256,9 +256,9 @@ class Crb_Flickr {
 
 	public function parse_albums() {
 		/**
-		 * 
+		 *
 		 * Feed Expected Format:
-		 * 
+		 *
 		 *  \$entry => Array (
 		 *  	[tag] => photoset
 		 *  	[type] => open
@@ -279,19 +279,19 @@ class Crb_Flickr {
 		 *  		[date_create] => 1448395853
 		 *  		[date_update] => 1448458569
 		 *  	))
-		 * 
+		 *
 		 *  \$entry => Array (
 		 *  	[tag] => title
 		 *  	[type] => complete
 		 *  	[level] => 4
 		 *  	[value] => Business Celebrations
-		 * 
+		 *
 		 *  \$entry => Array (
 		 *  	[tag] => description
 		 *  	[type] => complete
 		 *  	[level] => 4
 		 *  	[value] => One of the benefits of Chamber membership is the popular Celebration Kit. Here are some of the photos we've taken while helping our members celebrate anniversaries, grand openings, remodels and more!
-		 * 
+		 *
 		 */
 
 		\$photosets = array();

@@ -36,7 +36,7 @@ function crb_get_woocommerce_links( \$link = '' ) {
 		);
 	}
 
-	if ( !empty( \$link ) && !empty( \$links[\$link] ) ) {
+	if ( ! empty( \$link ) && ! empty( \$links[\$link] ) ) {
 		return \$links[\$link];
 	}
 

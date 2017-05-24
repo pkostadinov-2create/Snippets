@@ -22,7 +22,7 @@ function crb_update_views_count() {
 add_action( 'save_post', 'crb_initialize_views_count' );
 function crb_initialize_views_count( \$post_id ) {
 	\$crb_views = carbon_get_post_meta( \$post_id, 'crb_views' );
-	if ( !empty( \$crb_views ) ) {
+	if ( ! empty( \$crb_views ) ) {
 		return;
 	}
 

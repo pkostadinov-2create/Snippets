@@ -20,7 +20,7 @@ function crb_get_multilingual_suffix() {
 
 	\$languages = icl_get_languages('skip_missing=0&orderby=KEY&order=DIR&link_empty_to=str');
 	foreach (\$languages as \$language) {
-		if ( !empty(\$language['active']) ) {
+		if ( ! empty(\$language['active']) ) {
 			\$suffix = '_' . \$language['language_code'];
 			break;
 		}
@@ -58,7 +58,7 @@ function carbon_get_theme_option(\$name, \$type = null) {
 	\$names = array(\$multilingual_name, \$default_multilingual_name, \$name);
 	foreach (\$names as \$current_name) {
 		\$value = carbon_get_theme_option_original(\$current_name, \$type);
-		if ( !empty(\$value) ) {
+		if ( ! empty(\$value) ) {
 			break;
 		}
 	}

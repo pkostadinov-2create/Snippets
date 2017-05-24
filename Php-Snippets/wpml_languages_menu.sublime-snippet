@@ -3,7 +3,7 @@
 <?php
 if ( crb_is_wpml_active() ) :
 	\$languages = icl_get_languages('skip_missing=N');
-	if ( !empty(\$languages) ) : ?>
+	if ( ! empty(\$languages) ) : ?>
 		<nav class="nav-lang">
 			<ul class="menu">
 				<?php foreach (\$languages as \$key => \$language): ?>

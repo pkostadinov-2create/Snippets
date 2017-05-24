@@ -2,7 +2,7 @@
 	<content><![CDATA[
 // Check if the script is currently called throug AJAX
 function crb_is_ajax() {
-	return !empty(\$_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower(\$_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+	return ! empty(\$_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower(\$_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 }
 
 ]]></content>

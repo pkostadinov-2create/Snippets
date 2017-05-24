@@ -11,10 +11,10 @@ function crb_get_video_embed_src(\$post_id = 0, \$size = 'crb_video_medium') {
 	\$crb_video_override_thumbnail = carbon_get_post_meta( \$post_id, 'crb_video_override_thumbnail' );
 	\$crb_video_link = carbon_get_post_meta( \$post_id, 'crb_video_link' );
 
-	if ( !empty(\$crb_video_override_thumbnail) ) {
+	if ( ! empty(\$crb_video_override_thumbnail) ) {
 		\$override_thumbnail_src = wp_get_attachment_image_src( \$crb_video_override_thumbnail, \$size );
 		\$override_thumbnail_src = array_shift(\$override_thumbnail_src);
-	} elseif ( !empty(\$crb_video_link) ) {
+	} elseif ( ! empty(\$crb_video_link) ) {
 		\$video = Carbon_Video::create(\$crb_video_link);
 		\$override_thumbnail_src = \$video->get_image();
 		\$override_thumbnail_src = crb_wpthumb(\$override_thumbnail_src, \$size);

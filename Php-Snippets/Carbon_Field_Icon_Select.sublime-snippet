@@ -11,8 +11,8 @@ function crb_register_carbon_field_icon_select() {
 				\$description = '';
 				\$is_image = false;
 				\$has_image = false;
-				\$attachment_url = !empty(\$this->value) ? wp_get_attachment_url( \$this->value ) : '';
-				\$thumbnail_src = !empty(\$this->value) ? wp_get_attachment_image_src( \$this->value, 'thumbnail' ) : '';
+				\$attachment_url = ! empty(\$this->value) ? wp_get_attachment_url( \$this->value ) : '';
+				\$thumbnail_src = ! empty(\$this->value) ? wp_get_attachment_image_src( \$this->value, 'thumbnail' ) : '';
 				\$attachment_type = wp_check_filetype(\$attachment_url);
 
 				if ( in_array(\$attachment_type['ext'], \$this->image_extensions) ) {

@@ -25,19 +25,19 @@ function fix_map() {
 		\$zoom = 14;
 
 		\$map_info_array = explode(',', \$map_info);
-		if ( !empty(\$map_info_array[0]) ) {
+		if ( ! empty(\$map_info_array[0]) ) {
 			\$lat = \$map_info_array[0];
 		}
-		if ( !empty(\$map_info_array[1]) ) {
+		if ( ! empty(\$map_info_array[1]) ) {
 			\$lng = \$map_info_array[1];
 		}
-		if ( !empty(\$map_info_array[2]) ) {
+		if ( ! empty(\$map_info_array[2]) ) {
 			\$zoom = \$map_info_array[2];
 		}
 		if ( empty(\$address) ) {
 			\$address = '';
 		}
-		
+
 		// echo '<pre>';
 		// var_dump( \$lat );
 		// var_dump( \$lng );
