@@ -1,0 +1,20 @@
+<snippet>
+	<content><![CDATA[
+// Shortalize string based on symbols count, rather than word count
+function crb_symbols_shortalize( \$string, \$count = 40, \$more = '...' ) {
+	\$string = strip_tags( \$string );
+	if ( mb_strlen( \$string ) > \$count ) {
+		\$string = preg_replace( '~^([\v\V]{0,' . \$count . '})([ \v][\v\V]*)\$~', "\$1", \$string ) . \$more;
+	}
+
+	return \$string;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_symbols_shortalize</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

@@ -1,0 +1,87 @@
+<snippet>
+	<content><![CDATA[
+/* ------------------------------------------------------------ *\
+	Reset GForm
+\* ------------------------------------------------------------ */
+
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield.gfield_error.gfield_contains_required div.ginput_container,
+body .wrapper div.gform_wrapper form ul.gform_fields.top_label li.gfield.gfield_error .ginput_container,
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield.gfield_html,
+body .wrapper div.gform_wrapper { max-width: 100%; }
+
+body .wrapper div.gform_wrapper,
+body .wrapper div.gform_wrapper form ul.gform_fields.top_label li.gfield .gfield_label { margin: 0; }
+
+body .wrapper div.gform_wrapper form ul.gform_fields.top_label li.gfield.gfield_error input.large,
+body .wrapper div.gform_wrapper form ul.gform_fields.top_label li.gfield.gfield_error select.large,
+body .wrapper div.gform_wrapper form ul.gform_fields.top_label li.gfield.gfield_error textarea.textarea,
+body .wrapper div.gform_wrapper form .gform_heading,
+body .wrapper div.gform_wrapper form ul.gform_fields.top_label li.gfield.gfield_error,
+body .wrapper div.gform_wrapper form ul.gform_fields.top_label li.gfield input.large,
+body .wrapper div.gform_wrapper form ul.gform_fields.top_label li.gfield select.large,
+body .wrapper div.gform_wrapper form ul.gform_fields.top_label li.gfield textarea.textarea { width: 100%; }
+
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield textarea { display: block; }
+
+body .wrapper div.gform_wrapper form .gform_heading,
+body .wrapper div.gform_wrapper form div.validation_error { margin-bottom: 0; }
+
+body .wrapper div.gform_wrapper.gform_validation_error form .gform_body ul.gform_fields li.gfield.gfield_error,
+body .wrapper div.gform_wrapper.gform_validation_error form .gform_body ul.gform_fields li.gfield.gfield_error.gfield_contains_required { padding-left: 0 !important; margin-top: 8px !important; margin-bottom: 0 !important; margin-right: 0 !important; max-width: none !important; }
+
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield.gfield_error,
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield.gfield_error.gfield_contains_required.gfield_creditcard_warning { border-width: 0; padding: 0 !important; margin-bottom: 0 !important; background: transparent; }
+html body div.gform_wrapper label.gfield_label + div.ginput_container,
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield.gfield_html.gfield_no_follows_desc,
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield.gfield_error.gfield_contains_required label.gfield_label,
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield.gfield_error.gfield_contains_required div.ginput_container,
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield .ginput_container + .gfield_description.validation_message { margin-top: 0; }
+body .wrapper div.gform_wrapper form ul.gform_fields.top_label li.gfield .gfield_description.validation_message,
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield .gfield_description.validation_message { padding: 0 !important; }
+
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield.gfield_error.gfield_contains_required div.ginput_container,
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield.gfield_error.gfield_contains_required div.gfield_description,
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield.gfield_error.gfield_contains_required label.gfield_label,
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield.gfield_error.gfield_contains_required fieldset legend.gfield_label { margin-left: 0; }
+
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield.gfield_error .gfield_label { color: #f00; }
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield.gfield_error .validation_message { color: #f00; }
+
+body .wrapper div.gform_wrapper form .gform_footer { padding: 0; margin: 0; clear: none; }
+
+/* ------------------------------------------------------------ *\
+	Default GForm
+\* ------------------------------------------------------------ */
+
+body .wrapper div.gform_wrapper {  }
+body .wrapper div.gform_wrapper .validation_error { display: none; }
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield.gfield_error,
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield.gfield_error.gfield_contains_required,
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield { padding-bottom: 0 !important; }
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield .top_label input.medium,
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield .top_label select.medium,
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield .ginput_complex .ginput_left input:not([type=radio]):not([type=checkbox]):not([type=submit]):not([type=image]):not([type=file]),
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield .ginput_complex .ginput_right input:not([type=radio]):not([type=checkbox]):not([type=submit]):not([type=image]):not([type=file]),
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield .ginput_complex .ginput_right select,
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield .ginput_complex input:not([type=radio]):not([type=checkbox]):not([type=submit]):not([type=image]):not([type=file]),
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield .ginput_complex select,
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield input:not([type=radio]):not([type=checkbox]):not([type=submit]):not([type=button]):not([type=image]):not([type=file]),
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield input:not([type=radio]):not([type=checkbox]):not([type=submit]):not([type=image]):not([type=file]),
+body .wrapper div.gform_wrapper form ul.gform_fields li.gfield textarea { text-indent: 0; }
+
+body .wrapper div.gform_wrapper .gform_footer,
+body .wrapper div.gform_wrapper .gform_page_footer { position: relative; display: inline-block; width: auto; }
+
+body .wrapper div.gform_wrapper form .gform_footer input.button,
+body .wrapper div.gform_wrapper form .gform_footer input[type=image],
+body .wrapper div.gform_wrapper form .gform_footer input[type=submit] { }
+
+body .wrapper div.gform_wrapper .gform_ajax_spinner { width: 14px; height: 14px; padding: 0; }
+body .wrapper div.gform_wrapper .gform_ajax_spinner { position: absolute; top: 50%; margin-top: -7px; right: -21px; }
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>gform-reset</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.css</scope>
+</snippet>

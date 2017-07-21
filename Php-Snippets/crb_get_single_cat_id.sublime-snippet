@@ -5,11 +5,11 @@ function crb_get_single_cat_id() {
 	\$single_cat_id = false;
 
 	if ( is_category() ) {
-		\$single_cat_id = get_query_var('cat');
+		\$single_cat_id = get_query_var( 'cat' );
 	// } elseif ( is_single() ) {
 	} else {
 		\$categories = get_the_category();
-		if ( ! empty(\$categories[0]) ) {
+		if ( ! empty( \$categories[0] ) ) {
 			\$single_cat_id = \$categories[0]->term_id;
 		}
 	}

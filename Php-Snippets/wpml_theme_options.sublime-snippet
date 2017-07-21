@@ -1,38 +1,33 @@
 <snippet>
 	<content><![CDATA[
-// Override carbon functions
-add_filter('after_setup_theme', 'crb_carbon_before_include');
-function crb_carbon_before_include() {
-	include_once(CRB_THEME_DIR . 'includes/carbon-functions-override.php');
-}
 
+/* ==========================================================================
+	# includes/wpml-functions.php
+========================================================================== */
+
+// Check WPML plugin is active
 function crb_is_wpml_active() {
-	return function_exists('icl_get_languages');
+	return function_exists( 'icl_get_languages' );
 }
 
 // Return current language suffix. In cases "All Language" option is selected, an empty string is returned.
-// This is handled accordingly in carbon_get_theme_option
-function crb_get_multilingual_suffix() {
+// This is handled accordingly in carbon_get_i18n_theme_option
+function crb_get_i18n_suffix() {
 	\$suffix = '';
-	if ( !crb_is_wpml_active() ) {
+
+	if ( ! defined( 'ICL_LANGUAGE_CODE' ) ) {
 		return \$suffix;
 	}
 
-	\$languages = icl_get_languages('skip_missing=0&orderby=KEY&order=DIR&link_empty_to=str');
-	foreach (\$languages as \$language) {
-		if ( ! empty(\$language['active']) ) {
-			\$suffix = '_' . \$language['language_code'];
-			break;
-		}
-	}
+	\$suffix = '_' . ICL_LANGUAGE_CODE;
 
 	return \$suffix;
 }
 
 // Return the default language prefix
-function crb_get_default_multilingual_suffix() {
+function crb_get_i18n_default_suffix() {
 	\$suffix = '';
-	if ( !crb_is_wpml_active() ) {
+	if ( ! crb_is_wpml_active() ) {
 		return \$suffix;
 	}
 
@@ -41,67 +36,24 @@ function crb_get_default_multilingual_suffix() {
 	return \$suffix;
 }
 
-/* ==========================================================================
-	# includes/carbon-functions-override.php
-========================================================================== */
-<?php
-
-if ( !function_exists('carbon_get_theme_option') ) :
-
-function carbon_get_theme_option(\$name, \$type = null) {
-	\$suffix = crb_get_multilingual_suffix();
-	\$default_suffix = crb_get_default_multilingual_suffix();
+// Theme Option Getter
+function carbon_get_i18n_theme_option( \$option_name ) {
+	\$suffix = crb_get_i18n_suffix();
+	\$default_suffix = crb_get_i18n_default_suffix();
 
 	\$multilingual_name = \$name . \$suffix;
 	\$default_multilingual_name = \$name . \$default_suffix;
 
-	\$names = array(\$multilingual_name, \$default_multilingual_name, \$name);
-	foreach (\$names as \$current_name) {
-		\$value = carbon_get_theme_option_original(\$current_name, \$type);
-		if ( ! empty(\$value) ) {
+	\$names = array( \$multilingual_name, \$default_multilingual_name, \$name );
+	foreach ( \$names as \$current_name ) {
+		\$value = carbon_get_theme_option_original( \$current_name, \$type );
+		if ( ! empty( \$value ) ) {
 			break;
 		}
 	}
 
 	return \$value;
 }
-
-endif;
-
-if ( !function_exists('carbon_get_theme_option_original') ) :
-
-function carbon_get_theme_option_original(\$name, \$type = null) {
-	switch (\$type) {
-		case 'complex':
-			\$value = carbon_get_complex_fields('ThemeOptions', \$name);
-		break;
-
-		case 'map':
-		case 'map_with_address':
-			\$value =  array(
-				'lat' => (float) get_option(\$name . '-lat'),
-				'lng' => (float) get_option(\$name . '-lng'),
-				'address' => get_option(\$name . '-address'),
-				'zoom' => (int) get_option(\$name . '-zoom'),
-			);
-		break;
-
-		case 'association':
-			\$raw_value = get_option(\$name);
-			\$value = carbon_parse_relationship_field(\$raw_value, \$type);
-		break;
-
-		default:
-			\$value = get_option(\$name);
-
-			// backward compatibility for the old Relationship field
-			\$value = crb_maybe_old_relationship_field(\$value);
-	}
-
-	return \$value;
-}
-
-endif;
 
 /* ==========================================================================
 	# options/theme-options.php
