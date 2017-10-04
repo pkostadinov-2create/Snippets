@@ -12,6 +12,7 @@
 	{"trigger": "Field", "contents": "Field::make( 'text', 'title', __( 'Title', 'crb' ) ),"},
 	{"trigger": "FieldC", "contents": "Field::make( 'rich_text', 'content', __( 'Content', 'crb' ) ),"},
 	{"trigger": "FieldI", "contents": "Field::make( 'image', '${1:image}', __( '${1:Image}', 'crb' ) )\n\t->help_text( crb_get_attachment_help( '${2:crb_image_size}' ) ),"},
+	{"trigger": "FieldN", "contents": "Field::make( 'text', '${1:number}', __( '${2:Number}', 'crb' ) )\n\t->set_attribute( 'type', 'number' )\n\t->set_attribute( 'min', '1' )\n\t->set_attribute( 'max', '100' )\n\t->set_attribute( 'step', '1' )\n\t->set_attribute( 'pattern', '[0-9]*' )\n\t->set_default_value( '3' ),"},
 	{"trigger": "help_text", "contents": "help_text( __( '${1:You can use the shortcode [year] to display the current year.}', 'crb' ) )"},
 	{"trigger": "help_text_year", "contents": "help_text( __( '${1:You can use the shortcode [year] to display the current year.}', 'crb' ) )"},
 	{"trigger": "help_text_attachment", "contents": "help_text( crb_get_attachment_help( '${1:crb_image_size}' ) )"},

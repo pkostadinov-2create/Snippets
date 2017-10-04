@@ -1,0 +1,21 @@
+<snippet>
+	<content><![CDATA[
+function crb_logger() {
+	\$content = func_get_args();
+
+	\$content['date'] = date( 'Y-m-d H:s' );
+
+	\$filename = CRB_THEME_DIR . sprintf( 'log/log-%s.txt', date( 'Y-m-d' ) );
+
+	file_put_contents( \$filename, var_export( \$content, true ), FILE_APPEND );
+	file_put_contents( \$filename, "\n------------------------\n", FILE_APPEND );
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_logger</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

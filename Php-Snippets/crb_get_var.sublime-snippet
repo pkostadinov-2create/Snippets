@@ -1,0 +1,49 @@
+<snippet>
+	<content><![CDATA[
+/**
+ * Recursive function for retrieving a value by a given variable route in a specific array or object
+ * Return false if the variable isn't available
+ *
+ * Examples:
+ * \$variable_route=ID, \$arr_obj=new WP_POST, return => \$arr_obj->ID
+ * \$variable_route=post|post_name, \$arr_obj=(object), return => \$arr_obj->post->post_name
+ *
+ * @param  string \$variable_route
+ * @param  mixed \$arr_obj
+ * @return a value specified by a variable route from a given array or object
+ */
+function crb_get_var( \$variable_route, \$arr_obj, \$default_value = '' ) {
+	if ( ! \$arr_obj ) {
+		return \$default_value;
+	}
+
+	\$route_parts = explode( '|', \$variable_route );
+	\$var_name = trim( \$route_parts[0] );
+
+	\$result = '';
+
+	// get the value
+	if ( is_object( \$arr_obj ) && ! empty( \$arr_obj->\$var_name ) ) {
+		\$result = \$arr_obj->\$var_name;
+	} else if ( is_array( \$arr_obj ) && ! empty( \$arr_obj[\$var_name] ) ) {
+		\$result = \$arr_obj[\$var_name];
+	} else {
+		return \$default_value;
+	}
+
+	if ( count( \$route_parts ) > 1 ) {
+		unset( \$route_parts[0] );
+		return crb_get_var( implode( '|', \$route_parts ), \$result, \$default_value );
+	} else {
+		return \$result;
+	}
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_var</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

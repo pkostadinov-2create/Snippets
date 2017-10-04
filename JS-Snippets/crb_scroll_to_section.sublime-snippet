@@ -1,0 +1,29 @@
+<snippet>
+	<content><![CDATA[
+initScrollToSection = function() {
+	\$('a[href^="#"]:not([href="#"])').on( 'click', function( e ) {
+		e.preventDefault();
+
+		scrollToSection( \$(this).attr('href') );
+	} );
+
+	window.addEventListener( 'hashchange', function() {
+		scrollToSection( location.hash );
+	}, false );
+
+	function scrollToSection( selector ) {
+		if ( \$(selector).length > 0 ) {
+			\$('html, body').animate({
+				scrollTop: \$(selector).offset().top
+			}, 1000);
+		};
+	}
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_scroll_to_section</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.js,source.ts</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> equalize</description>
+</snippet>

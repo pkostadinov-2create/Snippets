@@ -1,0 +1,28 @@
+<snippet>
+	<content><![CDATA[
+// Callback for Dropdown showing all user created menus
+function crb_get_menu_options() {
+	\$menu_terms = get_terms( array(
+		'taxonomy' => 'nav_menu',
+		'orderby'  => 'name',
+		'order'    => 'ASC',
+	) );
+
+	\$menus = array_merge(
+		array(
+			'' => __( ' --- Select Menu --- ', 'crb' )
+		),
+		wp_list_pluck( \$menu_terms, 'name', 'slug' )
+	);
+
+	return \$menus;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_menu_options</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

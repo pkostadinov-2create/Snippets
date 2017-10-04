@@ -1,20 +1,20 @@
 <snippet>
 	<content><![CDATA[
-set_types(array(
+set_types( array(
 	array(
-		'type' => 'post',
+		'type'      => 'post',
 		'post_type' => 'page',
 	),
 	array(
-		'type' => 'post',
+		'type'      => 'post',
 		'post_type' => 'post',
 	),
 	array(
-		'type' => 'term',
+		'type'     => 'term',
 		'taxonomy' => 'category',
 	),
 	array(
-		'type' => 'term',
+		'type'     => 'term',
 		'taxonomy' => 'post_tag',
 	),
 	array(
@@ -23,7 +23,7 @@ set_types(array(
 	array(
 		'type' => 'comment',
 	),
-))
+) )
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
 	<tabTrigger>set_types</tabTrigger>

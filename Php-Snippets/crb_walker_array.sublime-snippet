@@ -1,0 +1,154 @@
+<snippet>
+	<content><![CDATA[
+/**
+ * Base Walker for arrays
+ */
+class Crb_Walker_Array {
+	public \$childrens_key = 'rows';
+
+	function __construct() {
+	}
+
+	function walk( \$elements, \$max_depth ) {
+		\$args = array_slice(func_get_args(), 2);
+		\$output = '';
+
+		\$depth = 0;
+		\$empty_array = array();
+
+		if ( -1 == \$max_depth ) {
+			foreach ( \$elements as \$index => \$e ) {
+				\$e['id'] = \$index;
+
+				\$max_depth = 1;
+				\$this->display_element( \$e, \$empty_array, \$max_depth, \$depth, \$args, \$output );
+			}
+
+			return \$output;
+		}
+
+		foreach ( \$elements as \$index => \$e ) {
+			\$e['id'] = \$index;
+
+			\$children_elements = array();
+			if ( ! empty( \$e[\$this->childrens_key] ) ) {
+				\$children_elements = \$e[\$this->childrens_key];
+			}
+
+			\$this->display_element( \$e, \$children_elements, \$max_depth, \$depth, \$args, \$output );
+		}
+
+		return \$output;
+	}
+
+	public function display_element( \$element, \$children_elements, \$max_depth, \$depth, \$args, &\$output ) {
+		if ( ! \$element ) {
+			return;
+		}
+
+		\$cb_args = array_merge( array(&\$output, \$element, \$depth), \$args);
+		call_user_func_array(array(\$this, 'start_el'), \$cb_args);
+
+		// descend only when the depth is right and there are childrens for this element
+		if ( (\$max_depth == 0 || \$max_depth > \$depth+1 ) && ! empty( \$children_elements ) ) {
+
+			foreach ( \$children_elements as \$index => \$child ){
+				\$child['id'] = \$element['id'] . '-' . \$index;
+
+				if ( !isset(\$newlevel) ) {
+					\$newlevel = true;
+					//start the child delimiter
+					\$cb_args = array_merge( array(&\$output, \$depth), \$args);
+					call_user_func_array(array(\$this, 'start_lvl'), \$cb_args);
+				}
+
+				\$children_children_elements = array();
+				if ( ! empty( \$child[\$this->childrens_key] ) ) {
+					\$children_children_elements = \$child[\$this->childrens_key];
+				}
+
+				\$this->display_element( \$child, \$children_children_elements, \$max_depth, \$depth + 1, \$args, \$output );
+			}
+		}
+
+		if ( isset(\$newlevel) && \$newlevel ){
+			//end the child delimiter
+			\$cb_args = array_merge( array(&\$output, \$depth), \$args);
+			call_user_func_array(array(\$this, 'end_lvl'), \$cb_args);
+		}
+
+		//end this element
+		\$cb_args = array_merge( array(&\$output, \$element, \$depth), \$args);
+		call_user_func_array(array(\$this, 'end_el'), \$cb_args);
+
+	}
+
+	public function start_lvl( &\$output, \$depth = 0, \$args = array() ) {
+		\$output .= "<ul>";
+	}
+
+	public function end_lvl( &\$output, \$depth = 0, \$args = array() ) {
+		\$output .= "</ul>";
+	}
+
+	public function start_el( &\$output, \$object, \$depth = 0, \$args = array(), \$current_object_id = 0 ) {
+		if ( empty( \$object['title'] ) ) {
+			\$object['title'] = __( 'No Title', 'crb' );
+		}
+
+		\$output .= "<li>";
+		\$output .= sprintf( '<a href="tab-%s">', \$object['id'] );
+		\$output .= \$object['title'];
+		\$output .= "</a>";
+	}
+
+	public function end_el( &\$output, \$object, \$depth = 0, \$args = array() ) {
+		\$output .= "</li>";
+	}
+
+}
+
+/**
+ * Walker for Tabs navigation
+ */
+class Crb_Privacy_Policy_Tabs_Nav extends Crb_Walker_Array {
+}
+
+/**
+ * Walker for Tabs content
+ */
+class Crb_Privacy_Policy_Tabs_Content extends Crb_Walker_Array {
+	public function start_lvl( &\$output, \$depth = 0, \$args = array() ) {
+		// \$output .= "<ul>";
+	}
+
+	public function end_lvl( &\$output, \$depth = 0, \$args = array() ) {
+		// \$output .= "</ul>";
+	}
+
+	public function start_el( &\$output, \$object, \$depth = 0, \$args = array(), \$current_object_id = 0 ) {
+		\$output .= sprintf( '<div class="tab tab-level%s tab-%s" id="tab-%s">', \$depth, \$object['id'], \$object['id'] );
+
+		if ( ! empty( \$object['title'] ) ) {
+			\$output .= '<h2>';
+			\$output .= apply_filters( 'the_title', \$object['title'] );
+			\$output .= '</h2>';
+		}
+
+		\$output .= apply_filters( 'the_content', \$object['content'] );
+
+		\$output .= "</div>";
+	}
+
+	public function end_el( &\$output, \$object, \$depth = 0, \$args = array() ) {
+	}
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_walker_array</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>
