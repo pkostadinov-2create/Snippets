@@ -19,6 +19,37 @@ initScrollToSection = function() {
 		};
 	}
 };
+
+initScrollToSection = function() {
+	\$('a[href^="#"]:not([href="#"])').on( 'click', function( e ) {
+		e.preventDefault();
+
+		scrollToSection( \$(this).attr('href') );
+	} );
+
+	\$win.on('load', function() {
+		if ( location.hash ) {
+			scrollToSection( location.hash );
+		};
+	});
+
+	function scrollToSection( selector ) {
+		if ( \$(selector).length > 0 ) {
+			\$('html, body').animate({
+				scrollTop: \$(selector).offset().top
+			}, 1000);
+			return;
+		};
+
+		selector = selector.replace( /-smooth\$/, '' );
+		if ( \$(selector).length > 0 ) {
+			\$('html, body').animate({
+				scrollTop: \$(selector).offset().top
+			}, 1000);
+		};
+	}
+};
+
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
 	<tabTrigger>crb_scroll_to_section</tabTrigger>

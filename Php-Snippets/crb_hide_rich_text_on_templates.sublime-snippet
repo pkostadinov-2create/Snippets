@@ -1,0 +1,25 @@
+<snippet>
+	<content><![CDATA[
+// Add Near the end of:
+# add_action( 'init', 'crb_attach_post_types_and_taxonomies', 0 );
+
+// Remove main WYSIWYG Editor from templates that doesnt use it.
+if (
+	is_admin() &&
+	! empty( \$_GET ) &&
+	! empty( \$_GET['post'] ) &&
+	in_array(
+		get_page_template_slug( \$_GET['post'] ),
+		array( 'templates/home.php' )
+	)
+) {
+	remove_post_type_support( 'page', 'editor' );
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_hide_rich_text_on_templates</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

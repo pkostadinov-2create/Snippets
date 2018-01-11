@@ -1,0 +1,32 @@
+<snippet>
+	<content><![CDATA[
+.htaccess:
+Options -Indexes
+
+<Files xmlrpc.php>
+order deny,allow
+deny from all
+</Files>
+
+order deny,allow
+deny from all
+
+functions.php:
+// Remove WordPress version and generator information from appearing in your HTML code
+remove_action( 'wp_head', 'wp_generator' );
+add_filter( 'the_generator', 'crb_remove_version' );
+function crb_remove_version() {
+	return '';
+}
+
+// Turn off XML-RPC simple discovery
+add_filter( 'xmlrpc_enabled', '__return_false' );
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>hacked_site_optimizations</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

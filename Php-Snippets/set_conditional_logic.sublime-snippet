@@ -1,13 +1,13 @@
 <snippet>
 	<content><![CDATA[
-set_conditional_logic(array(
+set_conditional_logic( array(
 	'relation' => 'AND', // Optional, defaults to "AND"
 	array(
 		'field' => 'crb_show_socials',
 		'value' => 'yes', // Optional, defaults to "". Should be an array if "IN" or "NOT IN" operators are used.
 		'compare' => '=', // Optional, defaults to "=". Available operators: =, <, >, <=, >=, IN, NOT IN
 	)
-))
+) )
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
 	<tabTrigger>set_conditional_logic</tabTrigger>

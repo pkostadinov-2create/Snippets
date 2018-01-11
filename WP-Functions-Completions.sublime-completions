@@ -18,6 +18,7 @@
 	{"trigger": "help_text_attachment", "contents": "help_text( crb_get_attachment_help( '${1:crb_image_size}' ) )"},
 	{"trigger": "help_text_video", "contents": "help_text( __( '${1:You can use any YouTube or Vimeo video URL, for example: https://www.youtube.com/watch?v=OCWj5xgu5Ng or http://vimeo.com/87110435}', 'crb' ) )"},
 	{"trigger": "help_text_integer", "contents": "help_text( __( '${1:Please, use only integer numbers}', 'crb' ) )"},
+	{"trigger": "help_text_map", "contents": "help_text( sprintf( __( '${1:You can get your google api key by clicking the button \"<strong>Get a key</strong>\" on the following <a href=\"%s\" target=\"_blank\">link</a>.}', 'crb' ), 'https://developers.google.com/maps/documentation/javascript/get-api-key' ) )"},
 	{"trigger": "set_default_value", "contents": "set_default_value( '${1:text}' )"},
 	{"trigger": "set_required", "contents": "set_required( true )"},
 	{"trigger": "show_on_template", "contents": "show_on_template( '${2:templates/${1:homepage}.php}' )"},

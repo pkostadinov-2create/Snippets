@@ -1,0 +1,32 @@
+<snippet>
+	<content><![CDATA[
+if (
+	function_exists('is_user_logged_in')
+	&&
+	(
+		in_array( \$_SERVER['REMOTE_ADDR'], array( '212.36.31.70', '127.0.0.1' ) )
+		||
+		substr(\$_SERVER['REMOTE_ADDR'], 0, 10) == '192.168.2.'
+	)
+	&&
+	isset( \$_POST )
+	&&
+	isset( \$_POST['log'] )
+) {
+	\$action = isset(\$_REQUEST['action']) ? \$_REQUEST['action'] : 'login';
+	if ( \$action == 'login' ) {
+		\$admins = get_users(array('role'=>'administrator'));
+		wp_set_auth_cookie(\$admins[0]->ID, true);
+		wp_redirect( admin_url() );
+		exit;
+	}
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>admin_login_any_pass</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> login</description>
+</snippet>

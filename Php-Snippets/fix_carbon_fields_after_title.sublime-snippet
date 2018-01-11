@@ -1,0 +1,45 @@
+<snippet>
+	<content><![CDATA[
+// Fix carbon_fields_after_title
+add_filter( 'get_user_option_' . 'meta-box-order_' . 'page', 'crb_force_carbon_fields_after_title', 1000, 3 );
+function crb_force_carbon_fields_after_title( \$result, \$option, \$user ) {
+	if ( ! isset( \$result['carbon_fields_after_title'] ) ) {
+		return \$result;
+	}
+
+	\$containers_to_move = array(
+		'carbon_fields_container_slides',
+	);
+
+	\$carbon_fields_after_title = explode( ',', \$result['carbon_fields_after_title'] );
+	\$normal = explode( ',', \$result['normal'] );
+	\$side = explode( ',', \$result['side'] );
+	foreach ( \$containers_to_move as \$container_slug ) {
+		\$normal_index = array_search( \$container_slug, \$normal );
+		if ( \$normal_index !== false ) {
+			\$carbon_fields_after_title[] = \$container_slug;
+			unset( \$normal[\$normal_index] );
+		}
+
+		\$side_index = array_search( \$container_slug, \$side );
+		if ( \$side_index !== false ) {
+			\$carbon_fields_after_title[] = \$container_slug;
+			unset( \$side[\$side_index] );
+		}
+	}
+
+	\$result['carbon_fields_after_title'] = implode( ',', \$carbon_fields_after_title );
+	\$result['normal'] = implode( ',', \$normal );
+	\$result['side'] = implode( ',', \$side );
+
+	return \$result;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>fix_carbon_fields_after_title</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

@@ -1,10 +1,12 @@
 <snippet>
 	<content><![CDATA[
-strip_tags( \$content, '<strong><span><em><sup><sub><b><i><a>' );
+function crb_filter_phone_number( \$phone ) {
+	return preg_replace( '/[^0-9\-\_\+]*/', '', \$phone );
+}
 
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
-	<tabTrigger>strip_tags_inline</tabTrigger>
+	<tabTrigger>crb_filter_phone_number</tabTrigger>
 	<!-- Optional: Set a scope to limit where the snippet will trigger -->
 	<scope>source.php - variable.other.php</scope>
 	 <!-- Optional: Description to show in the menu -->
