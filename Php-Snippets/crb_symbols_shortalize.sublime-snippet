@@ -1,10 +1,25 @@
 <snippet>
 	<content><![CDATA[
 // Shortalize string based on symbols count, rather than word count
-function crb_symbols_shortalize( \$string, \$count = 40, \$more = '...' ) {
+function crb_symbols_shortalize( \$string, \$count = 55, \$more = '...' ) {
 	\$string = strip_tags( \$string );
 	if ( mb_strlen( \$string ) > \$count ) {
-		\$string = preg_replace( '~^([\v\V]{0,' . \$count . '})([ \v][\v\V]*)\$~', "\$1", \$string ) . \$more;
+		/**
+		 *
+		 * ( match up to n-symbols )
+		 * (
+		 * 		match 1 character that is not a letter/symbol/number,
+		 * 		than match anything to the end of string
+		 * )
+		 *
+		 * Additional info:
+		 * [\xFF01-\xFF5E]
+		 * 		Alphanumeric and Punctuation (Full Width):
+		 * 		！ ＂ ＃ ＄ ％ ＆ ＇ （ ） ＊ ＋ ， － ． ／ ０ １ ２ ３ ４ ５ ６ ７ ８ ９ ： ； ＜ ＝ ＞ ？
+		 * 		＠ Ａ Ｂ Ｃ Ｄ Ｅ Ｆ Ｇ Ｈ Ｉ Ｊ Ｋ Ｌ Ｍ Ｎ Ｏ Ｐ Ｑ Ｒ Ｓ Ｔ Ｕ Ｖ Ｗ Ｘ Ｙ Ｚ ［ ＼ ］ ＾ ＿
+		 * 		｀ ａ ｂ ｃ ｄ ｅ ｆ ｇ ｈ ｉ ｊ ｋ ｌ ｍ ｎ ｏ ｐ ｑ ｒ ｓ ｔ ｕ ｖ ｗ ｘ ｙ ｚ ｛ ｜ ｝ ～
+		 */
+		\$string = preg_replace( '~^([\v\V]{0,' . \$count . '})([^\xFF01-\xFF5E][\v\V]*)\$~u', "\$1", \$string ) . \$more;
 	}
 
 	return \$string;

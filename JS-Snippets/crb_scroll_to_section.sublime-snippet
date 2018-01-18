@@ -33,20 +33,24 @@ initScrollToSection = function() {
 		};
 	});
 
-	function scrollToSection( selector ) {
-		if ( \$(selector).length > 0 ) {
-			\$('html, body').animate({
-				scrollTop: \$(selector).offset().top
-			}, 1000);
-			return;
-		};
+	function scrollToSection( baseSelector ) {
+		var selectors = [
+			baseSelector,
+			baseSelector + '-smooth',
+			baseSelector.replace( /-smooth\$/, '' )
+		];
 
-		selector = selector.replace( /-smooth\$/, '' );
-		if ( \$(selector).length > 0 ) {
-			\$('html, body').animate({
-				scrollTop: \$(selector).offset().top
-			}, 1000);
-		};
+		\$.each( selectors, function( index, selector ) {
+			if ( \$(selector).length > 0 ) {
+				\$('html, body').animate({
+					scrollTop: \$(selector).offset().top - offset
+				}, 1000, function() {
+					window.location.hash = baseSelector;
+				});
+
+				return false;
+			};
+		} );
 	}
 };
 

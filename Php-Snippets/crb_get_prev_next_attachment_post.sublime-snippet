@@ -1,0 +1,48 @@
+<snippet>
+	<content><![CDATA[
+function crb_get_prev_next_attachment_post( \$current_post_id, \$post_type, \$next = false, \$infinity_loop = true ) {
+	\$post = get_post( \$current_post_id );
+
+	\$attachments = get_children( array(
+		'post_parent' => \$post->post_parent,
+		'post_status' => 'inherit',
+		'post_type' => 'attachment',
+		'post_mime_type' => 'image',
+		'order' => 'ASC',
+		'orderby' => 'menu_order ID',
+	) );
+
+	\$attachments = array_values( wp_list_pluck( \$attachments, 'ID' ) );
+	if ( empty( \$attachments ) ) {
+		return;
+	}
+
+	\$current_post_index = array_search( \$current_post_id, \$attachments );
+
+	\$next_post_index = \$current_post_index + 1;
+	\$prev_post_index = \$current_post_index - 1;
+	\$last_post_index = count( \$attachments ) - 1;
+
+	if ( \$prev_post_index < 0 ) {
+		\$prev_post_index = \$infinity_loop ? \$last_post_index : false;
+	}
+
+	if ( \$next_post_index > \$last_post_index ) {
+		\$next_post_index = \$infinity_loop ? 0 : false;
+	}
+
+	if ( \$next ) {
+		return \$next_post_index !== false ? \$attachments[\$next_post_index] : \$next_post_index;
+	} else {
+		return \$prev_post_index !== false ? \$attachments[\$prev_post_index] : \$prev_post_index;
+	}
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_prev_next_attachment_post</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

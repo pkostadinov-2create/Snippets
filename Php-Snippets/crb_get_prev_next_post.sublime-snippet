@@ -1,28 +1,28 @@
 <snippet>
 	<content><![CDATA[
-function crb_get_prev_next_post_alphabetically(\$current_post_id, \$post_type, \$next = false) {
-	\$post_ids = get_posts(array(
+function crb_get_prev_next_post_alphabetically( \$current_post_id, \$post_type, \$next = false, \$infinity_loop = true ) {
+	\$post_ids = get_posts( array(
 		'post_type' => \$post_type,
 		'posts_per_page' => -1,
 		'fields' => 'ids'
-	));
+	) );
 
-	if ( empty(\$post_ids) ) {
+	if ( empty( \$post_ids ) ) {
 		return;
 	}
 
-	\$current_post_index = array_search(\$current_post_id, \$post_ids);
+	\$current_post_index = array_search( \$current_post_id, \$post_ids );
 
-	\$next_post_index = \$current_post_index+1;
-	\$prev_post_index = \$current_post_index-1;
-	\$last_post_index = count(\$post_ids) - 1;
+	\$next_post_index = \$current_post_index + 1;
+	\$prev_post_index = \$current_post_index - 1;
+	\$last_post_index = count( \$post_ids ) - 1;
 
 	if ( \$prev_post_index < 0 ) {
-		\$prev_post_index = \$last_post_index;
+		\$prev_post_index = \$infinity_loop ? \$last_post_index : false;
 	}
 
 	if ( \$next_post_index > \$last_post_index ) {
-		\$next_post_index = 0;
+		\$next_post_index = \$infinity_loop ? 0 : false;
 	}
 
 	if ( \$next ) {
@@ -32,32 +32,29 @@ function crb_get_prev_next_post_alphabetically(\$current_post_id, \$post_type, \
 	}
 }
 
-function crb_get_prev_next_post(\$current_post_id, \$post_type, \$next = false) {
-	\$post_ids = get_posts(array(
+function crb_get_prev_next_post( \$current_post_id, \$post_type, \$next = false, \$infinity_loop = true ) {
+	\$post_ids = get_posts( array(
 		'post_type' => \$post_type,
 		'posts_per_page' => -1,
 		'fields' => 'ids'
-	));
+	) );
 
-	if ( empty(\$post_ids) ) {
+	if ( empty( \$post_ids ) ) {
 		return;
 	}
 
-	\$current_post_index = array_search(\$current_post_id, \$post_ids);
+	\$current_post_index = array_search( \$current_post_id, \$post_ids );
 
-
-	\$next_post_index = \$current_post_index+1;
-	\$prev_post_index = \$current_post_index-1;
-	\$last_post_index = count(\$post_ids) - 1;
+	\$next_post_index = \$current_post_index + 1;
+	\$prev_post_index = \$current_post_index - 1;
+	\$last_post_index = count( \$post_ids ) - 1;
 
 	if ( \$prev_post_index < 0 ) {
-		// \$prev_post_index = \$last_post_index;
-		\$prev_post_index = false;
+		\$prev_post_index = \$infinity_loop ? \$last_post_index : false;
 	}
 
 	if ( \$next_post_index > \$last_post_index ) {
-		// \$next_post_index = 0;
-		\$next_post_index = false;
+		\$next_post_index = \$infinity_loop ? 0 : false;
 	}
 
 	if ( \$next ) {
@@ -69,7 +66,7 @@ function crb_get_prev_next_post(\$current_post_id, \$post_type, \$next = false) 
 
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
-	<tabTrigger>crb_get_prev_next_post_alphabetically</tabTrigger>
+	<tabTrigger>crb_get_prev_next_post</tabTrigger>
 	<!-- Optional: Set a scope to limit where the snippet will trigger -->
 	<scope>source.php - variable.other.php</scope>
 	 <!-- Optional: Description to show in the menu -->
