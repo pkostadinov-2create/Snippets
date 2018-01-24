@@ -1,0 +1,343 @@
+<snippet>
+	<content><![CDATA[
+/**
+ * Implementing Hierarchical Posts
+ */
+class Crb_Hierarchical_Posts {
+	protected \$request = array();
+
+	/**
+	 * Filters defined in the order as they are run by WordPress
+	 */
+	function __construct() {
+		/* ==========================================================================
+			# Core Functionallity
+		========================================================================== */
+
+			/**
+			 * Runs just after "create_initial_post_types", which runs at "0" priority
+			 */
+			add_action( 'init', array( \$this, 'make_posts_hierarchical' ), 1 );
+
+			/**
+			 * Change the Query, set posts
+			 */
+			add_action( 'parse_request', array( \$this, 'parse_request' ) );
+
+			/**
+			 * Disable Hierarchical Posts Redirects
+			 */
+			# add_filter( 'redirect_canonical', array( \$this, 'redirect_canonical' ), 99, 2 );
+
+		/* ==========================================================================
+			# Modify Slugs
+		========================================================================== */
+
+			/**
+			 * Force posts to have unique slugs despite being hierarchical
+			 * This trickery will allow for a default Query to be used within the "parse_request"
+			 */
+			add_filter( 'wp_unique_post_slug', array( \$this, 'wp_unique_post_slug' ), 10, 6 );
+
+			/**
+			 * Add parent posts to the URL
+			 */
+			add_filter( 'post_link', array( \$this, 'post_link' ), 100, 3 );
+
+			/**
+			 * Use the category of the top parent
+			 * YoastSEO also uses this hook
+			 * MUST RUN after YoastSEO hook, after priority "10"
+			 */
+			add_filter( 'post_link_category', array( \$this, 'post_link_category' ), 1000, 3 );
+
+			/**
+			 * Replace Permalink sample with actual path to child post ( UI improvement in the Edit screen )
+			 */
+			add_filter( 'get_sample_permalink', array( \$this, 'get_sample_permalink' ), 10, 5 );
+
+		/* ==========================================================================
+			# Modify Breadcrumbs
+		========================================================================== */
+
+			/**
+			 * Change the Category breadcrumbs from the categories of the current post
+			 * into the categories of the top level post
+			 */
+			add_action( 'carbon_breadcrumbs_after_setup_trail', array( \$this, 'modify_breadcrumbs' ) );
+	}
+
+	/* ==========================================================================
+		# Core Functionallity
+	========================================================================== */
+
+		function make_posts_hierarchical() {
+			// access \$wp_post_types global variable
+			global \$wp_post_types;
+
+			// Set post type "post" to be hierarchical
+			\$wp_post_types['post']->hierarchical = 1;
+
+			// Add page attributes to post backend
+			// This adds the box to set up parent and menu order on edit posts.
+			add_post_type_support( 'post', 'page-attributes' );
+		}
+
+		function parse_request( \$query ) {
+			/**
+			 * Try to generate the result of "index.php?category_name=\$matches[1]&name=\$matches[2]&page=\$matches[3]"
+			 * to be compared with \$matched_query
+			 *
+			 * Input : opzeggen/lexa/lexa/lexa
+			 * Output: category_name=opzeggen%2Flexa%2Flexa&name=lexa&page=
+			 */
+			preg_match( '~(.+?)/([^/]+)(?:/([0-9]+))?/?\$~', \$query->request, \$matches );
+			\$matches = array_map( 'urlencode', \$matches );
+			\$matched_query = @"category_name={\$matches[1]}&name={\$matches[2]}&page={\$matches[3]}";
+
+			if (
+				\$query->matched_query !== \$matched_query ||
+				\$query->matched_rule !== '(.+?)/([^/]+)(?:/([0-9]+))?/?\$' ||
+				empty( \$query->query_vars['category_name'] ) ||
+				empty( \$query->query_vars['name'] ) ||
+				! isset( \$query->query_vars['page'] )
+			) {
+				return;
+			}
+
+			// Holds the requested data in raw format
+			\$request = array(
+				'request' => \$query->request,
+				'page' => \$query->query_vars['page'],
+				'name' => \$query->query_vars['name'],
+				'category_name' => '',
+				'names' => array(),
+				'categories' => array(),
+			);
+
+			// Hold data containing correct information about the request
+			\$actual_request = array();
+
+			\$all_category_slugs = get_categories( array(
+				'fields' => 'id=>slug',
+			) );
+
+			\$assumed_categories = explode( '/', \$query->query_vars['category_name'] );
+
+			// If we have standart structure of "category/post" skip execution
+			if ( count( \$assumed_categories ) <= 1 ) {
+				return;
+			}
+
+			foreach ( \$assumed_categories as \$category_slug ) {
+				if ( in_array( \$category_slug, \$all_category_slugs ) ) {
+					\$request['categories'][] = \$category_slug;
+				} else {
+					// Category slug is actually a post slug
+					\$request['names'][] = \$category_slug;
+
+					/*// First entry that is not
+					if ( empty( \$request['top_parent_slug'] ) ) {
+						\$request['top_parent_slug'] = \$category_slug;
+					}*/
+				}
+			}
+
+			// If we have standart structure of "category/subcategory/post" skip execution
+			if ( empty( \$request['names'] ) ) {
+				return;
+			}
+
+			// Convert the arrays into Hierarchical strings
+			\$request['category_name'] = implode( '/', \$request['categories'] );
+
+			\$query->query_vars = array(
+				'page' => \$request['page'],
+				'name' => \$request['name'],
+				'category_name' => \$request['category_name'],
+			);
+		}
+
+		function redirect_canonical( \$redirect_url, \$requested_url ) {
+			return \$requested_url;
+		}
+
+	/* ==========================================================================
+		# Modify Slugs
+	========================================================================== */
+
+		function wp_unique_post_slug( \$slug, \$post_ID, \$post_status, \$post_type, \$post_parent, \$original_slug ) {
+			if ( \$post_type !== 'post' ) {
+				return \$slug;
+			}
+
+			global \$wpdb, \$wp_rewrite;
+
+			\$original_slug = \$slug;
+
+			\$feeds = \$wp_rewrite->feeds;
+			if ( ! is_array( \$feeds ) ) {
+				\$feeds = array();
+			}
+
+			\$check_sql = "SELECT post_name FROM \$wpdb->posts WHERE post_name = %s AND ID != %d LIMIT 1";
+			\$post_name_check = \$wpdb->get_var( \$wpdb->prepare( \$check_sql, \$slug, \$post_ID ) );
+
+			if ( \$post_name_check || in_array( \$slug, \$feeds ) ) {
+				\$suffix = 2;
+
+				do {
+					\$alt_post_name = _truncate_post_slug( \$slug, 200 - ( strlen( \$suffix ) + 1 ) ) . "-\$suffix";
+					\$post_name_check = \$wpdb->get_var( \$wpdb->prepare( \$check_sql, \$alt_post_name, \$post_ID ) );
+					\$suffix++;
+				} while ( \$post_name_check );
+
+				\$slug = \$alt_post_name;
+			}
+
+			return \$slug;
+		}
+
+		function post_link( \$permalink, \$post, \$leavename = false ) {
+			if (
+				\$post->post_type != 'post' ||
+				\$post->post_parent == 0
+			) {
+				return \$permalink;
+			}
+
+			\$original_slug = \$post->post_name;
+
+			\$slugs = \$this->get_all_slugs_to_top( \$post );
+			\$slugs = array_reverse( \$slugs );
+
+			\$permalink = untrailingslashit( \$permalink );
+
+			// Replace original slug with a path of slugs showing the post hierarchy
+			\$permalink = preg_replace( '~' . preg_quote( \$original_slug, '~' ) . '\$~', implode( '/', \$slugs ), \$permalink )  . '/';
+
+			return \$permalink;
+		}
+
+		function post_link_category( \$category_object, \$cats, \$post ) {
+			if ( \$post->post_parent == 0 ) {
+				return \$category_object;
+			}
+
+			\$top_post = \$this->get_top_post( \$post );
+
+			/**
+			 * Cloned code from WP Core
+			 * "wp-includes/link-template.php" -> inside function "get_permalink"
+			 */
+			\$cats = get_the_category( \$top_post->ID );
+			\$cats = wp_list_sort( \$cats, array(
+				'term_id' => 'ASC',
+			) );
+
+			/**
+			 * Call the filter again,
+			 * triggering YoastSEO primary category modification
+			 */
+			\$category_object = apply_filters( 'post_link_category', \$cats[0], \$cats, \$top_post );
+
+			\$category_object = get_term( \$category_object, 'category' );
+
+			return \$category_object;
+		}
+
+		function get_sample_permalink( \$permalink, \$post_ID, \$title, \$name, \$post ) {
+			if ( \$post->post_type != 'post' || \$post->post_parent == 0 ) {
+				return \$permalink;
+			}
+
+			\$slugs = \$this->get_all_slugs_to_top( \$post );
+			\$slugs = array_reverse( \$slugs );
+			\$last_index = count( \$slugs ) - 1;
+			\$slugs[\$last_index] = '%postname%';
+
+			\$permalink = str_replace( '%postname%', implode( '/', \$slugs ), \$permalink );
+
+			return \$permalink;
+		}
+
+	/* ==========================================================================
+		# Modify Breadcrumbs
+	========================================================================== */
+
+		function modify_breadcrumbs( \$trail ) {
+			global \$post;
+			if ( ! is_singular( 'post' ) || \$post->post_parent == 0 ) {
+				return;
+			}
+
+			\$top_post = \$this->get_top_post( \$post );
+			if ( empty( \$top_post ) ) {
+				return;
+			}
+
+			\$cats = get_the_category( \$top_post->ID );
+			if ( empty( \$cats ) || empty( \$cats[0] ) ) {
+				return;
+			}
+			\$cats = wp_list_sort( \$cats, array(
+				'term_id' => 'ASC',
+			) );
+
+			/**
+			 * Call the filter,
+			 * triggering YoastSEO primary category modification
+			 */
+			\$category_object = apply_filters( 'post_link_category', \$cats[0], \$cats, \$top_post );
+
+			\$term_id = \$category_object->term_id;
+
+			/**
+			 * Taxonomy breadcrumb is inserted at 700
+			 * Removing it, and adding new one at the same priority
+			 */
+			\$trail->remove_item_by_priority( 700 );
+
+			\$terms = Carbon_Breadcrumb_Locator::factory( 'term', 'category' );
+			\$items = \$terms->get_items( 700, \$term_id );
+
+			if ( \$items ) {
+				\$trail->add_item( \$items );
+			}
+		}
+
+	/* ==========================================================================
+		# Helpers
+	========================================================================== */
+
+		protected function get_top_post( \$post ) {
+			if ( \$post->post_parent == 0 ) {
+				return \$post;
+			}
+
+			return \$this->get_top_post( get_post( \$post->post_parent ) );
+		}
+
+		protected function get_all_slugs_to_top( \$post, \$slugs = array() ) {
+			\$slugs[] = \$post->post_name;
+
+			if ( \$post->post_parent == 0 ) {
+				return \$slugs;
+			} else {
+				\$post = get_post( \$post->post_parent );
+
+				return \$this->get_all_slugs_to_top( \$post, \$slugs );
+			}
+
+			return \$slugs;
+		}
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>Crb_Hierarchical_Posts</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>
