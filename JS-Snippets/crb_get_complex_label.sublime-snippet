@@ -1,0 +1,39 @@
+<snippet>
+	<content><![CDATA[
+function crb_get_complex_label( fieldsRaw, complexKey, type ) {
+	var fieldsFormatted = {};
+
+	// Format array
+	for ( var key in fieldsRaw ) {
+		var entryKey = fieldsRaw[key].base_name;
+		fieldsFormatted[entryKey] = fieldsRaw[key];
+	}
+
+	var field = fieldsFormatted[complexKey];
+
+	var value = field.value;
+	var label = "";
+
+	if ( type == 'select' ) {
+		// Search in "options"
+		for ( var key in field.options ) {
+			if ( field.options[key].value == value ) {
+				label = field.options[key].label;
+				break;
+			}
+		}
+	};
+
+	return label;
+}
+
+USE: ->set_header_template( '<% var label = crb_get_complex_label( fields, "category", "select" ); %><%- label %>' )
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_complex_label</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.js,source.ts</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> equalize</description>
+</snippet>

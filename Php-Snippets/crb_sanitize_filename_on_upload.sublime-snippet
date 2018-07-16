@@ -1,0 +1,37 @@
+<snippet>
+	<content><![CDATA[
+/**
+ * Produces cleaner filenames for uploads
+ *
+ * @param  string \$filename
+ * @return string
+ */
+add_filter( 'sanitize_file_name', 'crb_sanitize_file_name_on_upload', 10, 1 );
+function crb_sanitize_file_name_on_upload( \$filename ) {
+	\$sanitized_filename = remove_accents( \$filename ); // Convert to ASCII
+
+	// Standard replacements
+	\$invalid = array(
+		' '   => '-',
+		'%20' => '-',
+		'_'   => '-',
+	);
+	\$sanitized_filename = str_replace( array_keys( \$invalid ), array_values( \$invalid ), \$sanitized_filename );
+
+	\$sanitized_filename = preg_replace( '/[^A-Za-z0-9-\. ]/', '', \$sanitized_filename ); // Remove all non-alphanumeric except .
+	\$sanitized_filename = preg_replace( '/\.(?=.*\.)/', '', \$sanitized_filename ); // Remove all but last .
+	\$sanitized_filename = preg_replace( '/-+/', '-', \$sanitized_filename ); // Replace any more than one - in a row
+	\$sanitized_filename = str_replace( '-.', '.', \$sanitized_filename ); // Remove last - if at the end
+	\$sanitized_filename = strtolower( \$sanitized_filename ); // Lowercase
+
+	return \$sanitized_filename;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_sanitize_file_name_on_upload</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

@@ -1,0 +1,169 @@
+<snippet>
+	<content><![CDATA[
+/**
+ * Generates Query for related posts
+ */
+class Crb_Related_Posts {
+	/**
+	 * @param \$related_count => ( int )    => how many entries will the query hold
+	 * @param \$taxonomies    => ( array )  => list of taxonomies to pull related by
+	 * @param \$meta_key      => ( string ) => related posts meta key
+	 * @param \$post_type     => ( mixed - string|array ) => post types
+	 * @param \$current_post  => ( int - post_ids )       => skip current post
+	 * @param \$current_posts => ( array - post_ids )     => skip already found posts
+	 */
+
+	public \$related_count = 4;
+	public \$post_type = 'post';
+	public \$taxonomies = array( 'category' );
+	public \$meta_key = '';
+	public \$current_post_id = 0;
+	public \$current_posts = array();
+
+	public function __construct() {
+	}
+
+	public function set_params( \$params ) {
+		foreach ( \$params as \$key => \$value ) {
+			if ( isset( \$this->\$key ) ) {
+				\$this->\$key = \$value;
+			}
+		}
+
+		// Get the current post if missing
+		if ( empty( \$this->current_post_id ) ) {
+			\$this->current_post_id = get_the_id();
+		}
+
+		\$this->current_posts = array(
+			\$this->current_post_id,
+		);
+	}
+
+	public function get_query() {
+		\$related_ids = \$this->get_related_post_ids();
+
+		\$related_query = new WP_Query( array(
+			'post_type' => \$this->post_type,
+			'post__in' => \$related_ids,
+			'posts_per_page' => \$this->related_count,
+			'order' => 'ASC',
+			'orderby' => 'post__in',
+		) );
+
+		return \$related_query;
+	}
+
+	protected function get_related_post_ids() {
+		// Step 1
+		\$related_ids = \$this->get_related_post_ids_by_meta();
+		if ( ! empty( \$related_ids ) ) {
+			return \$related_ids;
+		}
+
+		\$related_count = \$this->related_count;
+
+		// Step 2
+		\$related_ids = \$this->get_related_post_ids_by_terms();
+		if ( count( \$related_ids ) >= \$related_count ) {
+			return \$related_ids;
+		}
+
+		\$related_count = \$related_count - count( \$related_ids );
+		\$this->current_posts = array_merge( \$this->current_posts, \$related_ids );
+
+		// Step 3
+		\$related_ids_by_author = \$this->get_related_post_ids_by_author();
+
+		if ( ! empty( \$related_ids_by_author ) ) {
+			\$related_ids = array_merge( \$related_ids, \$related_ids_by_author );
+		}
+
+		return \$related_ids;
+	}
+
+	protected function get_related_post_ids_by_meta() {
+		\$related_posts = carbon_get_post_meta( \$this->current_post_id, \$this->meta_key );
+		if ( empty( \$related_posts ) ) {
+			return array();
+		}
+
+		\$related_post_ids = wp_list_pluck( \$related_posts, 'id' );
+
+		return \$related_post_ids;
+	}
+
+	protected function get_related_post_ids_by_terms() {
+		// Initialize tax query
+		\$tax_query = array();
+
+		// Holds all current taxonomies and terms
+		\$taxonomy_terms = array();
+
+		foreach ( \$this->taxonomies as \$taxonomy ) {
+			// Predefined Category, Tag and Custom terms
+			if ( \$taxonomy == 'category' ) {
+				\$terms = get_the_category();
+			} elseif ( \$taxonomy == 'tag' ) {
+				\$terms = get_the_tags();
+			} else {
+				\$terms = wp_get_post_terms( \$this->current_post_id, \$taxonomy );
+			}
+
+			if ( ! empty( \$terms ) ) {
+				\$taxonomy_terms[\$taxonomy] = \$terms;
+			}
+		}
+
+		if ( ! empty( \$taxonomy_terms ) ) {
+			\$tax_query['relation'] = 'OR';
+		}
+
+		foreach ( \$taxonomy_terms as \$terms ) {
+			if ( ! empty( \$terms ) ) {
+				foreach ( \$terms as \$term ) {
+					\$tax_query[] = array(
+						'taxonomy' => \$term->taxonomy,
+						'field' => 'id',
+						'terms' => \$term->term_id,
+					);
+				}
+			}
+		}
+
+		\$related_ids = get_posts( array(
+			'fields' => 'ids',
+			'post_type' => \$this->post_type,
+			'orderby' => 'rand',
+			'post__not_in' => \$this->current_posts,
+			'posts_per_page' => \$this->related_count,
+			'tax_query' => \$tax_query,
+		) );
+
+		return \$related_ids;
+	}
+
+	protected function get_related_post_ids_by_author() {
+		\$author = get_post_field( 'post_author', \$this->current_post_id );
+
+		\$related_ids = get_posts( array(
+			'fields' => 'ids',
+			'author' => \$author,
+			'post_type' => \$this->post_type,
+			'orderby' => 'rand',
+			'post__not_in' => \$this->current_posts,
+			'posts_per_page' => \$this->related_count,
+		) );
+
+		return \$related_ids;
+	}
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>Crb_Related_Posts</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

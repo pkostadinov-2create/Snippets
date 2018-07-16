@@ -1,20 +1,18 @@
 <snippet>
 	<content><![CDATA[
-function crb_get_woocommerce_shop_url() {
-	if ( !class_exists('WooCommerce') ) {
-		return home_url('/');
-	}
+// Allow SVG Files upload in administration
+add_filter( 'upload_mimes', 'crb_mime_types' );
+function crb_mime_types( \$mimes ) {
+	\$mimes['svg'] = 'image/svg+xml';
 
-	\$shop_page_url = get_permalink( wc_get_page_id('shop') );
-
-	return \$shop_page_url;
+	return \$mimes;
 }
 
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
-	<tabTrigger>crb_get_woocommerce_shop_url</tabTrigger>
+	<tabTrigger>crb_svg</tabTrigger>
 	<!-- Optional: Set a scope to limit where the snippet will trigger -->
 	<scope>source.php - variable.other.php</scope>
 	 <!-- Optional: Description to show in the menu -->
-	<description> wpthumb wrapper</description>
+	<description> with args</description>
 </snippet>

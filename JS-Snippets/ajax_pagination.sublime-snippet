@@ -32,7 +32,7 @@ function ajaxPagination() {
 				\$button.insertAfter(\$loadBtn);
 			};
 
-			ajaxNextPage();
+			\$(window).trigger('ajaxNextPage', \$entries);
 		})
 		.always(function() {
 			\$loadBtn.remove();
@@ -43,9 +43,10 @@ function ajaxPagination() {
 /**
  * Hook Any Next Page events
  */
-function ajaxNextPage() {
+\$(window).on('ajaxNextPage', function( event, ...\$entries ) {
 	// Do nothing
-}
+	// isotope.appended( \$entries );
+});
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
 	<tabTrigger>ajax_pagination</tabTrigger>
