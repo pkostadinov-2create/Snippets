@@ -1,0 +1,66 @@
+<snippet>
+	<content><![CDATA[
+# Image sizes
+\$image_sizes = array(
+	'crb_home_slider' => array( 'width' => 1920, 'height' => 1080, 'crop' => false, ),
+);
+\$retina_supported = array(
+	''       => 1,
+	'@1.25x' => 1.25,
+	'@1.33x' => 1.33,
+	'@1.4x'  => 1.4,
+	'@1.5x'  => 1.5,
+	'@1.8x'  => 1.8,
+	'@2x'    => 2,
+	'@2.5x'  => 2.5,
+	'@3x'    => 3,
+	'@4x'    => 4,
+	'@5x'    => 5,
+);
+foreach ( \$image_sizes as \$name => \$size ) {
+	foreach ( \$retina_supported as \$suffix => \$multiplier ) {
+		add_image_size( \$name . \$suffix , \$size['width'] * \$multiplier , \$size['height'] * \$multiplier , \$size['crop'] );
+	}
+}
+
+// Returns image help text from image size name or image dimensions
+function crb_get_attachment_help( \$args ) {
+	\$args = crb_sanitize_image_size_args( \$args );
+
+	if ( \$args['crop'] ) {
+		return sprintf( __( 'Recommended image size: %s x %s px. If the image is larger, it will be scaled down and cropped to match exactly both the recommended width and height.', 'crb' ), \$args['width'], \$args['height'] );
+	} else {
+		return sprintf( __( 'Largest image size: %s x %s px. If the image is larger, it will be scaled down proportionately to fit within either the recommended width or height.', 'crb' ), \$args['width'], \$args['height'] );
+	}
+}
+
+// Parsing Args width, height and crop, or extracting them from image size.
+function crb_sanitize_image_size_args( \$args ) {
+	if ( ! is_array( \$args ) ) {
+		global \$_wp_additional_image_sizes;
+		if ( ! empty( \$_wp_additional_image_sizes[ \$args ] ) ) {
+			\$current_size = \$_wp_additional_image_sizes[ \$args ];
+		} else {
+			# \$current_size = crb_get_unregistered_image_size( \$args );
+		}
+
+		if ( ! empty( \$current_size ) ) {
+			\$args = \$current_size;
+		}
+	}
+
+	return wp_parse_args( \$args, array(
+		'width' => 0,
+		'height' => 0,
+		'crop' => false,
+	) );
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_add_image_size</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

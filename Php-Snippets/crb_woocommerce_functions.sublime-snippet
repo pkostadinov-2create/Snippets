@@ -10,6 +10,36 @@ function crb_is_woocommerce() {
 
 function crb_get_woocommerce_links( \$link = '' ) {
 	\$home_url = home_url( '/' );
+
+	\$links = array(
+		'my-account' => array(
+			'url' => admin_url( 'profile.php' ),
+			'condition' => is_user_logged_in(),
+			'title' => __( 'My Account', 'crb' ),
+		),
+		'logout' => array(
+			'url' => wp_logout_url( \$home_url ),
+			'condition' => is_user_logged_in(),
+			'title' => __( 'Logout', 'crb' ),
+		),
+		'login' => array(
+			'url' => wp_login_url( \$home_url ),
+			'condition' => ! is_user_logged_in(),
+			'title' => __( 'Login', 'crb' ),
+		),
+		'register' => array(
+			'url' => wp_registration_url(),
+			'condition' => ! is_user_logged_in(),
+			'title' => __( 'Join', 'crb' ),
+		),
+		'cart' => array(
+			'url' => '',
+			'condition' => true,
+			'title' => __( 'Cart', 'crb' ),
+		),
+		'cart_count' => 0,
+	);
+
 	if ( crb_is_woocommerce_active() ) {
 		global \$woocommerce;
 		\$cart_url = wc_get_cart_url();
@@ -17,23 +47,12 @@ function crb_get_woocommerce_links( \$link = '' ) {
 
 		\$myaccount_link = get_permalink( get_option( 'woocommerce_myaccount_page_id' ) );
 
-		\$links = array(
-			'my account' => \$myaccount_link,
-			'logout' => \$home_url . '?customer-logout=true',
-			'login' => \$myaccount_link,
-			'register' => \$myaccount_link . '?customer-register=true',
-			'cart' => \$cart_url,
-			'cart_count' => \$cart_count,
-		);
-	} else {
-		\$links = array(
-			'my account' => admin_url( 'profile.php' ),
-			'logout' => wp_logout_url( \$home_url ),
-			'login' => wp_login_url( \$home_url ),
-			'register' => wp_registration_url(),
-			'cart' => '',
-			'cart_count' => 0,
-		);
+		\$links['my-account']['url'] = \$myaccount_link;
+		\$links['logout']['url'] = \$home_url . '?customer-logout=true';
+		\$links['login']['url'] = \$myaccount_link;
+		\$links['register']['url'] = \$myaccount_link . '?customer-register=true';
+		\$links['cart']['url'] = \$cart_url;
+		\$links['cart_count'] = \$cart_count;
 	}
 
 	if ( ! empty( \$link ) && ! empty( \$links[\$link] ) ) {

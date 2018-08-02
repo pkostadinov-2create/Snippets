@@ -1,0 +1,78 @@
+<snippet>
+	<content><![CDATA[
+function crb_xml_to_array( \$xml, \$global_namespaces = null ) {
+	if ( \$global_namespaces === null ) {
+		\$global_namespaces = \$xml->getNamespaces( true );
+	}
+
+	\$arr = array();
+
+	\$current_namespaces = \$xml->getNamespaces( false );
+	foreach ( \$current_namespaces as \$prefix => \$namespace) {
+		foreach ( \$xml->attributes( \$namespace ) as \$key => \$value ) {
+			// Add prefixes to prefixed attributes
+			if ( is_string( \$prefix ) ) {
+				\$key = \$prefix . '.' . \$key;
+			}
+
+			\$arr['@attributes'][\$key] = (string) \$value;
+		}
+	}
+
+	foreach ( \$xml as \$name => \$element ) {
+		\$value = null;
+		\$array_data = get_object_vars( \$element );
+
+		if ( ! empty( \$array_data ) ) {
+			\$value = \$array_data;
+		} elseif ( \$element->children() ) {
+			\$value = crb_xml_to_array( \$element, \$global_namespaces );
+		} elseif ( \$global_namespaces ) {
+			\$value = array();
+
+			foreach ( \$global_namespaces as \$ns => \$ns_title ) {
+				\$childrens = \$element->children( \$ns, true );
+
+				if ( \$childrens ) {
+					\$value[\$ns] = crb_xml_to_array( \$childrens, \$global_namespaces );
+				}
+			}
+		}
+
+		if ( empty( \$value ) ) {
+			\$value = trim( \$element );
+		}
+
+		if ( \$value ) {
+			if ( ! isset( \$arr[\$name] ) ) {
+				\$arr[\$name] = \$value;
+			} else {
+				foreach ( (array) \$value as \$k => \$v ) {
+					if ( is_numeric( \$k ) ) {
+						\$arr[\$name][] = \$v;
+					} else {
+						\$arr[\$name][\$k] = array_merge(
+							(array) \$arr[\$name][\$k],
+							(array) \$v
+						);
+					}
+				}
+			}
+		}
+	}
+
+	if ( \$content = trim( (string) \$xml ) ) {
+		\$arr[] = \$content;
+	}
+
+	return \$arr;
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_xml_to_array</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>
