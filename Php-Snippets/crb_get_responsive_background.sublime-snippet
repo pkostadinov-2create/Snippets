@@ -1,0 +1,90 @@
+<snippet>
+	<content><![CDATA[
+/**
+ * Generate some inline styles for use with the background-image and responsive images in WordPress.
+ *
+ * Uses wp_get_attachment_image_srcset to gather the image urls and device sizes.
+ * A mobile-friendly application of the background-image property.
+ * In this example, it's setup for a full-width image
+ *
+ * @author Joshua David Nelson, josh@joshuadnelson.com
+ */
+function crb_render_background_image( \$image_id, \$image_size, \$css_selector ) {
+	\$img_srcset = wp_get_attachment_image_srcset( \$image_id, \$image_size );
+
+	if ( empty( \$img_srcset ) ) {
+		\$image_url = wp_get_attachment_image_url( \$image_id, \$image_size );
+
+		return sprintf( '%s { background-image: url(%s); }', \$css_selector, \$image_url );
+	}
+
+	\$sizes = explode( ", ", \$img_srcset );
+	\$css = array();
+	\$prev_size = '';
+
+	\$formatted_sizes = array();
+	foreach( \$sizes as \$size ) {
+		// Split up the size string, into an array with [0]=>img_url, [1]=>size
+		\$split = explode( " ", \$size );
+		if( ! isset( \$split[0], \$split[1] ) ) {
+			continue;
+		}
+
+		\$size = str_replace( "w", "", \$split[1] );
+
+		\$formatted_sizes[\$size] = \$split[0];
+	}
+
+	// ksort( \$formatted_sizes );
+	krsort( \$formatted_sizes );
+
+	foreach( \$formatted_sizes as \$breakpoint => \$image_url ) {
+		// Set the current image size as the "previous image" size, for use with media queries
+		\$prev_size = \$breakpoint . 'px';
+
+		\$background_css = sprintf( '%s { background-image: url(%s); }', \$css_selector, \$image_url );
+
+		// Grab the previous image size as the min-width and/or add the background css to the main css string
+		if ( empty( \$css ) ) {
+			\$css[] = \$background_css;
+		}
+
+		\$css[] = sprintf( '@media only screen and (max-width: %s) { %s }', \$prev_size, \$background_css );
+
+		/*if( !empty( \$prev_size ) ) {
+		} else {
+			\$css[] = \$background_css;
+		}*/
+	}
+
+	\$css = implode( "\n", \$css );
+
+	return \$css;
+}
+
+// Example Use Case:
+
+\$style = array();
+foreach ( \$slider as \$slide_index => \$slide ):
+	\$id = sprintf( 'slide-%s', ( \$slide_index + 1 ) );
+	\$selector = sprintf( '#%s .slider__slide-image', \$id );
+
+	if ( ! empty( \$slide['image'] ) ) {
+		\$style[] = crb_render_background_image( \$slide['image'], 'crb_home_slider', \$selector );
+	}
+	?>
+<?php endforeach; ?>
+
+<?php if ( ! empty( \$style ) ): ?>
+	<style type="text/css"><?php echo implode( "\n", \$style ); ?></style>
+<?php endif; ?>
+
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_get_responsive_background</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>
