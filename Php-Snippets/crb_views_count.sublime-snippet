@@ -1,0 +1,28 @@
+<snippet>
+	<content><![CDATA[
+// Handle Custom Views
+add_action( 'template_redirect', 'crb_handle_views_count' );
+function crb_handle_views_count() {
+	if ( is_singular() ) {
+		\$post_id = get_the_id();
+
+		\$views_count = absint( get_post_meta( \$post_id, '_crb_post_views_count', true ) );
+
+		if ( empty( \$views_count ) ) {
+			\$views_count = 0;
+		}
+
+		\$views_count++;
+
+		update_post_meta( \$post_id, '_crb_post_views_count', \$views_count );
+	}
+}
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_views_count</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>

@@ -1,0 +1,91 @@
+<snippet>
+	<content><![CDATA[
+// Handle Custom Likes
+add_action( 'template_redirect', 'crb_handle_post_like' );
+function crb_handle_post_like() {
+	if ( is_singular( 'post' ) && crb_request_param( 'like' ) ) {
+		\$Crb_Post_Like = new Crb_Post_Like();
+
+		\$Crb_Post_Like->add_like( get_the_id() );
+
+		wp_redirect( get_permalink() );
+		exit;
+	}
+}
+
+/**
+ * Handle custom Likes
+ */
+class Crb_Post_Like {
+	private \$table_name;
+
+	function __construct() {
+		global \$wpdb;
+		\$this->table_name = \$wpdb->prefix . 'crb_likes';
+
+		\$this->init();
+	}
+
+	function add_like( \$post_id ) {
+		\$likes_count = absint( get_post_meta( get_the_id(), '_crb_post_likes_count', true ) );
+		if ( empty( \$likes_count ) ) {
+			\$likes_count = 0;
+		}
+
+		global \$wpdb;
+		\$ips = (array) \$wpdb->get_col( "SELECT IP from {\$this->table_name} WHERE post_id = '{\$post_id}'" );
+		\$current_ip = \$_SERVER['REMOTE_ADDR'];
+
+		if ( in_array( \$current_ip, \$ips ) ) {
+			return;
+		}
+
+		\$wpdb->insert(
+			\$this->table_name,
+			array(
+				'IP' => \$current_ip,
+				'post_id' => \$post_id,
+			),
+			array(
+				'%s',
+				'%s',
+			)
+		);
+
+		\$likes_count++;
+
+		update_post_meta( \$post_id, '_crb_post_likes_count', \$likes_count );
+	}
+
+	private function init() {
+		global \$wpdb;
+
+		\$table_exists = \$wpdb->get_var( "SHOW TABLES LIKE '{\$this->table_name}'" ) == \$this->table_name;
+		if ( \$table_exists ) {
+			return;
+		}
+
+		\$charset_collate = \$wpdb->get_charset_collate();
+
+		\$sql =
+			"CREATE TABLE \$this->table_name (
+				id mediumint(9) NOT NULL AUTO_INCREMENT,
+				IP varchar(55) DEFAULT '' NOT NULL,
+				post_id bigint(20) DEFAULT 0 NOT NULL,
+				PRIMARY KEY  (id)
+			) \$charset_collate;";
+
+		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		dbDelta( \$sql );
+	}
+}
+
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>crb_likes</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.php - variable.other.php</scope>
+	 <!-- Optional: Description to show in the menu -->
+	<description> with args</description>
+</snippet>
