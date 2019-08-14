@@ -17,39 +17,98 @@ function crb_get_share_link( \$network, \$data = array() ) {
 
 	// Initialize Default data
 	\$data = wp_parse_args( \$data, array(
-		'link'        => get_permalink( \$post_id ),
-		'title'       => get_the_title( \$post_id ),
-		'description' => crb_get_the_excerpt( \$post_id ),
-		'thumbnail'   => has_post_thumbnail() ? wp_get_attachment_image_url( get_post_thumbnail_id( \$post_id ) , 'full' ) : get_permalink( \$post_id ),
+		'link'          => get_permalink( \$post_id ),
+		'title'         => get_the_title( \$post_id ),
+		'description'   => crb_get_the_excerpt( \$post_id ),
+		'thumbnail'     => has_post_thumbnail() ? wp_get_attachment_image_url( get_post_thumbnail_id( \$post_id ) , 'full' ) : get_permalink( \$post_id ),
+		'company'       => 'Glue42',
+		'phone_number'  => '',
+		'email_address' => '',
 	) );
 
 	\$socials = array(
 		// Facebook
-		'facebook'   => 'https://facebook.com/sharer/sharer.php?u={{link}}',
+		'facebook'    => 'https://facebook.com/sharer/sharer.php?u={{link}}',
 		// Twitter
-		'twitter'    => 'https://twitter.com/intent/tweet/?text={{title}}&amp;url={{link}}',
-		// Google+
-		'google'     => 'https://plus.google.com/share?url={{link}}&prefilltext={{title}}',
+		'twitter'     => 'https://twitter.com/intent/tweet/?text={{title}}&amp;url={{link}}',
 		// Tumblr
-		'tumblr'     => 'https://www.tumblr.com/widgets/share/tool?posttype=link&amp;title={{title}}&amp;caption={{description}}&amp;content={{link}}&amp;canonicalUrl={{link}}&amp;shareSource=tumblr_share_button',
+		'tumblr'      => 'https://www.tumblr.com/widgets/share/tool?posttype=link&amp;title={{title}}&amp;caption={{description}}&amp;content={{link}}&amp;canonicalUrl={{link}}&amp;shareSource=tumblr_share_button',
 		// E-Mail
-		'email'      => 'mailto:?subject={{title}}&amp;body={{description}}',
+		'email'       => 'mailto:?subject={{title}}&amp;body={{description}}',
 		// Pinterest
-		'pinterest'  => 'https://pinterest.com/pin/create/button/?url={{link}}&amp;media={{thumbnail}}&amp;description={{title}}',
+		'pinterest'   => 'https://pinterest.com/pin/create/button/?url={{link}}&amp;media={{thumbnail}}&amp;description={{title}}',
 		// LinkedIn
-		'linkedin'   => 'https://www.linkedin.com/shareArticle?mini=true&amp;url={{link}}&amp;title={{title}}&amp;summary={{description}}&amp;source={{link}}',
+		'linkedin'    => 'https://www.linkedin.com/shareArticle?mini=true&amp;url={{link}}&amp;title={{title}}&amp;summary={{description}}&amp;source={{link}}',
 		// Reddit
-		'reddit'     => 'https://reddit.com/submit/?url={{link}}',
-		// XING
-		'xing'       => 'https://www.xing.com/app/user?op=share;url={{link}};title={{title}}',
-		// WhatsApp
-		'whatsapp'   => 'whatsapp://send?text={{title}}%20{{link}}',
+		'reddit'      => 'https://reddit.com/submit/?url={{link}}&amp;title={{title}}',
+
+		# Source: https://github.com/bradvin/social-share-urls
+		// Blogger
+		'blogger'     => 'https://www.blogger.com/blog-this.g?u={{link}}&amp;n={{title}}&amp;t={{description}}',
+		// LiveJournal
+		'livejournal' => 'http://www.livejournal.com/update.bml?subject={{title}}&amp;event={{link}}',
+		// Evernote
+		'evernote'    => 'https://www.evernote.com/clip.action?url={{link}}&amp;title={{title}}',
+		// AddThis
+		'addthis'     => 'http://www.addthis.com/bookmark.php?url={{link}}',
+		// Pocket
+		'pocket'      => 'https://getpocket.com/save?url={{link}}&amp;title={{title}}',
 		// Hacker News
-		'hackernews' => 'https://news.ycombinator.com/submitlink?u={{link}}&amp;t={{title}}',
+		'hackernews'  => 'https://news.ycombinator.com/submitlink?u={{link}}&amp;t={{title}}',
+		// Digg
+		'digg'        => 'http://digg.com/submit?url={{link}}',
+		// Buffer
+		'buffer'      => 'https://bufferapp.com/add?text={{title}}&amp;url={{link}}',
+		// FlipBoard
+		'flipboard'   => 'https://share.flipboard.com/bookmarklet/popout?v=2&amp;title={{title}}&amp;url={{link}}',
+		// InstaPaper
+		'instapaper'  => 'http://www.instapaper.com/edit?url={{link}}&amp;title={{title}}&amp;description={{description}}',
+		// SurfingBird
+		'surfingbird' => 'http://surfingbird.ru/share?url={{link}}&amp;description={{description}}&amp;screenshot={{thumbnail}}&amp;title={{title}}',
+		// Flattr
+		'flattr'      => 'https://flattr.com/submit/auto?url={{link}}&amp;title={{title}}&amp;description={{description}}&amp;hidden=HIDDEN', // user_id={{user_id}}, category={{category}}, tags={{hash_tags}}, language={{language_code}}
+		// Diaspora
+		'diaspora'    => 'https://share.diasporafoundation.org/?title={{title}}&amp;url={{link}}',
+
+		# Non English
+		// QZone
+		'qzone'       => 'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={{link}}',
 		// VK
-		'vk'         => 'http://vk.com/share.php?title={{title}}&amp;url={{link}}',
+		'vk'          => 'http://vk.com/share.php?url={{link}}&amp;title={{title}}&amp;comment={{description}}',
+		// Weibo
+		'weibo'       => 'http://service.weibo.com/share/share.php?url={{link}}&amp;appkey=&amp;title={{title}}&amp;pic=&amp;ralateUid=',
+		// OKru
+		'okru'        => 'https://connect.ok.ru/dk?st.cmd=WidgetSharePreview&amp;st.shareUrl={{link}}',
+		// Douban
+		'douban'      => 'http://www.douban.com/recommend/?url={{link}}&amp;title={{title}}',
+		// XING
+		'xing'        => 'https://www.xing.com/spi/shares/new?url={{link}}',
+		// RenRen
+		'renren'      => 'http://widget.renren.com/dialog/share?resourceUrl={{link}}&amp;srcUrl={{link}}&amp;title={{title}}&amp;description={{description}}',
+		// Threema
+		'threema'     => 'threema://compose?text={{link}}', // id={{user_id}}
+
+		# Phone/Audio-Based Social Media
+		// Line.me
+		'line.me'     => 'https://lineit.line.me/share/ui?url={{link}}&amp;text={{description}}',
+		// Skype
+		'skype'       => 'https://web.skype.com/share?url={{link}}&amp;text={{description}}',
 		// Telegram
-		'telegram'   => 'https://telegram.me/share/url?text={{title}}&amp;url={{link}}',
+		'telegram'    => 'https://telegram.me/share/url?url={{link}}&amp;text={{title}}&amp;to={{phone_number}}',
+		// GMail
+		'gmail'       => 'https://mail.google.com/mail/?view=cm&amp;to={{email_address}}&amp;su={{title}}&amp;body={{link}}',
+		// Yahoo
+		'yahoo'       => 'http://compose.mail.yahoo.com/?to={{email_address}}&amp;subject={{title}}&amp;body={{link}}',
+
+		# Deprecated Social Media
+		// Delicious - 2018
+		# 'delicious'   => 'https://delicious.com/save?v=5&amp;provider={{company}}&amp;noui&amp;jump=close&amp;url={{link}}&amp;title={{title}}',
+		// Google+ - 2018
+		# 'google'      => 'https://plus.google.com/share?url={{link}}&amp;prefilltext={{title}}',
+		// StumbleUpon
+		# 'stumbleupon' => 'https://www.stumbleupon.com/submit?url={{link}}&amp;title={{title}}',
+		// WhatsApp - 2018
+		# 'whatsapp'    => 'whatsapp://send?text={{title}}%20{{link}}',
 	);
 
 	\$social_link = '#';
@@ -83,13 +142,51 @@ function crb_get_the_excerpt( \$post_id = 0 ) {
 	return apply_filters( 'get_the_excerpt', \$excerpt );
 }
 
-\$('.article-socials-theme a').on( 'click', function( e ) {
-	e.preventDefault();
+function shares_popup() {
 
-	window.open(\$(this).attr('href'), 'newwindow', 'width=500, height=400');
+	var defaultDimensions = 'width=500,  height=400';
+	var dimensions = {
+		twitter    : 'width=500,  height=450',
+		linkedin   : 'width=1010, height=690'
+	};
 
-	return false;
-});
+	\$('.article-socials a').on( 'click', function( e ) {
+		e.preventDefault();
+
+		var \$this = \$(this);
+		var type = \$this.data('type');
+		var size = typeof dimensions[ type ] != 'undefined' ? dimensions[ type ] : defaultDimensions;
+
+		window.open(
+			\$this.attr('href'),
+			'newwindow',
+			size
+		);
+
+		return false;
+	});
+
+}
+
+/**
+HTML Example:
+
+<div class="article-socials">
+	<ul class="socials">
+		<li>
+			<a href="<?php echo crb_get_share_link( 'facebook' ); ?>" data-type="facebook" target="_blank">facebook</a>
+		</li>
+
+		<li>
+			<a href="<?php echo crb_get_share_link( 'twitter' ); ?>" data-type="twitter" target="_blank">twitter</a>
+		</li>
+
+		<li>
+			<a href="<?php echo crb_get_share_link( 'linkedin' ); ?>" data-type="linkedin" target="_blank">linkedin</a>
+		</li>
+	</ul>
+</div>
+ */
 
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
