@@ -2,12 +2,9 @@
 	<content><![CDATA[
 
 add_action( 'parse_query', 'debug_rewrites' );
+
 /**
  * Debug Rewrite rules
- *
- * @since 1.0.0
- * @access public
- * @return void
  */
 function debug_rewrites( \$wp_query ) {
 	global \$wp_rewrite;
